@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1143</width>
+    <height>820</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>300</width>
+    <height>380</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1330</width>
+    <height>940</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>TMV3</string>
+  </property>
+  <property name="documentMode">
+   <bool>true</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="1">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="locale">
+       <locale language="English" country="UnitedKingdom"/>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Control</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="5" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QTreeView" name="treeView">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
+            <property name="whatsThis">
+             <string/>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>32</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="verticalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="rootIsDecorated">
+             <bool>true</bool>
+            </property>
+            <property name="uniformRowHeights">
+             <bool>true</bool>
+            </property>
+            <property name="animated">
+             <bool>true</bool>
+            </property>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="headerStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QPushButton" name="BtnSelAll">
+              <property name="text">
+               <string>check all</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="BtnSelNone">
+              <property name="text">
+               <string>uncheck all</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BtnStart">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Start</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BtnStop">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Stop</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BtnPause">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Pause</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BtnTraceRestart">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Retrigger Analyzer</string>
+            </property>
+            <property name="text">
+             <string>Trace Restart</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BtnExit_3">
+            <property name="styleSheet">
+             <string notr="true">color:rgb(255, 170, 0);
+font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
+            </property>
+            <property name="text">
+             <string>EXIT</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="lbRouteStatus">
+            <property name="maximumSize">
+             <size>
+              <width>20</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>R</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BtnShowRelatedRoute">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;lists Routes of current Dataset&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>show Routes</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BtnSetRelatedRoute">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;generate missing entries in Routing-Table&lt;/p&gt;&lt;p&gt;User has to complete these entries&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>gen. missing Routes</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>Options</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Class</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>GroupBox</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>GroupBox</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="BtnExit">
+          <property name="styleSheet">
+           <string notr="true">color:rgb(255, 170, 0);
+font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Exit</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Tools</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QPushButton" name="BtnBackupTPL">
+          <property name="text">
+           <string>backup Workbench</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="BtnTDStoTDS3">
+          <property name="text">
+           <string>TDStoTDS3</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="BtnTKRtoTKR3">
+          <property name="text">
+           <string>TKRtoTKR3</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="BtnTLMtoTLM3">
+          <property name="text">
+           <string>TLMtoTLM3</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_7">
+          <property name="text">
+           <string>Edit Limits</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_5">
+          <property name="text">
+           <string>Edit Anntennas</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>Edit Cables</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_4">
+          <property name="text">
+           <string>Edit Testplans</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>GroupBox</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="BtnExit_2">
+          <property name="styleSheet">
+           <string notr="true">color:rgb(255, 170, 0);
+font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
+          </property>
+          <property name="text">
+           <string>Exit</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1143</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuLimits">
+    <property name="title">
+     <string>Workbench</string>
+    </property>
+    <addaction name="actionAddCorrections"/>
+    <addaction name="actionAddLimits"/>
+    <addaction name="actionAddTestPlan"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport_Tests"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport_Master_KMV"/>
+    <addaction name="actionImport_Master_KMV"/>
+    <addaction name="separator"/>
+    <addaction name="actionUpdate_ZKMV"/>
+    <addaction name="actionUpdate_ZZ"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuChoose">
+    <property name="title">
+     <string>Routes</string>
+    </property>
+    <addaction name="actionRoutes"/>
+   </widget>
+   <widget class="QMenu" name="menuCorrections">
+    <property name="title">
+     <string>Corrections</string>
+    </property>
+    <addaction name="actionAntenna"/>
+    <addaction name="actionCable"/>
+    <addaction name="actionProbe"/>
+   </widget>
+   <addaction name="menuLimits"/>
+   <addaction name="menuChoose"/>
+   <addaction name="menuCorrections"/>
+  </widget>
+  <action name="actionClose">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>close</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>open Test</string>
+   </property>
+  </action>
+  <action name="actionAddLimits">
+   <property name="text">
+    <string>import  Limits</string>
+   </property>
+  </action>
+  <action name="actionAddTestPlan">
+   <property name="text">
+    <string>import  TestPlan</string>
+   </property>
+  </action>
+  <action name="actionExport_Tests">
+   <property name="text">
+    <string>export Tests</string>
+   </property>
+  </action>
+  <action name="actionExport_Master_KMV">
+   <property name="text">
+    <string>export Reference KMV</string>
+   </property>
+  </action>
+  <action name="actionUpdate_ZKMV">
+   <property name="text">
+    <string>update Zone KMV Testplan</string>
+   </property>
+  </action>
+  <action name="actionUpdate_ZZ">
+   <property name="text">
+    <string>update Zone Approval TestPlan</string>
+   </property>
+  </action>
+  <action name="actionImport_Master_KMV">
+   <property name="text">
+    <string>import Reference KMV</string>
+   </property>
+  </action>
+  <action name="actionOpenRoutes">
+   <property name="text">
+    <string>open Routes</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>exit</string>
+   </property>
+  </action>
+  <action name="actionChoose">
+   <property name="text">
+    <string>Routes</string>
+   </property>
+  </action>
+  <action name="actionAntenna">
+   <property name="text">
+    <string>Antennas</string>
+   </property>
+  </action>
+  <action name="actionCable">
+   <property name="text">
+    <string>Cables</string>
+   </property>
+  </action>
+  <action name="actionProbe">
+   <property name="text">
+    <string>Probes</string>
+   </property>
+  </action>
+  <action name="actionRoutes">
+   <property name="text">
+    <string>Routes</string>
+   </property>
+  </action>
+  <action name="actionLimits">
+   <property name="text">
+    <string>Limits</string>
+   </property>
+  </action>
+  <action name="actionAddCorrections">
+   <property name="text">
+    <string>import Corrections</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>tabWidget</sender>
+   <signal>customContextMenuRequested(QPoint)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>raise()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>381</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>381</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
