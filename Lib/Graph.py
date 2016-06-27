@@ -202,24 +202,24 @@ class MainForm(QMainWindow):
         self.Client.send(_sData)
 
     def toggleVS(self):
-        if self.labelD == None:
-            self.labelD = self.host.text(self.labelX,13,'Test')
-        else:
-            self.labelX += 1e6
-            self.labelD.set_x(self.labelX)
-        self.signalGraphUpdate.emit()
-
-        # if self.limitsVisible:
-        #     self.limitsVisible = False
-        #     for x in self.limits:
-        #         x.set_visible(False)
-        #     self.fig.suptitle("VS-Nur für den Dienstgebrauch",color='blue',size=15)
+        # if self.labelD == None:
+        #     self.labelD = self.host.text(self.labelX,13,'Test')
         # else:
-        #     self.limitsVisible = True
-        #     for x in self.limits:
-        #         x.set_visible(True)
-        #     self.fig.suptitle("VS-Vertraulich",color='blue',size=15)
+        #     self.labelX += 1e6
+        #     self.labelD.set_x(self.labelX)
         # self.signalGraphUpdate.emit()
+
+         if self.limitsVisible:
+             self.limitsVisible = False
+             for x in self.limits:
+                 x.set_visible(False)
+             self.fig.suptitle("VS-Nur für den Dienstgebrauch",color='blue',size=15)
+         else:
+             self.limitsVisible = True
+             for x in self.limits:
+                 x.set_visible(True)
+             self.fig.suptitle("VS-Vertraulich",color='blue',size=15)
+         self.signalGraphUpdate.emit()
 
     def switchPage1(self):
         self.canvas.setVisible(True)
