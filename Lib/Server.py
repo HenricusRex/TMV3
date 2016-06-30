@@ -4,6 +4,7 @@ import snakemq.link
 import snakemq.packeter
 import snakemq.messaging
 import snakemq.message
+import snakemq.rpc
 
 from PyQt4 import QtCore
 import pickle
@@ -26,7 +27,7 @@ class Server(QtCore.QObject):
     signalItemComplete = QtCore.pyqtSignal(list) #access Gui
     signalMeasStarted = QtCore.pyqtSignal() #access Gui
     signalWait = threading.Event()
-    def __init__( self ):
+    def __init__( self, parent = None ):
         QtCore.QObject.__init__(self)
         self.signals=Signal()
         self.graphName = ''
@@ -45,6 +46,9 @@ class Server(QtCore.QObject):
         self.messaging = snakemq.messaging.Messaging("Controller", "", _pktr)
         self.messaging.on_message_recv.add(self.on_recv)
 
+        #rh = snakemq.messaging.ReceiveHook(self.messaging)
+        #srpc = snakemq.rpc.RpcServer(rh)
+       # srpc.register_object(parent,"Controller")
 
         self.signalItemActive.connect(self.onItemActive)
         self.signalItemComplete.connect(self.onItemComplete)
