@@ -32,6 +32,7 @@ class MainForm(QtGui.QMainWindow):
     signalShowMessage = QtCore.pyqtSignal(str)
     signalWait = threading.Event()
     signalErrorEnd = threading.Event()
+    signalPause = threading.Event()
 
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -42,6 +43,8 @@ class MainForm(QtGui.QMainWindow):
         self.activeTestPlan = os.path.join(self.workingDir,"ActiveTestPlan.TDS3")
         self.job_table = JobTable()
         self.client = Client(self)
+       # self.proxy = self.client.crpc.get_proxy('Controller','Controller')
+
         self.item = None
         self.signals = Signal()
         self.hwd = self
@@ -133,6 +136,7 @@ class MainForm(QtGui.QMainWindow):
 
     def onPause(self):
         self.addItem("Signal from Controller: Measurement paused")
+
         pass
 
     def onStop(self):
@@ -151,7 +155,11 @@ class MainForm(QtGui.QMainWindow):
     def parser(self):
 
         _ret = 1
+        self.signalPause.set()
         while (_ret != 0):
+            print('vor')
+            self.signalPause.wait()
+            print('nach')
             if (self.job_table.Name == "Plot"):
                 _ds_plan = DatasetPlan(self.activeTestPlan)
                 _ds_plot = DatasetPlot(self.activeTestPlan, self.job_table.DBIdx)
@@ -225,7 +233,7 @@ class MainForm(QtGui.QMainWindow):
                     #start Routine
                     try:
 
-                       _rt = _py_mod_class()
+                       _rt = _py_mod_class(self)
                        _ret = _rt.startRoutine(_ds_routine,self.job_table)
                        if (_ret == False):
                             print("wait for Error-End")
