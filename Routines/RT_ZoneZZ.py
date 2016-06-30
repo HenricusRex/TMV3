@@ -3,8 +3,8 @@ from pydispatch import dispatcher
 from NeedfullThings import Signal
 
 class RT_ZoneZZ(RT_StandardHF):
-    def __init__(self):
-        super().__init__()
+    def __init__(self,parent= None):
+        super().__init__(parent)
         self.signals = Signal()
         pass
 

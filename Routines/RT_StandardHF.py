@@ -13,6 +13,7 @@ from DB_Handler_TPL3 import *
 from NeedfullThings import Signal
 from pydispatch import dispatcher
 from Routing import Router
+from Instruction import Instruction
 import pickle
 import importlib.machinery
 import time
@@ -45,7 +46,8 @@ string to dic
 class RT_StandardHF(object):
     global globalStop
     eventWait = threading.Event()
-    def __init__(self):
+    def __init__(self,parent = None):
+        self.parent = parent
         self.config = configparser.ConfigParser()
         self.config.read('TMV3.ini')
         self.deviceList=[]
@@ -141,6 +143,8 @@ class RT_StandardHF(object):
             logging.exception(_err)
             self.showMessage(_error_text)
             return 0
+            _text = "Connection DeviceDriver {0} established ".format(str(_module_name))
+            self.showMessage(_text)
 
         return True
 
@@ -151,7 +155,7 @@ class RT_StandardHF(object):
         _ret = self.job_table.getJob()
         try:
             while (_ret != 0):
-
+                self.parent.signalPause.wait()
                 if self.stopExecution:
                     self.showMessage('Measurement stopped')
                     self.eventWait.wait()
@@ -291,6 +295,13 @@ class RT_StandardHF(object):
         if self.currentSetting.autorange:
             self.startAutoRange = True
 
+        if not self.currentSetting.instruction == None:
+            print("i = ",self.currentSetting.instruction)
+            instr = Instruction(self.currentSetting.instruction,self)
+            instr.exec_()
+            instr.close()
+            # show instructions text
+            pass
 
         #open resource
         self.spec_analyzer.checkConnection()
