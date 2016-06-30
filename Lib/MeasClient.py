@@ -6,6 +6,9 @@ import snakemq.link
 import snakemq.packeter
 import snakemq.messaging
 import snakemq.message
+import snakemq.rpc
+
+
 from PyQt4 import QtCore
 import pickle
 import threading
@@ -25,7 +28,7 @@ logging.basicConfig(filename="TMV3log.txt",
 
 
 class Client():
-    signalPause = threading.Event()
+  #  signalPause = threading.Event()
 
     def __init__(self,parent=None):
 
@@ -44,6 +47,9 @@ class Client():
         self.messaging = snakemq.messaging.Messaging("Meas", "", _pktr)
         self.messaging.on_message_recv.add(self.on_recv)
         #self.messaging.on_message_sent.add(self.on_send)
+
+        #rh = snakemq.messaging.ReceiveHook(self.messaging)
+       # self.crpc = snakemq.rpc.RpcClient(rh)
 
         dispatcher.connect(self.onJobComplete, self.sig.JOB_COMPLETE, dispatcher.Any)
         dispatcher.connect(self.onItemComplete, self.sig.ITEM_COMPLETE, dispatcher.Any)
@@ -79,14 +85,14 @@ class Client():
                     dispatcher.send(self.sig.MEAS_PAUSE,dispatcher.Anonymous)
                     print('Pause')
                     if not self.pause:
-                        self.signalPause.set()
+                        self.parent.signalPause.set()
                         self.pause = True
                     else:
-                        self.signalPause.clear()
+                        self.parent.signalPause.clear()
                         self.pause = False
 
                 if sdata[0] == self.sig.MEAS_GOON:
-                    dispatcher.send(self.sig.MEAS_GOON,dispatcher.Anonymous)
+                    #dispatcher.send(self.sig.MEAS_GOON,dispatcher.Anonymous)
                     self.parent.signalWait.set()
                     print('GoOn')
 
@@ -118,8 +124,8 @@ class Client():
             sdata = pickle.dumps(data)
             msg = snakemq.message.Message(sdata,ttl=600)
             self.messaging.send_message("Controller",msg)
-            if self.pause:
-                self.signalPause.wait()
+    #        if self.pause:
+    #            self.signalPause.wait()
 
         except Exception as _err:
             logging.info (_err)
