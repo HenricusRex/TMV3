@@ -68,6 +68,8 @@ class SpectrumAnalyzer():
             if not self.checkStatusCode(self.sa.write("SENSE:DET:FUNC POS; *WAI")): return False
             if not self.checkStatusCode(self.sa.write("UNIT:POW DBUV; *WAI")): return False
 
+
+
         except Exception as _err:
             self.showMessage("Analyzer setup error")
             logging.exception(_err)
@@ -472,6 +474,7 @@ class SpectrumAnalyzer():
         if state:
             self.sa.write("CORR:TEST ON")
             if not self.errorQueueHandler() : return False
+
         else:
             self.sa.write("CORR:TEST OFF")
             if not self.errorQueueHandler() : return False

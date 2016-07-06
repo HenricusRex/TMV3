@@ -49,10 +49,9 @@ logging.basicConfig(filename="TMV3log.txt",
 
 class MainForm(QtGui.QMainWindow):
     signalShowMessage = pyqtSignal(str)
-    closed = pyqtSignal()
+    signalCollapseTreeview = pyqtSignal()
     signalWait = threading.Event()
     signalWaitForFinishedLastPlot = threading.Event()
-    feierabend = pyqtSignal()
 
     def __init__(self, parent=None):
         # global model
@@ -117,7 +116,7 @@ class MainForm(QtGui.QMainWindow):
         dispatcher.connect(self.onBtnShowPlot, signal=self.signals.CTR_SHOW_PLOT, sender=dispatcher.Any)
 
         dispatcher.connect(self.onMnuExit, signal=self.signals.CTR_EXIT)
-        dispatcher.connect(self.onSetMasterID, signal=self.signals.CTR_SET_MASTER_ID)
+     #   dispatcher.connect(self.onSetMasterID, signal=self.signals.CTR_SET_MASTER_ID)
         #Signals from Process Graph
         dispatcher.connect(self.onGraphStarted, signal=self.signals.GRAPH_STARTED, sender=dispatcher.Any)
         dispatcher.connect(self.onGraphStopped, self.signals.GRAPH_STOPPED, dispatcher.Any)
@@ -129,6 +128,7 @@ class MainForm(QtGui.QMainWindow):
         dispatcher.connect(self.onShowMessageA, signal=self.signals.ERROR_MESSAGE, sender=dispatcher.Any)
         dispatcher.connect(self.onShowMessageA, signal=self.signals.SHOW_MESSAGE, sender=dispatcher.Any)
         self.signalShowMessage.connect(self.onShowMessageB)
+        self.signalCollapseTreeview.connect(self.collapseTreeView)
 
         #Signals from Workbench
         dispatcher.connect(self.onNewPlotID, signal=self.signals.WB_NEW_PLOT_ID, sender=dispatcher.Any)
@@ -170,7 +170,7 @@ class MainForm(QtGui.QMainWindow):
 
             #copy last TestPlan to ActiveTestPlan
             # self.currentTestID = int (self.config['Current']['current_testID_ZK'])
-            _planID = int(self.config['Current']['current_planID_ZK'])
+            #_planID = int(self.config['Current']['current_planID_ZK'])
             self.planTitle = "Zone KMV"
 
         if self.startOption == 'ZZ':
@@ -185,16 +185,16 @@ class MainForm(QtGui.QMainWindow):
             self.ui.actionAddTestPlan.setVisible(False)
             #copy last TestPlan to ActiveTestPlan
             #self.currentTestID = int (self.config['Current']['current_testID_ZZ'])
-            _planID = int(self.config['Current']['current_planID_ZZ'])
+            #_planID = int(self.config['Current']['current_planID_ZZ'])
             self.planTitle = "Zone Approval"
 
         if self.startOption == 'SK':
             self.currentTestID = int(self.config['Current']['current_testID_SK'])
-            _planID = int(self.config['Current']['current_planID_SK'])
+            #_planID = int(self.config['Current']['current_planID_SK'])
 
         if self.startOption == 'SZ':
             self.currentTestID = int(self.config['Current']['current_testID_SZ'])
-            _planID = int(self.config['Current']['current_planID_SZ'])
+            #_planID = int(self.config['Current']['current_planID_SZ'])
 
 
 
@@ -303,7 +303,7 @@ class MainForm(QtGui.QMainWindow):
         cR.close()
         sRR.close()
         _mText = 'you have to complete the new routes: {0}'.format(addList)
-        QtGui.QMessageBox.information(self, 'TMV3', _mText, QtGui.QMessageBox.Ok)
+        QtGui.QMessageBox.information(MainForm, 'TMV3', _mText, QtGui.QMessageBox.Ok)
 
         cR = Routing.Routing()
         cR.loadRoutes()
@@ -329,7 +329,7 @@ class MainForm(QtGui.QMainWindow):
         sRR.close()
         if len(addList) > 0:
             _mText = 'following routes are not defined: {0}. \nRouting will be disabled !'.format(addList)
-            QtGui.QMessageBox.information(self, 'TMV3', _mText, QtGui.QMessageBox.Ok)
+            QtGui.QMessageBox.information(MainForm, 'TMV3', _mText, QtGui.QMessageBox.Ok)
             self.routeFlag = False
             return False
         else:
@@ -337,8 +337,8 @@ class MainForm(QtGui.QMainWindow):
             return True
         pass
 
-    def onSetMasterID(self, id):
-        self.masterID = id
+  #  def onSetMasterID(self, id):
+   #     self.masterID = id
 
     def firstStart(self):
         if platform.system() == 'Linux':
@@ -356,7 +356,8 @@ class MainForm(QtGui.QMainWindow):
         print('ShowMessageA')
         #Message from foreign thread => access gui via qt-signal
         if isinstance(text, bytes):  #may be text is packed
-            stext = pickle.load(text)
+            stext = pickle.loads(text)
+
         else:
             stext = text
         self.signalShowMessage.emit(stext)
@@ -438,7 +439,7 @@ class MainForm(QtGui.QMainWindow):
                 time.sleep(1)
                 proc.kill()
 
-            if self.MeasProcess != None:
+            if self.MeasProcess is not None:
                 _data = []
                 _data.append((self.signals.MEAS_STOP))
                 self.Server.writeMeas(_data)
@@ -589,7 +590,7 @@ class MainForm(QtGui.QMainWindow):
             _line = self.ticket.data
             _tm.addData([_line.line_id, _line.title, _line.version, _line.date, _line.comment])
 
-        choose = Choose(_tm)
+        choose = Choose(_tm,'Limit')
 
         choose.exec()
         if choose.ret:
@@ -604,7 +605,7 @@ class MainForm(QtGui.QMainWindow):
         dispatcher.send(self.signals.WB_GET_LINE_IDS, dispatcher.Anonymous, self.ticket)
         _ids = self.ticket.data.lineIDs
         if len(_ids) == 0:
-            QtGui.QMessageBox.information(self, 'TMV3', 'no antennas found', QtGui.QMessageBox.Ok)
+            QtGui.QMessageBox.information(MainForm, 'TMV3', 'no antennas found', QtGui.QMessageBox.Ok)
             return
         for _id in _ids:
             self.ticket.data = _id
@@ -717,7 +718,7 @@ class MainForm(QtGui.QMainWindow):
                     if self.stopWorkbench() == 0:
                         return 0
 
-                self.startWorkbench(_filename)
+                self.startWorkbench()
 
 
 
@@ -742,9 +743,11 @@ class MainForm(QtGui.QMainWindow):
         _command.append(self.ticket.plotID)
         _command.append('False')
         self.Server.writeGraph(_command)
-        #dispatcher.send(self.signals.GRAPH_MAKE_THUMBNAIL,dispatcher.Anonymous)
-        self.ui.treeView.collapseAll()
+        # no direct access to ui via thread
+        self.signalCollapseTreeview.emit()
 
+    def collapseTreeView(self):
+        self.ui.treeView.collapseAll()
 
     def onPlotThumbnail(self):
         print("Thumbnail ready")

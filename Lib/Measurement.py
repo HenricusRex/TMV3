@@ -17,7 +17,7 @@ from NeedfullThings import Signal
 from DB_Handler_TDS3 import *
 from DB_Handler_TPL3 import Tpl3Plot
 from JobTables import JobTable
-
+from Instruction import Instruction
 
 
 
@@ -30,6 +30,8 @@ logging.raiseExceptions = False
 
 class MainForm(QtGui.QMainWindow):
     signalShowMessage = QtCore.pyqtSignal(str)
+    signalShowInstruction = QtCore.pyqtSignal(str)
+    signalShowInstructionEnd = threading.Event()
     signalWait = threading.Event()
     signalErrorEnd = threading.Event()
     signalPause = threading.Event()
@@ -55,6 +57,7 @@ class MainForm(QtGui.QMainWindow):
         #Messages
         dispatcher.connect(self.onShowMessageA, self.signals.SHOW_MESSAGE, dispatcher.Any)
         self.signalShowMessage.connect(self.onShowMessageB)
+        self.signalShowInstruction.connect(self.showInstruction)
 
       #  dispatcher.connect(self.onStop, self.signals.MEAS_STOP, dispatcher.Any)
         dispatcher.connect(self.onPause, self.signals.MEAS_PAUSE, dispatcher.Any)
@@ -87,6 +90,15 @@ class MainForm(QtGui.QMainWindow):
         #             # wort = "default_measurement"
         #             # a = __import__(wort)
         #             # b = a.DefaultMeasurement()
+
+    def onShowInstruction(self,text):
+        self.signalShowInstruction.emit(text)
+        self.signalShowInstructionEnd.wait()
+    def showInstruction(self,text):
+        instr = Instruction(text)
+        instr.exec_()
+        instr.close()
+        self.signalShowInstructionEnd.set()
 
     def onShowMessageB(self, text):
         self.addItem(text)
@@ -157,9 +169,7 @@ class MainForm(QtGui.QMainWindow):
         _ret = 1
         self.signalPause.set()
         while (_ret != 0):
-            print('vor')
             self.signalPause.wait()
-            print('nach')
             if (self.job_table.Name == "Plot"):
                 _ds_plan = DatasetPlan(self.activeTestPlan)
                 _ds_plot = DatasetPlot(self.activeTestPlan, self.job_table.DBIdx)

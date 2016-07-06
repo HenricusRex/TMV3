@@ -297,9 +297,11 @@ class RT_StandardHF(object):
 
         if not self.currentSetting.instruction == None:
             print("i = ",self.currentSetting.instruction)
-            instr = Instruction(self.currentSetting.instruction,self)
-            instr.exec_()
-            instr.close()
+            self.parent.onShowInstruction(self.currentSetting.instruction)
+          # instr = Instruction(self.currentSetting.instruction,self)
+          #  instr.exec_()
+          #
+          #   instr.close()
             # show instructions text
             pass
 

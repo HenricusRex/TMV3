@@ -130,6 +130,9 @@ class MainForm(QMainWindow):
     signalShowTitle = QtCore.pyqtSignal(str)
     signalGraphUpdate = pyqtSignal()
     waitEvent = threading.Event()
+    signalPrint = pyqtSignal()
+    signalPrintEnd = pyqtSignal()
+
 
     def __init__(self, parent = None):
         QMainWindow.__init__(self,parent)
@@ -150,8 +153,10 @@ class MainForm(QMainWindow):
         process_name = "Graph" + sys.argv[2]
         self.Client = Client(process_name)
 
+
         self.workBenchDB = self.config['DataBases']['workbench']
         self._workingDir = self.config['Pathes']['workingdir']
+        self.autoPrint = int(self.config['Print']['autoprint'])
         self.ticket = Workbench.Ticket()
         self.limits = []
         self.limitsVisible = True
@@ -160,7 +165,11 @@ class MainForm(QMainWindow):
         self.attList = []
         self.ampList = []
         self.page = 1
-        self.create_main_frame()
+        self.fig = Figure((10.0, 5.0), 100)
+        self.dyfig = self.fig
+        self.fig2 = Figure((10.0, 5.0), 100)
+        self.dyfig2 = self.fig2
+
         self.line1TextFlag = False
         self.line2TextFlag = False
         self.corrAntYEndPos = 0
@@ -172,10 +181,12 @@ class MainForm(QMainWindow):
         self.currentStaticPlot = None
         self.currentStaticPlotCorrList = None
         self.currentStaticPlotFlag = False
+
+
         #Messages
         self.signalShowTitle.connect(self.onShowTitle) #access to Gui via signal
         self.signalGraphUpdate.connect(self.onGraphUpdate) #access to Gui via signal
-
+        self.signalPrint.connect(self.print)
 
         dispatcher.connect(self.onNewPlot, self.signals.GRAPH_NEW_PLOT, dispatcher.Any)
         dispatcher.connect(self.onNewTrace, self.signals.GRAPH_NEW_TRACE, dispatcher.Any)
@@ -192,7 +203,7 @@ class MainForm(QMainWindow):
 
         logging.info('TMV3 Graph started')
 
-
+        self.create_main_frame()
         #if (ret):
         #   print("GRAPH Socket started, waiting for jobs")
         #else:
@@ -239,6 +250,9 @@ class MainForm(QMainWindow):
         self.canvas2.setFocus()
         self.page = 2
 
+    def onPrint(self):
+        self.signalPrint.emit()
+        self.signalPrintEnd.wait()
     def print(self):
         printer = QPrinter()
         printer.setOrientation(QPrinter.Landscape)
@@ -246,27 +260,28 @@ class MainForm(QMainWindow):
         ret = printerDialog.exec()
         if ret == QDialog.Accepted:
             _dpi = 300
-            _xScale=(printer.pageRect().width()/ (self.fig.get_figwidth()* _dpi))
-            _yScale=(printer.pageRect().height()/(self.fig.get_figheight() * _dpi))
+            _xScale=(printer.pageRect().width()/ (self.dyfig.get_figwidth()* _dpi))
+            _yScale=(printer.pageRect().height()/(self.dyfig.get_figheight() * _dpi))
             painter = QPainter(printer)
             painter.scale(_xScale,_yScale)
-            self.fig.savefig("../WorkingDir/Page1.png",dpi=_dpi)
+            self.dyfig.savefig("../WorkingDir/Page1.png",dpi=_dpi)
             image = QImage("../WorkingDir/Page1.png")
             painter.drawImage(QPoint(0,0),image)
             painter.end()
 
             painter = QPainter(printer)
             painter.scale(_xScale,_yScale)
-            self.fig2.savefig("../WorkingDir/Page2.png",dpi=_dpi)
+            self.dyfig2.savefig("../WorkingDir/Page2.png",dpi=_dpi)
             image = QImage("../WorkingDir/Page2.png")
             painter.drawImage(QPoint(0,0),image)
             painter.end()
+            self.signalPrintEnd.set()
 
     def create_main_frame(self):
         self.main_frame = QWidget()
 
-        self.fig = Figure((10.0, 5.0), 100)
-        self.fig2 = Figure((10.0, 5.0), 100)
+        #self.fig = Figure((10.0, 5.0), 100)
+        #self.fig2 = Figure((10.0, 5.0), 100)
         self.canvas =  FigureCanvas(self.fig)
         self.canvas2 =  FigureCanvas(self.fig2)
         self.canvas.setParent(self.main_frame)
@@ -320,7 +335,7 @@ class MainForm(QMainWindow):
     def genPlotPage(self):
 
         self.host = self.fig.add_subplot(111)
-        pos = self.host.get_position()
+        #pos = self.host.get_position()
 
 
 
@@ -783,7 +798,7 @@ class MainForm(QMainWindow):
                 _yTextPos = _y[-1]
                 _xTextPos = self.host.get_xlim()[1]
                 anz = len(_xys)
-                n = 0
+                #n = 0
                 for n in range(anz-1):
                     if (_xys[n][0] == _xTextPos):
                         _yTextPos = _xys[n][1]
@@ -809,17 +824,17 @@ class MainForm(QMainWindow):
                 _title = data.title
                 self.addSensor(_xStartPos,_xEndPos,_title)
                 self.setLineSensor()
-                if self.corrAntLabel == None:
+                if self.corrAntLabel is None:
                     self.corrAntLabel = self.host.text(self.host.get_xlim()[1],self.corrAntYEndPos,'Antenna')
                 else:
                     self.corrAntLabel.set_y(self.corrAntYEndPos)
             if data.type == "Cable":
-                if self.corrCabLabel == None:
+                if self.corrCabLabel is None:
                     self.corrCabLabel = self.host.text(self.host.get_xlim()[1],self.corrCabYEndPos,'Cable')
                 else:
                     self.corrCabLabel.set_y(self.corrCabYEndPos)
             if data.type == "Probe":
-                if self.corrProbeLabel == None:
+                if self.corrProbeLabel is None:
                     self.corrProbeLabel = self.host.text(self.host.get_xlim()[1],self.corrProbeYEndPos,'Probe')
                 else:
                     self.corrProbeLabel.set_y(self.corrProbeYEndPos)
@@ -845,7 +860,7 @@ class MainForm(QMainWindow):
                     _y = numpy.array(eval(data.data_y))
                 else:
                     _y = numpy.array(data.data_y)
-                _stepFreq = (_stopFreq - _startFreq)/len(_y)
+                #_stepFreq = (_stopFreq - _startFreq)/len(_y)
                 _x = numpy.array(numpy.linspace(_startFreq,_stopFreq,len(_y)))
             else:
                 pass
@@ -853,7 +868,7 @@ class MainForm(QMainWindow):
             self.getDefaultLineStyle('Trace')
             if data.hf_overload == True or data.if_overload == True:
                 self.getDefaultLineStyle('TraceOverload')
-            if data.uncal == True:
+            if data.uncal:
                 self.getDefaultLineStyle('TraceUncal')
             _color = self.defaultColor
             _style = self.defaultStyle
@@ -907,12 +922,15 @@ class MainForm(QMainWindow):
 
     def onMakeThumbnail(self):
         try:
-            print ('making thumbnail')
-            self.fig.savefig('../WorkingDir/Page1.png', format = 'png',dpi=300)
+            #print ('making thumbnail')
+            self.dyfig.savefig('../WorkingDir/Page1.png', format = 'png',dpi=300)
             im = Image.open('../WorkingDir/Page1.png')
             im.thumbnail((150,150))
             im.save("../WorkingDir/ThumbNail.png")
 
+            if self.autoPrint:
+                print ("autoPrint",self.autoPrint)
+                self.onPrint()
 
             #image.thumbnail("../WorkingDir/Page1.svg","../WorkingDir/ThumbNail.svg",scale=0.15,interpolation='gaussian')
         except Exception as _err:
@@ -1059,7 +1077,7 @@ class CorrLabel(object):
         self.parent = parent
     def writeAntLabel(self):
         x = self.parent.host.get_xlim()[1]
-        if self.labelAntenna != None:
+        if self.labelAntenna is not None:
             self.labelAntenna.set_position(x,self.parent.corrAntYEndPos)
         else:
             self.labelAntenna = self.parent.host.text(x,self.parent.corrAntYEndPos,'Antenna')
@@ -1067,7 +1085,7 @@ class CorrLabel(object):
 #        self.parent.host.add_artist(self.labelAntenna)
     def writeCabLabel(self):
         x = self.parent.host.get_xlim()[1]
-        if self.labelCable != None:
+        if self.labelCable is not None:
             self.labelCable.set_position(x,self.parent.corrCabYEndPos)
         else:
             self.labelCab = self.parent.host.text(x,self.parent.corrCabYEndPos,'Cable')
