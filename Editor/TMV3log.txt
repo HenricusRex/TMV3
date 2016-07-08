@@ -1,0 +1,45 @@
+07.08.2016 10:27:09 no such table: main.Plan
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.08.2016 10:27:26 no such table: main.Plan
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.08.2016 10:36:48 no such table: main.Plan
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.08.2016 10:37:05 no such table: main.Plan
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.08.2016 10:44:35 no such table: main.Plan
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.08.2016 10:47:30 no such table: main.Plan
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.08.2016 11:15:57 no such table: main.Plan
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.08.2016 11:22:18 unable to open database file
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 445, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+07.08.2016 11:22:26 unable to open database file
+Traceback (most recent call last):
+  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 445, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file

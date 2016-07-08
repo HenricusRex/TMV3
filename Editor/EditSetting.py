@@ -13,7 +13,7 @@ class EditSetting(EditElement.EditElement):
         super(EditSetting, self).__init__()
         self.ui = uic.loadUi("EditorSetting.ui", self)
         self.config = configparser.ConfigParser()
-        self.config.read('TMV3.ini')
+        self.config.read('../Lib/TMV3.ini')
         self.workBenchDB = self.config['DataBases']['workbench']
         self.driverList = []
         self.limList = []

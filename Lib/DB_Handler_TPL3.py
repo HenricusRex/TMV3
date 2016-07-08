@@ -650,6 +650,26 @@ class Tpl3Lines(object):
 
         _con.close()
         return(1)
+    def readLimitTitles(self):
+        _error_text = 'can not read Lines of TPL3 %s '
+        ret = []
+        try:
+            _con = lite.connect(self.filename)
+            #_con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute ("SELECT [Title],[Version] FROM [Lines] WHERE ([Lines].[Type]='Limit')")
+            ret = _cur.fetchall()
+
+        except  Exception as _err:
+            #QMessageBox.information(None, 'TMV3',
+            #_error_text % self.filename, QMessageBox.Ok)
+            print (_err)
+            logging.exception(_err)
+            return 0,ret
+
+        _con.close()
+        return 1,ret
+
     def add(self):
         try:
             _con = lite.connect(self.filename)

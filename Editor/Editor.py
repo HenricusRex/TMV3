@@ -42,10 +42,24 @@ class MainForm(QtGui.QMainWindow):
         self.id = 1
         self.disableBtns()
         self.dataSetFileName = ''
-        self.onLoadTDS('../ZZ12A.TDS3')
         self.signals = Signal()
+        self.openTDS3()
+    def openTDS3(self):
 
-
+        dlg=QtGui.QFileDialog( self )
+        dlg.setWindowTitle( 'open or create DataSet' )
+        dlg.setViewMode( QtGui.QFileDialog.Detail )
+        dlg.setNameFilters( [self.tr('DataSet (*.TDS3)')] )
+        dlg.setDefaultSuffix( 'TDS3' )
+        if dlg.exec_() :
+            fname = dlg.selectedFiles()
+            print (fname)
+        if fname == '':
+            return
+        if QtCore.QFile.exists(fname[0]):
+            self.onLoadTDS(fname[0])
+        else:
+            print('new TDS', fname)
     def setEditPage(self,type,id):
         if type == PLAN_TYPE:
             self.ui.stackedWidget.setCurrentIndex(0)

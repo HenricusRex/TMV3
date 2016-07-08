@@ -124,6 +124,17 @@ class Signal(object):
         self.GRAPH_MAKE_THUMBNAIL = "GRAPH_Make_Thumbnail"
         self.GRAPH_THUMBNAIL_READY = "GRAPH_Make_Thumbnail_Ready"
 
+        self.EDIT_PLANID ="EDIT_PlanID"
+        self.EDIT_PLOTID ="EDIT_PlotID"
+        self.EDIT_ROUTINEID ="EDIT_RoutineID"
+        self.EDIT_SETTINGID ="EDIT_SettingID"
+        self.EDIT_ADD_LIMIT = "EDIT_Add_Limit"
+        self.EDIT_ADD_LINE = "EDIT_Add_Line"
+        self.EDIT_ADD_DEVICE = "EDIT_Add_Device"
+        self.EDIT_ADD_INSTRUCTION = "EDIT_Add_Instruction"
+        self.EDIT_DEL_ITEM = "EDIT_DelItem"
+
+
 class StateRegister():
     MEAS_STARTED = hex(0x01)
     MEAS_FAILED = hex(0x02)
