@@ -21,7 +21,7 @@ class ImportZKMV(QtGui.QDialog):
         self.config = configparser.ConfigParser()
         self.config.read('TMV3.ini')
         self.signals = Signal()
-        self.data = 0
+        self.data = None
         self.config = configparser.ConfigParser()
         self.config.read('TMV3.ini')
         self.workBenchDB = self.config['DataBases']['workbench']
@@ -45,11 +45,16 @@ class ImportZKMV(QtGui.QDialog):
         fileTDS.date = _dA
         fileTDS.data = self.data
         ret = fileTDS.read(fileTDS.title,fileTDS.version)
+        _id = fileTDS.file_id
         if ret:
             QtGui.QApplication.restoreOverrideCursor()
-            _s = "Testplan {0} version {1} already exists".format(fileTDS.title,fileTDS.version)
-            QtGui.QMessageBox.information(self, 'TMV3', _s, QtGui.QMessageBox.Ok)
-            return
+            _s = "Testplan {0} version {1} already exists. Overwrite anyway?".format(fileTDS.title,fileTDS.version)
+            _ret = QtGui.QMessageBox.information(self, 'TMV3', _s, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            if _ret == QtGui.QMessageBox.No:
+                return
+            else:
+                fileTDS.delete()
+                pass
         ret = fileTDS.add()
         QtGui.QApplication.restoreOverrideCursor()
         if ret == 0:

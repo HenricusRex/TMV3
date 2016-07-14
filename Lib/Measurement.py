@@ -202,42 +202,43 @@ class MainForm(QtGui.QMainWindow):
                     _ds_routine = DatasetRoutine(self.activeTestPlan, self.job_table.DBIdx)
                     if (_ds_routine.read() == 0):
                         return 0
+
+                    #copy driver and routines to working dir
+                    if (self.config['Development']['development'] == '0'):
+                        self.deviceList = list(_ds_routine.device1.split(','))
+                        for d in self.deviceList:
+                            _error_text = 'can not read Driver '
+                            _module_name = d
+                            _module_path = os.path.abspath(os.path.join(self.workingDir,_module_name)+".py")
+
+                            _ds_files = DatasetFile(self.activeTestPlan,0)
+                            _ret = _ds_files.export(_module_name,'Driver',_module_path)
+                            if (_ret == 0):
+                                _s = "can't export Driver" + _module_name + ' ' + _module_path
+                                self.addItem(_s)
+                                return 0
+
+                        _module_name = _ds_routine.title
+                        _module_path = os.path.abspath(os.path.join(self.workingDir,_module_name)+".py")
+                        #_ds_files = DatasetFile(self.activeTestPlan,0)
+
+                        #export Routine-Script to WorkingDir
+                        _ret = _ds_files.export(_module_name,'Routine',_module_path)
+                        if (_ret == 0):
+                            _s = "can't export Routine" + _module_name + ' ' + _module_path
+                            self.addItem(_s)
+                            return 0
+
+
+                    else:
+                        self.addItem('Development = True')
                     _module_name = _ds_routine.title
                     _module_path = os.path.abspath(os.path.join(self.workingDir,_module_name)+".py")
-                    _ds_files = DatasetFile(self.activeTestPlan,0)
-
-                    #export Routine-Script to WorkingDir
-                    _ret = _ds_files.export(_module_name,'Routine',_module_path)
-                    if (_ret == 0):
-                        _s = "can't export Routine" + _module_name + ' ' + _module_path
-                        self.addItem(_s)
-                        return 0
-                    #
-                    #---for comfortable development
-                    if (self.config['Development']['development'] == '1'):
-                        self.addItem('Development = True')
-                        _module_name = self.config['Development']['modulname_routine']
-                        _module_path = self.config['Development']['modulpath_routine']
-
                     _loader = importlib.machinery.SourceFileLoader(_module_name,_module_path)
                     _py_mod = _loader.load_module()
                     _py_mod_class = getattr(_py_mod, _module_name)
                     self.addItem('Routine Module {0}, {1} loaded'.format(str(_module_name),str(_module_path)))
 
-
-                    self.deviceList = list(_ds_routine.device1.split(','))
-
-                    for d in self.deviceList:
-                        _error_text = 'can not read Driver '
-                        _module_name = d
-                        _module_path = os.path.abspath(os.path.join(self.workingDir,_module_name)+".py")
-
-                        _ds_files = DatasetFile(self.activeTestPlan,0)
-                        _ret = _ds_files.export(_module_name,'Driver',_module_path)
-                        if (_ret == 0):
-                            _s = "can't export Driver" + _module_name + ' ' + _module_path
-                            self.addItem(_s)
-                            return 0
 
                     self.sendItemComplete(self.job_table.TreeItem)
                     #start Routine

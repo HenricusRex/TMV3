@@ -419,6 +419,7 @@ class MainForm(QtGui.QMainWindow):
     def onBtnStart(self):
 
         _mode = self.startOption
+
         if _mode == 'ZK' or _mode == 'SK':
             if self.testModul.masterID == 0:
                 _ret = QtGui.QMessageBox.information(self, 'TMV3', 'no Master-KMV defined. Proceed ?',

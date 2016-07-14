@@ -422,7 +422,7 @@ font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
     <enum>QFrame::Box</enum>
    </property>
    <property name="text">
-    <string>M86V0</string>
+    <string/>
    </property>
   </widget>
   <widget class="QPushButton" name="BtnProtocol">

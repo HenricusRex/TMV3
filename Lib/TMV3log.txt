@@ -1,213 +1,29 @@
-06.30.2016 10:58:13 TMV3 Measurement started Meas
-06.30.2016 10:58:14 __init__() takes 1 positional argument but 2 were given Meas
+07.14.2016 08:03:19 TMV3 Measurement started Meas
+07.14.2016 08:03:19 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
 Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:14 __init__() takes 1 positional argument but 2 were given Meas
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.14.2016 08:03:21 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
 Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:14 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:14 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:14 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:15 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:15 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:15 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:15 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:15 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:15 __init__() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "Measurement.py", line 236, in parser
-    _rt = _py_mod_class(self)
-TypeError: __init__() takes 1 positional argument but 2 were given
-06.30.2016 10:58:19 recv 2fd1496 error WSAECONNRESET
-06.30.2016 11:00:07 TMV3 Measurement started Meas
-06.30.2016 11:01:55 recv 2fd1496 error WSAECONNRESET
-06.30.2016 11:14:12 TMV3 Measurement started Meas
-06.30.2016 12:19:01 recv 2fd1476 error WSAECONNRESET
-06.30.2016 12:19:01 recv 3fd1576 error WSAECONNRESET
-06.30.2016 12:19:01 recv 1fd948 error WSAECONNRESET
-06.30.2016 12:19:01 recv 4fd1612 error WSAECONNRESET
-07.04.2016 10:30:56 TMV3 Measurement started Meas
-07.04.2016 11:38:20 recv 2fd1508 error WSAECONNRESET
-07.04.2016 03:56:52 TMV3 Measurement started Meas
-07.04.2016 03:56:56 -222,"Data out of range;INP:ATT 1.0"
- Meas
-07.04.2016 03:59:48 recv 1fd976 error WSAECONNRESET
-07.04.2016 04:22:07 TMV3 Measurement started Meas
-07.04.2016 04:22:12 -103,"Invalid separator;INP:ATT:PROT:STAT: 0"
- Meas
-07.04.2016 04:22:51 TMV3 Measurement started Meas
-07.04.2016 04:46:30 recv 2fd1508 error WSAECONNRESET
-07.05.2016 09:15:38 TMV3 Measurement started Meas
-07.05.2016 09:17:03 TMV3 Measurement started Meas
-07.05.2016 09:29:24 TMV3 Measurement started Meas
-07.05.2016 09:31:42 recv 2fd1488 error WSAECONNRESET
-07.05.2016 09:31:43 recv 1fd988 error WSAECONNRESET
-07.05.2016 09:31:43 TMV3 Measurement started Meas
-07.05.2016 09:31:44 a float is required Meas
-Traceback (most recent call last):
-  File "C:\TMV3\Routines\RT_StandardHF.py", line 437, in startTrace
-    _ret, amp, att =  _func()
-  File "/TMV3/DeviceDriver/DD_FSWT.PY", line 86, in autoRange
-    _peak = math.ceil(self.get_maxPeak())
-TypeError: a float is required
-07.05.2016 09:35:23 TMV3 Measurement started Meas
-07.05.2016 09:35:25 float() argument must be a string or a number, not 'tuple' Meas
-Traceback (most recent call last):
-  File "C:\TMV3\Routines\RT_StandardHF.py", line 437, in startTrace
-    _ret, amp, att =  _func()
-  File "/TMV3/DeviceDriver/DD_FSWT.PY", line 85, in autoRange
-    _ref = float(self.get_RefLevel())
-TypeError: float() argument must be a string or a number, not 'tuple'
-07.05.2016 09:38:03 TMV3 Measurement started Meas
-07.05.2016 09:58:38 TMV3 Measurement started Meas
-07.05.2016 10:13:56 TMV3 Measurement started Meas
-07.05.2016 10:15:21 TMV3 Measurement started Meas
-07.05.2016 10:44:16 TMV3 Measurement started Meas
-07.05.2016 10:52:43 TMV3 Measurement started Meas
-07.05.2016 10:52:44 onShowInstruction() takes 1 positional argument but 2 were given Meas
-Traceback (most recent call last):
-  File "C:\TMV3\Routines\RT_StandardHF.py", line 209, in parser
-    if self.startSetting(_setting_DBIdx) == False:
-  File "C:\TMV3\Routines\RT_StandardHF.py", line 300, in startSetting
-    self.parent.onShowInstruction(self.currentSetting.instruction)
-TypeError: onShowInstruction() takes 1 positional argument but 2 were given
-07.05.2016 10:55:18 TMV3 Measurement started Meas
-07.05.2016 10:56:57 TMV3 Measurement started Meas
-07.05.2016 10:58:38 TMV3 Measurement started Meas
-07.05.2016 10:59:03 recv 2fd1496 error WSAECONNRESET
-07.05.2016 11:02:57 TMV3 Measurement started Meas
-07.05.2016 11:11:02 TMV3 Measurement started Meas
-07.05.2016 11:12:22 TMV3 Measurement started Meas
-07.05.2016 11:12:27 recv 1fd956 error WSAECONNRESET
-07.05.2016 11:12:27 TMV3 Measurement started Meas
-07.05.2016 11:26:29 recv 3fd1728 error WSAECONNRESET
-07.06.2016 09:29:49 TMV3 Measurement started Meas
-07.06.2016 09:34:24 TMV3 Measurement started Meas
-07.06.2016 09:35:19 recv 2fd1516 error WSAECONNRESET
-07.06.2016 09:35:20 recv 1fd960 error WSAECONNRESET
-07.06.2016 09:35:20 TMV3 Measurement started Meas
-07.06.2016 09:40:33 TMV3 Measurement started Meas
-07.06.2016 09:41:29 recv 2fd1604 error WSAECONNRESET
-07.06.2016 09:41:30 recv 1fd1072 error WSAECONNRESET
-07.06.2016 09:41:31 TMV3 Measurement started Meas
-07.06.2016 09:51:27 recv 3fd1104 error WSAECONNRESET
-07.06.2016 09:51:55 TMV3 Measurement started Meas
-07.06.2016 09:56:13 TMV3 Measurement started Meas
-07.06.2016 09:56:45 recv 2fd1492 error WSAECONNRESET
-07.06.2016 09:56:46 recv 1fd996 error WSAECONNRESET
-07.06.2016 09:56:46 TMV3 Measurement started Meas
-07.06.2016 09:58:26 recv 3fd1456 error WSAECONNRESET
-07.06.2016 09:58:49 TMV3 Measurement started Meas
-07.06.2016 09:59:18 recv 2fd1512 error WSAECONNRESET
-07.06.2016 09:59:19 recv 1fd988 error WSAECONNRESET
-07.06.2016 09:59:19 TMV3 Measurement started Meas
-07.06.2016 09:59:50 recv 4fd1760 error WSAECONNRESET
-07.06.2016 09:59:51 recv 3fd1484 error WSAECONNRESET
-07.06.2016 09:59:51 TMV3 Measurement started Meas
-07.06.2016 10:00:11 recv 6fd844 error WSAECONNRESET
-07.06.2016 10:00:12 recv 5fd1480 error WSAECONNRESET
-07.06.2016 10:00:12 TMV3 Measurement started Meas
-07.06.2016 10:01:04 recv 8fd1800 error WSAECONNRESET
-07.06.2016 10:01:05 recv 7fd988 error WSAECONNRESET
-07.06.2016 10:01:05 TMV3 Measurement started Meas
-07.06.2016 10:02:10 recv 10fd988 error WSAECONNRESET
-07.06.2016 10:07:13 TMV3 Measurement started Meas
-07.06.2016 10:07:14 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait' Meas
-Traceback (most recent call last):
-  File "C:\TMV3\Routines\RT_StandardHF.py", line 209, in parser
-    if self.startSetting(_setting_DBIdx) == False:
-  File "C:\TMV3\Routines\RT_StandardHF.py", line 300, in startSetting
-    self.parent.onShowInstruction(self.currentSetting.instruction)
-  File "Measurement.py", line 96, in onShowInstruction
-    self.signalShowInstructionEnd.wait()
-AttributeError: 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
-07.06.2016 10:09:38 TMV3 Measurement started Meas
-07.06.2016 10:11:03 TMV3 Measurement started Meas
-07.06.2016 10:34:57 TMV3 Measurement started Meas
-07.06.2016 10:42:59 TMV3 Measurement started Meas
-07.06.2016 10:56:10 TMV3 Measurement started Meas
-07.06.2016 10:56:57 'bool' object is not callable
-Traceback (most recent call last):
-  File "Graph.py", line 932, in onMakeThumbnail
-    self.autoprint()
-TypeError: 'bool' object is not callable
-07.06.2016 10:59:01 TMV3 Measurement started Meas
-07.06.2016 10:59:49 'MainForm' object has no attribute 'autoprint'
-Traceback (most recent call last):
-  File "Graph.py", line 931, in onMakeThumbnail
-    if self.autoprint:
-AttributeError: 'MainForm' object has no attribute 'autoprint'
-07.06.2016 11:00:37 TMV3 Measurement started Meas
-07.06.2016 11:01:25 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
-Traceback (most recent call last):
-  File "Graph.py", line 932, in onMakeThumbnail
-    self.onPrint()
-  File "Graph.py", line 255, in onPrint
-    self.signalPrintEnd.wait()
-AttributeError: 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
-07.06.2016 11:08:29 recv 2fd1488 error WSAECONNRESET
-07.06.2016 11:08:29 recv 1fd956 error WSAECONNRESET
-07.06.2016 11:08:30 TMV3 Measurement started Meas
-07.06.2016 11:08:43 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
-Traceback (most recent call last):
-  File "Graph.py", line 932, in onMakeThumbnail
-    self.onPrint()
-  File "Graph.py", line 255, in onPrint
-    self.signalPrintEnd.wait()
-AttributeError: 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
-07.06.2016 11:16:24 TMV3 Measurement started Meas
-07.06.2016 11:16:37 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
-Traceback (most recent call last):
-  File "Graph.py", line 932, in onMakeThumbnail
-    self.onPrint()
-  File "Graph.py", line 255, in onPrint
-    self.signalPrintEnd.wait()
-AttributeError: 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
-07.06.2016 11:21:03 TMV3 Measurement started Meas
-07.06.2016 11:21:04 -113,"Undefined header;CORR:TRANS:ADJ:RLEV ON"
- Meas
-07.06.2016 11:21:21 recv 2fd1496 error WSAECONNRESET
-07.06.2016 11:22:54 TMV3 Measurement started Meas
-07.06.2016 11:23:07 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
-Traceback (most recent call last):
-  File "Graph.py", line 933, in onMakeThumbnail
-    self.onPrint()
-  File "Graph.py", line 255, in onPrint
-    self.signalPrintEnd.wait()
-AttributeError: 'PyQt4.QtCore.pyqtBoundSignal' object has no attribute 'wait'
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1634, in open_resource
+    res.open(access_mode, open_timeout)
+  File "C:\Python34\lib\site-packages\pyvisa\resources\resource.py", line 184, in open
+    self.session, status = self._resource_manager.open_bare_resource(self._resource_name, access_mode, open_timeout)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1598, in open_bare_resource
+    return self.visalib.open(self.session, resource_name, access_mode, open_timeout)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1208, in open
+    ret = library.viOpen(session, resource_name, access_mode, open_timeout, byref(out_session))
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.

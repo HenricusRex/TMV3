@@ -83,7 +83,7 @@ class TestDataZK(QtGui.QWidget):
                 self.currentTest.technician = self.config['Welcome']['name']
                 self.currentTest.lab = self.config['Welcome']['lab']
                 self.currentTest.company = self.config['Welcome']['company']
-                self.currentTest.category = 'ZKMV'
+                self.currentTest.category = 'ZK'
                 self.currentTestSave = False
                 self.currentMeasNo = 0
                 self.currentPlotNo = 0
@@ -112,6 +112,7 @@ class TestDataZK(QtGui.QWidget):
         if proto.ret:
             self.ticket.data = self.currentTest
             dispatcher.send(self.signals.WB_UPDATE_TEST, dispatcher.Anonymous,self.ticket)
+            self.fillDialog()
 
 
     def onBtnNewTest(self):
@@ -293,14 +294,13 @@ class TestDataZK(QtGui.QWidget):
 
         if self.measTableModel == None:
             self.measTableModel = TableModel(['MeasNo', 'PlotNo', 'PlotTitle', 'Result', 'Date', 'Group',
-                                              'Group','ID','Image'])
+                                              'ID','Group','Image'])
             self.delegate = ImageDelegate(self)
-            self.ui.twMeas.setItemDelegateForColumn(6,self.delegate)
+            self.ui.twMeas.setItemDelegateForColumn(8,self.delegate)
         self.ui.twMeas.setColumnWidth(8,200)
         self.ui.twMeas.setColumnWidth(0,40)
         self.ui.twMeas.setColumnWidth(1,40)
         self.ui.twMeas.setColumnWidth(3,70)
-
         self.measTableModel.beginResetModel()
         if self.currentTest != None:
 
@@ -308,6 +308,7 @@ class TestDataZK(QtGui.QWidget):
             self.ticket.data = self.currentTest.test_no
             self.ticket.testID = self.currentTestID
             self.ui.lbTestNo.setText(self.currentTest.test_no)
+            self.ui.lbTempestNo.setText(self.currentTest.tempest_z_no)
 
             dispatcher.send(self.signals.WB_GET_PLOT_INFO_IDS, dispatcher.Anonymous, self.ticket)
             _ids = self.ticket.data.ids
@@ -318,7 +319,7 @@ class TestDataZK(QtGui.QWidget):
                 _plot = self.ticket.data
                 assert isinstance(_plot, Tpl3PlotInfo)
                 self.measTableModel.addData([_plot.meas_no, _plot.plot_no, _plot.plot_title, _plot.result,
-                                             _plot.date_time, _plot.group, _plot.image, _plot.group,_plot.plot_id])
+                                             _plot.date_time, _plot.group, _plot.plot_id,_plot.group,_plot.image])
                 if _plot.meas_no > self.currentMeasNo:
                     self.currentMeasNo = _plot.meas_no
                 self.ui.twMeas.setRowHeight(_i,110)
@@ -329,7 +330,7 @@ class TestDataZK(QtGui.QWidget):
         _header.setResizeMode(QtGui.QHeaderView.Fixed)
 
         # self.ui.twMeas.setColumnHidden(6,True)
-        self.ui.twMeas.setColumnHidden(6, True)
+        self.ui.twMeas.setColumnHidden(7, True)
         self.ui.twMeas.scrollToBottom()
         self.measTableModel.endResetModel()
 

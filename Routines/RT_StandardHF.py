@@ -120,10 +120,10 @@ class RT_StandardHF(object):
             _module_path =os.path.abspath(os.path.join(self.workingDir,_module_name)+".py")
 
             #---for comfortable development
-            _ret = self.config['Development']['development']
-            if (self.config['Development']['development'] == '1'):
-                _module_name = self.config['Development']['modulname_devicedriver']
-                _module_path = self.config['Development']['modulpath_devicedriver']
+            #_ret = self.config['Development']['development']
+            #if (self.config['Development']['development'] == '1'):
+            #    _module_name = self.config['Development']['modulname_devicedriver']
+            #    _module_path = self.config['Development']['modulpath_devicedriver']
 
             _error_text = "error load DeviceDriver {0} {1}".format(str(_module_name),str(_module_path))
 

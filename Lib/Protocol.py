@@ -18,7 +18,7 @@ from DB_Handler_TPL3 import TPL3Test
 
 class Protocol(QtGui.QDialog):
     update = QtCore.pyqtSignal()
-    def __init__(self,test,project):
+    def __init__(self,test,project=None):
         QtGui.QDialog.__init__(self)
         self.ui = uic.loadUi("Protocol.ui", self)
         self.centerOnScreen()
@@ -54,8 +54,9 @@ class Protocol(QtGui.QDialog):
 
         self.editComment=QtGui.QTextEdit(test.comment)
      #   self.ui.textEdit.setText("Dies ist ein Test /n in der zweiten Zeile")
-        self.ui.tableWidget.setItem(0,0,QtGui.QTableWidgetItem(project.title))
-        self.ui.tableWidget.setItem(9,0,QtGui.QTableWidgetItem(project.type))
+        if self.currentProject is not None:
+            self.ui.tableWidget.setItem(0,0,QtGui.QTableWidgetItem(project.title))
+            self.ui.tableWidget.setItem(9,0,QtGui.QTableWidgetItem(project.type))
         self.ui.tableWidget.setItem(1,0,QtGui.QTableWidgetItem(test.eut))
         self.ui.tableWidget.setItem(2,0,QtGui.QTableWidgetItem(test.serial_no))
         self.ui.tableWidget.setItem(3,0,QtGui.QTableWidgetItem(test.model_no))
@@ -218,8 +219,9 @@ class Protocol(QtGui.QDialog):
         self.close()
 
     def saveToDB(self):
-        self.currentProject.title = self.ui.tableWidget.item(0,0).text()
-        self.currentProject.type = self.ui.tableWidget.item(9,0).text()
+        if self.currentProject is not None:
+            self.currentProject.title = self.ui.tableWidget.item(0,0).text()
+            self.currentProject.type = self.ui.tableWidget.item(9,0).text()
         self.currentTest.eut = self.ui.tableWidget.item(1,0).text()
         self.currentTest.serial_no = self.ui.tableWidget.item(2,0).text()
         self.currentTest.model_no = self.ui.tableWidget.item(3,0).text()

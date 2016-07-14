@@ -456,11 +456,18 @@ class Tpl3Files(object):
             logging.exception(_err)
             return 0
         return _lastRowID
-
-    def modify(self):
-        pass
-
     def delete(self):
+        try:
+            _con = lite.connect(self.filename)
+            _con.execute("PRAGMA foreign_keys = OFF")
+            _cur = _con.cursor()
+            _cur.execute("DELETE FROM [Files] WHERE FileID={0}".format( str(self.file_id)))
+            _con.commit()
+            _con.close()
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        return 1
         pass
 
     def export(self):
