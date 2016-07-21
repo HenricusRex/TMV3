@@ -43,9 +43,9 @@ class ImportZKMV(QtGui.QDialog):
         _d = datetime.now()
         _dA = datetime(_d.year,_d.month,_d.day,_d.hour,_d.minute,_d.second).isoformat(' ')
         fileTDS.date = _dA
-        fileTDS.data = self.data
+      #  fileTDS.data = self.data
         ret = fileTDS.read(fileTDS.title,fileTDS.version)
-        _id = fileTDS.file_id
+        #_id = fileTDS.file_id
         if ret:
             QtGui.QApplication.restoreOverrideCursor()
             _s = "Testplan {0} version {1} already exists. Overwrite anyway?".format(fileTDS.title,fileTDS.version)
@@ -55,6 +55,7 @@ class ImportZKMV(QtGui.QDialog):
             else:
                 fileTDS.delete()
                 pass
+        fileTDS.data = self.data
         ret = fileTDS.add()
         QtGui.QApplication.restoreOverrideCursor()
         if ret == 0:

@@ -27,3 +27,476 @@ Traceback (most recent call last):
   File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
     raise errors.VisaIOError(ret_value)
 pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 09:34:19 TMV3 Measurement started Meas
+07.18.2016 09:34:29 VI_ERROR_NLISTENERS (-1073807265): No listeners condition is detected (both NRFD and NDAC are deasserted). Meas
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\Routing.py", line 41, in setRoute
+    _deviceRelais.write(relais.command)
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 44, in write
+    self.rl.write(command)
+  File "C:\Python34\lib\site-packages\pyvisa\resources\messagebased.py", line 187, in write
+    count = self.write_raw(message.encode(enco))
+  File "C:\Python34\lib\site-packages\pyvisa\resources\messagebased.py", line 165, in write_raw
+    return self.visalib.write(self.session, message)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1864, in write
+    ret = library.viWrite(session, data, len(data), byref(return_count))
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_NLISTENERS (-1073807265): No listeners condition is detected (both NRFD and NDAC are deasserted).
+07.18.2016 09:34:29 local variable 'sa' referenced before assignment Meas
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\Routing.py", line 80, in setRoute
+    _ret = sa.set_Transducer(antenna.title,'DB',_list)
+UnboundLocalError: local variable 'sa' referenced before assignment
+07.18.2016 10:03:43 recv 2fd1540 error WSAECONNRESET
+07.18.2016 10:03:43 recv 1fd984 error WSAECONNRESET
+07.18.2016 11:09:05 TMV3 Measurement started Meas
+07.18.2016 11:09:05 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 11:09:05 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 11:09:26 recv 2fd1576 error WSAECONNRESET
+07.18.2016 11:15:10 TMV3 Measurement started Meas
+07.18.2016 11:15:10 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 11:15:10 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 11:15:17 recv 2fd2252 error WSAECONNRESET
+07.18.2016 11:15:32 TMV3 Measurement started Meas
+07.18.2016 11:15:32 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 11:15:32 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 11:16:22 recv 2fd1596 error WSAECONNRESET
+07.18.2016 11:17:07 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 481, in export
+    output_file.write(_file[0])
+TypeError: 'NoneType' object is not subscriptable
+07.18.2016 11:17:10 no such table: main.Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.18.2016 11:18:32 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 481, in export
+    output_file.write(_file[0])
+TypeError: 'NoneType' object is not subscriptable
+07.18.2016 11:18:34 no such table: main.Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 449, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+07.18.2016 11:19:25 TMV3 Measurement started Meas
+07.18.2016 11:19:25 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 11:19:25 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.18.2016 11:20:42 recv 2fd1600 error WSAECONNRESET
+07.21.2016 10:25:52 TMV3 Measurement started Meas
+07.21.2016 10:25:52 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:25:52 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:25:52 [Errno 2] No such file or directory: 'C:\\TMV3\\WorkingDir\\DD_ESU.py' Meas
+Traceback (most recent call last):
+  File "C:\TMV3\Routines\RT_StandardHF.py", line 131, in loadDriver
+    _py_mod = _loader.load_module()
+  File "<frozen importlib._bootstrap>", line 539, in _check_name_wrapper
+  File "<frozen importlib._bootstrap>", line 1614, in load_module
+  File "<frozen importlib._bootstrap>", line 596, in _load_module_shim
+  File "<frozen importlib._bootstrap>", line 1220, in load
+  File "<frozen importlib._bootstrap>", line 1200, in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1129, in _exec
+  File "<frozen importlib._bootstrap>", line 1467, in exec_module
+  File "<frozen importlib._bootstrap>", line 1571, in get_code
+  File "<frozen importlib._bootstrap>", line 1623, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\TMV3\\WorkingDir\\DD_ESU.py'
+07.21.2016 10:33:43 TMV3 Measurement started Meas
+07.21.2016 10:33:43 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:33:43 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:33:44 'DD_ESU' object has no attribute 'set_StepTime' Meas
+Traceback (most recent call last):
+  File "C:\TMV3\Routines\RT_StandardHF.py", line 316, in startSetting
+    _func = getattr(self.spec_analyzer, row.command)
+AttributeError: 'DD_ESU' object has no attribute 'set_StepTime'
+07.21.2016 10:34:02 recv 1fd1684 error WSAECONNRESET
+07.21.2016 10:35:08 TMV3 Measurement started Meas
+07.21.2016 10:35:08 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:35:08 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:35:09 'DD_ESU' object has no attribute 'stepMode' Meas
+Traceback (most recent call last):
+  File "C:\TMV3\Routines\RT_StandardHF.py", line 318, in startSetting
+    _ret = _func(row.parameter)
+  File "C:\TMV3\WorkingDir\DD_ESU.py", line 36, in set_StepTime
+    if self.stepMode == False:
+AttributeError: 'DD_ESU' object has no attribute 'stepMode'
+07.21.2016 10:36:18 TMV3 Measurement started Meas
+07.21.2016 10:36:18 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:36:18 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:36:19 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:36:25 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:36:32 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:36:38 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:36:49 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:37:05 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:37:36 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:38:30 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:38:30 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Analyzer.py", line 34, in checkConnection
+    self.sa = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:38:31 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:38:42 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:38:53 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:39:04 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 10:39:20 VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system. Meas
+Traceback (most recent call last):
+  File "C:\TMV3\DeviceDriver\DD_Relais.py", line 34, in checkConnection
+    self.rl = self.rm.open_resource(self.name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1614, in open_resource
+    info = self.resource_info(resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\highlevel.py", line 1581, in resource_info
+    ret, err = self.visalib.parse_resource_extended(self.session, resource_name)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\functions.py", line 1378, in parse_resource_extended
+    alias_if_exists)
+  File "C:\Python34\lib\site-packages\pyvisa\ctwrapper\highlevel.py", line 188, in _return_handler
+    raise errors.VisaIOError(ret_value)
+pyvisa.errors.VisaIOError: VI_ERROR_RSRC_NFOUND (-1073807343): Insufficient location information or the requested device or resource is not present in the system.
+07.21.2016 12:07:40 recv 2fd1600 error WSAECONNRESET

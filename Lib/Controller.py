@@ -846,7 +846,7 @@ class MainForm(QtGui.QMainWindow):
                     _item.setCheckState(QtCore.Qt.Checked)
                     _parent_item_routine.appendRow(_item)
                     _parent_item_setting = _item
-
+                    print("Routine:",_member_routine.device1)
                     #' add Routine to JobTable'
                     _item.setData(self.JTable.CurrentJob)
                     self.JTable.addJob(1, 'Routine', id(_item), _member_routine.id_routine, _member_routine.title,

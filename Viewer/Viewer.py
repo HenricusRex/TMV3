@@ -41,7 +41,7 @@ class MainForm(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.config = configparser.ConfigParser()
-        self.config.read('TMV3.ini')
+        self.config.read('../Lib/TMV3.ini')
         self.ui = uic.loadUi("Viewer.ui", self)
         self.workBenchDB = self.config['DataBases']['workbench']
         self.figure_canvasReference = FigureCanvas(Figure())
@@ -405,9 +405,10 @@ class MainForm(QtGui.QMainWindow):
 #        self.signalGraphUpdate.emit()
 def main():
     app = QtGui.QApplication(sys.argv)
-    form = MainForm()
+
    # QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('plastique')) # setting the style
-    sshFile = "c:/tmv3/templates/darkorange.css"
+    sshFile = "../Templates/darkorange.css"
+    form = MainForm()
     with open (sshFile,"r") as fh:
         app.setStyleSheet(fh.read())
     form.show()

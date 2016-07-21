@@ -19,13 +19,13 @@ class Filter(QtGui.QDialog):
         #global model
         QtGui.QDialog.__init__(self)
         self.ui = uic.loadUi("Filter.ui", self)
-        sshFile = "c:/tmv3/templates/darkorange.css"
+        sshFile = "../Templates/darkorange.css"
         with open (sshFile,"r") as fh:
             self.setStyleSheet(fh.read())
         self.centerOnScreen()
         self.signals = Signal()
         self.config = configparser.ConfigParser()
-        self.config.read('TMV3.ini')
+        self.config.read('../Lib/TMV3.ini')
         self.workBenchDB = self.config['DataBases']['workbench']
         self.viewTableModel = None
         self.viewTableModel2 = None
@@ -239,15 +239,15 @@ class Filter(QtGui.QDialog):
 
         _cat = ''
         if self.ui.CB_LevelKMV.isChecked():
-            _cat += "'LKMV',"
+            _cat += "'LK',"
         if self.ui.CB_ZoneKMV.isChecked():
-            _cat += "'ZKMV',"
+            _cat += "'ZK',"
         if self.ui.CB_ZoneApp.isChecked():
             _cat += "'ZZ',"
         if self.ui.CB_LevelApp.isChecked():
             _cat += "'LZ',"
         if self.ui.CB_other.isChecked():
-            _whereString += "\r\n\t{0} [Tests].[Category] NOT IN ('SKMV', 'ZKMV', 'ZZ', 'SZ')".format(_con)
+            _whereString += "\r\n\t{0} [Tests].[Category] NOT IN ('LK', 'LZ', 'ZK', 'ZZ')".format(_con)
         else:
             if _cat != '':
                 _cat = _cat.rstrip(',')
@@ -320,7 +320,7 @@ class Filter(QtGui.QDialog):
         pass
 
     def onBtnOk(self):
-        if self.ui.tableView.selectionModel != None:
+        if self.ui.tableView.selectionModel is not None:
             _sel = self.ui.tableView.selectionModel().selectedRows()
         if len(_sel) > 0:
              self.sel = []
