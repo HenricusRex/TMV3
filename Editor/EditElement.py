@@ -13,10 +13,6 @@ class EditElement(QtGui.QMainWindow):
         pass
     pass
 
-
-
-
-
     def setCell(self,name,value):
 
         if value == None: return
@@ -82,3 +78,11 @@ class EditElement(QtGui.QMainWindow):
                 y = self.ui.tableWidget.insertRow()
                 self.ui.tableWidget.setCellWidget(y,0,_item)
                 break
+
+class MyChooseList(QtGui.QListWidget):
+    def __init(self,parent = None):
+        super(MyChooseList,self).__init__(parent)
+
+
+    def focusOutEvent(self, event):
+        print ("out")
