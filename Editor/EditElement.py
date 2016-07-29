@@ -40,7 +40,6 @@ class EditElement(QtGui.QMainWindow):
                 _item = object
                 self.ui.tableWidget.setCellWidget(x,0,_item)
                 _h = self.ui.tableWidget.rowHeight(x)
-                print('_h =',_h)
                 self.ui.tableWidget.setRowHeight(x,3 * _h)
                 break
     def setCellComboBox(self,name,cBox):
@@ -79,10 +78,63 @@ class EditElement(QtGui.QMainWindow):
                 self.ui.tableWidget.setCellWidget(y,0,_item)
                 break
 
-class MyChooseList(QtGui.QListWidget):
-    def __init(self,parent = None):
-        super(MyChooseList,self).__init__(parent)
+class CellChooseList(QtGui.QDialog):
+    def __init__(self,table, row, text,cList, parent = None):
+        QtGui.QDialog.__init__(self)
+
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        layout = QtGui.QVBoxLayout(self)
+
+#        self.cL = QtGui.QListWidget()
+        self.cL = chooseListWidget(self)
+        self.cL.doubleClicked.connect(self.dClicked)
+        self.cList = cList
+        self.ret = False
+        self.retChoose = ''
+        self.dc = False
+
+        table.setCellWidget(row,0,self)
+        _height = len(cList) * 20 + 10
+        self.setFixedHeight(_height)
+
+        for i in\
+                cList:
+            self.cL.addItem(i)
+
+        self.cL.setCurrentRow(cList.index(text))
+        layout.addWidget(self.cL)
 
 
     def focusOutEvent(self, event):
-        print ("out")
+        if self.dc:
+            #focus lost by doubleClicked
+            return
+        if self.cL.hasFocus():
+            #focus changed to ListWidget
+            return
+
+        self.cancel()
+
+    def cancel(self) :
+        self.retChoose = ''
+        self.ret = False
+        self.close()
+
+    def dClicked(self,mId):
+        self.dc = True
+
+        _text = self.cList[mId.row()]
+        self.retChoose = _text
+        self.ret = True
+        self.close()
+
+
+class chooseListWidget(QtGui.QListWidget):
+    def __init__(self,parent):
+        QtGui.QListWidget.__init__(self)
+
+        self.parent = parent
+
+    def focusOutEvent(self, event):
+        self.parent.cancel()

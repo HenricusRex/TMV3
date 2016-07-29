@@ -51,15 +51,16 @@ class MainForm(QtGui.QMainWindow):
         dlg.setViewMode( QtGui.QFileDialog.Detail )
         dlg.setNameFilters( [self.tr('DataSet (*.TDS3)')] )
         dlg.setDefaultSuffix( 'TDS3' )
+        dlg.setDirectory('.')
         if dlg.exec_() :
-            fname = dlg.selectedFiles()
-            print (fname)
-        if fname == '':
-            return
-        if QtCore.QFile.exists(fname[0]):
-            self.onLoadTDS(fname[0])
-        else:
-            print('new TDS', fname)
+            _fname = dlg.selectedFiles()
+            print (_fname)
+            if _fname == '':
+                return
+            if QtCore.QFile.exists(_fname[0]):
+                self.onLoadTDS(_fname[0])
+            else:
+                print('new TDS', _fname)
     def setEditPage(self,type,id):
         if type == PLAN_TYPE:
             self.ui.stackedWidget.setCurrentIndex(0)

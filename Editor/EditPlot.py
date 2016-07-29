@@ -11,25 +11,10 @@ class EditPlot(EditElement.EditElement):
         super(EditPlot, self).__init__()
         self.ui = uic.loadUi("EditorPlot.ui", self)
         dispatcher.connect(self.onFillPlotID,signal=self.signals.EDIT_PLOTID,sender=dispatcher.Any)
-
         self.ui.tableWidget.doubleClicked.connect(self.dClicked)
-
-
-        self.chooseDB = EditElement.MyChooseList()
-        self.chooseDB.addItem('5 dB')
-        self.chooseDB.addItem('10 dB')
-        self.chooseDB.addItem('15 dB')
-        self.chooseDB.addItem('20 dB')
-
-        self.cBoxScale = QtGui.QComboBox()
-        self.cBoxScale.addItem('logarithmic')
-        self.cBoxScale.addItem('linear')
-
-        self.cBoxUnit = QtGui.QComboBox()
-        self.cBoxUnit.addItem('dBµV')
-        self.cBoxUnit.addItem('dBm')
-        self.cBoxUnit.addItem('dBµV/m')
-        self.cBoxUnit.addItem('dB')
+        self.chooseListDBDEV = ['5 dB', '10 dB', '15 dB', '20 dB']
+        self.chooseListSCALE = ['logarithmic', 'linear']
+        self.chooseListUNIT = ['dBµV', 'dBm','dBµV/m', 'dB']
 
 
 
@@ -38,7 +23,7 @@ class EditPlot(EditElement.EditElement):
     def onFillPlotID(self,par1,par2):
         filename = par1
         ID = par2
-        print ('filename,ID',filename,ID)
+
         _plot = DatasetPlot(filename,ID)
         _plot.read()
         self.setCell('Title',_plot.title)
@@ -48,71 +33,66 @@ class EditPlot(EditElement.EditElement):
 
         _div = (_plot.y2 -_plot.y1) / 10
         if _div < 10:
-            self.setCell('dB','5')
+            self.setCell('dB','5 dB')
         elif _div < 15:
-            self.setCell('dB','10')
+            self.setCell('dB','10 dB')
         elif _div < 20:
-            self.setCell('dB','15')
+            self.setCell('dB','15 dB')
         elif _div >= 20:
-            self.setCell('dB','20')
+            self.setCell('dB','20 dB')
 
-        #self.setCellComboBox('dB',self.cBoxDB)
 
         if _plot.log:
-            self.cBoxScale.setCurrentIndex(0)
+            self.setCell('Scale','logarithmic')
         else:
-            self.cBoxScale.setCurrentIndex(1)
-        self.setCellComboBox('Scale',self.cBoxScale)
+            self.setCell('Scale','linear')
 
         if _plot.unit == 'dBµV':
-            self.cBoxUnit.setCurrentIndex(0)
+            self.setCell('Unit','dBµV')
         elif _plot.unit == 'dBm':
-            self.cBoxUnit.setCurrentIndex(1)
+            self.setCell('Unit','dBm')
         elif _plot.unit == 'dBµV/m':
-            self.cBoxUnit.setCurrentIndex(2)
+            self.setCell('Unit','dBµV/m')
         elif _plot.unit == 'dB':
-            self.cBoxUnit.setCurrentIndex(3)
-        self.setCellComboBox('Unit',self.cBoxUnit)
+            self.setCell('Unit','dB')
 
         self.setCell('Anno',_plot.annotation)
         self.setCell('Comment',_plot.comment)
 
     def dClicked(self,mi):
-       # self.blockSignals(True)
+
         _row = mi.row()
         _col = mi.column()
         _itemHeader = self.ui.tableWidget.verticalHeaderItem(_row)
         header = _itemHeader.text()
         if header.startswith('dB'):
             _item = self.ui.tableWidget.item(_row, _col)
-            _db = _item.text()
-            print(_db)
-            if _db == '5':
-                self.chooseDB.setCurrentRow(0)
-            elif _db == '10':
-                self.chooseDB.setCurrentRow(1)
-            elif _db == '15':
-                self.chooseDB.setCurrentRow(2)
-            elif _db == '20':
-                self.chooseDB.setCurrentRow(3)
+            _text = _item.text()
+            _cl = EditElement.CellChooseList(self.ui.tableWidget,_row,_text,self.chooseListDBDEV)
+            _cl.exec_()
 
-            self.ui.tableWidget.setCellWidget(_row ,0,self.chooseDB)
+            if _cl.ret:
+                self.setCell('dB',_cl.retChoose)
 
-            _rec = self.chooseDB.parent().pos()
-            print (_rec)
-         #   self.chooseDB.setParent(self.ui.tableWidget)
-            _yPos = _row*self.ui.tableWidget.rowHeight(_row)
-            _width = self.ui.tableWidget.columnWidth(0)
-         #   self.chooseDB.setGeometry(_rec.x(),_rec.y()+(_row*self.ui.tableWidget.rowHeight(5)),200,200)
-            self.chooseDB.setGeometry(0,_yPos,_width,200)
-
-            self.chooseDB.show()
-
-            pass
         elif header.startswith('Scale'):
-            pass
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+            _cl = EditElement.CellChooseList(self.ui.tableWidget,_row,_text,self.chooseListSCALE)
+            _cl.exec_()
+
+            if _cl.ret:
+                self.setCell('Scale',_cl.retChoose)
+
         elif header.startswith('Unit'):
-            pass
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+            _cl = EditElement.CellChooseList(self.ui.tableWidget,_row,_text,self.chooseListUNIT)
+            _cl.exec_()
+
+            if _cl.ret:
+                self.setCell('Unit',_cl.retChoose)
+
+
         else:
             pass
 
