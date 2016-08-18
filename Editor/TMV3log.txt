@@ -48,3 +48,73 @@ Traceback (most recent call last):
   File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
     _cur.execute ("SELECT * FROM main.Plan")
 sqlite3.OperationalError: no such table: main.Plan
+08.01.2016 02:51:12 'RegFieldNames' object has no attribute 'NATO'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 457, in read
+    self.nato = _r.NATO
+AttributeError: 'RegFieldNames' object has no attribute 'NATO'
+08.01.2016 02:51:44 'RegFieldNames' object has no attribute 'NATO'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 457, in read
+    self.nato = _r.NATO
+AttributeError: 'RegFieldNames' object has no attribute 'NATO'
+08.16.2016 09:58:22 no such table: main.Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+08.16.2016 10:00:12 no such table: main.Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+08.16.2016 10:07:05 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:07:10 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:10:10 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:10:15 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:15:19 no such table: main.Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+08.16.2016 10:15:56 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:15:59 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:17:41 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:17:46 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:23:12 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 452, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan

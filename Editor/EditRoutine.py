@@ -20,6 +20,7 @@ class EditRoutine(EditElement.EditElement):
         self.limObList = []
         self.getDeviceList()
         self.getLimitList()
+
         self.limitComboBoxes = []
 
         dispatcher.connect(self.onFillRoutineID,signal=self.signals.EDIT_ROUTINEID,sender=dispatcher.Any)
@@ -146,7 +147,7 @@ class EditRoutine(EditElement.EditElement):
 
     def getDeviceList(self):
 
-        for _file in os.listdir('/opt/TMV3/DeviceDriver'):
+        for _file in os.listdir('../DeviceDriver'):
             if _file.startswith('DD_'):
                 self.driverList.append(_file)
 
@@ -154,13 +155,11 @@ class EditRoutine(EditElement.EditElement):
 
         ll = Tpl3Lines(self.workBenchDB,0)
         ret, lim = ll.readLimitTitles()
-
-        self.limList = lim
+        return lim
     def getLineList(self):
         ll = Tpl3Lines(self.workBenchDB,0)
         ret, lines = ll.readLineTitles()
-
-        self.lineList = lines
+        return lines
 
     def getLimitCB(self,limit):
         _cb =  self.cBoxSC = QtGui.QComboBox()
@@ -182,7 +181,7 @@ class EditRoutine(EditElement.EditElement):
             _cb.addItem(_si,(i)) #store also index of limitlist and index of comboboxlist
 
         if line != '':
-            idx = _cb.findText('{}, Version {}'.format(limit[0],limit[1]))
+            idx = _cb.findText('{}, Version {}'.format(line[0],line[1]))
             if idx >= 0:
                 _cb.setCurrentIndex(idx)
 

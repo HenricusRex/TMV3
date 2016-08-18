@@ -8,6 +8,8 @@ Created on Tue Aug 20 14:42:08 2013
 from DB_Handler_TDS3 import *
 from pydispatch import dispatcher
 from NeedfullThings import *
+import sqlite3
+
 
 PLAN_TYPE, PLOT_TYPE, ROUTINE_TYPE, LIMIT_TYPE, SETTING_TYPE, TRACE_TYPE, ROUTE_TYPE = range(1001, 1008)
 class MainForm(QtGui.QMainWindow):
@@ -58,9 +60,16 @@ class MainForm(QtGui.QMainWindow):
             if _fname == '':
                 return
             if QtCore.QFile.exists(_fname[0]):
-                self.onLoadTDS(_fname[0])
+                _tds = Dataset(_fname[0])
+                _tdsName = "../WorkingDir/EditTDS.tds3"
+                _tds.copy(_tdsName)
+                self.onLoadTDS(_tdsName)
             else:
                 print('new TDS', _fname)
+
+
+
+
     def setEditPage(self,type,id):
         if type == PLAN_TYPE:
             self.ui.stackedWidget.setCurrentIndex(0)

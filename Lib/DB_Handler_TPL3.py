@@ -927,6 +927,7 @@ class Tpl3Plot(object):
             for _row in _rows:
               _t = Tpl3Traces(self.filename,_row[0])
               if _t.read() == 0:
+                  print ('no such trace',_row[0])
                   return 0
               self.traces.append(_t)
 
@@ -945,6 +946,7 @@ class Tpl3Plot(object):
                 for _ID in _lineIDs:
                     _line = Tpl3Lines(self.filename,_ID)
                     if _line.read() == 0:
+                        print ('no such line',_ID)
                         return 0
                     self.lineObjects.append(_line)
 

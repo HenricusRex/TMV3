@@ -31,7 +31,7 @@ logging.basicConfig(filename="TMV3log.txt",
                     datefmt='%m.%d.%Y %I:%M:%S')
 logging.raiseExceptions = False
 
-Ref, Cur, Both = 0,1,2
+Ref, Cur, Both,  = 0,1,2
 
 
 class MainForm(QtGui.QMainWindow):
@@ -50,13 +50,14 @@ class MainForm(QtGui.QMainWindow):
         self.plotsRefPos = 0
         self.plotsCur = []
         self.plotsCurPos = 0
-        self.mode = Both
+        self.mode = -1
 
         self.defBackground = 0
+        self.ui.BtnCurrent.setChecked(False)
+        self.ui.BtnReference.setChecked(False)
 
         self.ui.BtnLoadPlotsRef.clicked.connect(self.onBtnLoadRef)
         self.ui.BtnLoadPlotsCur.clicked.connect(self.onBtnLoadCur)
-
         self.ui.BtnSum.clicked.connect(self.onBtnApply)
         self.ui.BtnDiff.clicked.connect(self.onBtnApply)
         self.ui.BtnPrint.clicked.connect(self.onBtnApply)
@@ -108,6 +109,7 @@ class MainForm(QtGui.QMainWindow):
             self.onShowPlot(self.plotsCur[self.plotsCurPos],Cur)
         pass
     def onBtnFwd(self):
+        print ("FWD",self.mode)
         if self.mode == Ref:
             if self.plotsRefPos < len(self.plotsRef)-1:
                 self.plotsRefPos += 1
@@ -140,11 +142,16 @@ class MainForm(QtGui.QMainWindow):
     def onBtnRefCur(self):
         if (self.ui.BtnCurrent.isChecked() and self.ui.BtnReference.isChecked()):
             self.mode = Both
-        if (self.ui.BtnCurrent.isChecked() and not self.ui.BtnReference.isChecked()):
+            print (self.mode)
+        elif (self.ui.BtnCurrent.isChecked() and not self.ui.BtnReference.isChecked()):
             self.mode = Cur
-        if (not self.ui.BtnCurrent.isChecked() and self.ui.BtnReference.isChecked()):
+            print (self.mode)
+        elif (not self.ui.BtnCurrent.isChecked() and self.ui.BtnReference.isChecked()):
             self.mode = Ref
-
+            print (self.mode)
+        else:
+            self.mode = -1
+            print (self.mode)
     def openSession(self):
         session = Session()
         session.exec()
@@ -182,6 +189,7 @@ class MainForm(QtGui.QMainWindow):
             self.plotCur = filter.sel
         pass
     def onShowPlot(self, id, dest):
+        print ("id, dest",id,dest)
         _Plot = Tpl3Plot(self.workBenchDB,id)
         if _Plot.read():
             self.onNewPlot(_Plot, dest)
@@ -191,7 +199,11 @@ class MainForm(QtGui.QMainWindow):
             #_lines = eval (data.lineObjects)
             for _line in _Plot.lineObjects:
                 self.onNewLine(_line, dest)
-
+            return True
+        else:
+            _err = "Error reading Plot {}".format(str(id))
+            QtGui.QMessageBox.information(self, 'TMV3', _err, QtGui.QMessageBox.Ok)
+            return False
     def onNewPlot(self, data, dest):
         if dest == Ref:
             self.axesR.set_xlim(data.x1,data.x2)

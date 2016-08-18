@@ -146,7 +146,7 @@ class EditSetting(EditElement.EditElement):
 
     def getDeviceList(self):
 
-        for _file in os.listdir('/opt/TMV3/DeviceDriver'):
+        for _file in os.listdir('../DeviceDriver'):
             if _file.startswith('DD_'):
                 self.driverList.append(_file)
 

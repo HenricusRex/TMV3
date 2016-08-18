@@ -430,9 +430,11 @@ class DatasetPlan(object):
         self.comment = ""
         self.title = ""
         self.operator = ""
-        self.kmv = 0
-        self.nato = 0
+        self.kmv = ''
+        self.zooning = ''
+        self.nato = ''
         self.company = ""
+        self.date = ""
         self.plot_list = []
         self.filename = filename
 
@@ -446,16 +448,19 @@ class DatasetPlan(object):
             _cur = _con.cursor()
             _error_text = 'can not read Dataset %s '
 
-            _cur.execute ("SELECT * FROM main.Plan")
+            #_cur.execute ("SELECT * FROM main.Plan")
+            _cur.execute ("SELECT * FROM [Plan]")
             _plan = _cur.fetchone()
             _r = RegFieldNames(_cur,_plan)
             self.version = _r.Version
             self.tmv_version = _r.TMVVersion
             self.title = _r.Title
             self.kmv = _r.KMV
+            self.zooning = _r.Zooning
             self.nato = _r.NATO
             self.comment = _r.Comment
             self.company = _r.Company
+            self.date = _r.Date
             self.operator = _r.Operator
 
 
@@ -467,8 +472,9 @@ class DatasetPlan(object):
                   return 0
               self.plot_list.append(_ret)
         except Exception as _err:
-            QMessageBox.information(None, 'TMV3',
-            _error_text % self.filename, QMessageBox.Ok)
+            _s = "can not read DataSet {0} \n" \
+                 " {1}".format (self.filename,str(_err))
+            QMessageBox.information(None, 'TMV3',_s, QMessageBox.Ok)
             logging.exception(_err)
             return 0
 
@@ -490,6 +496,24 @@ class Dataset(object):
         #print(self.db.read())
         pass
 
+    def copy(self, dest):
+
+        try:
+            _new_db = lite.connect(dest) # create a memory database
+            _old_db = lite.connect(self.filename)
+
+            query = "".join(line for line in _old_db.iterdump())
+
+            _new_db.executescript(query)
+            _new_db.commit()
+            _new_db.close()
+            _old_db.close()
+        except Exception as _err:
+            _s = "can not copy DataSet {0} \n" \
+                 " {1}".format (self.filename,str(_err))
+            QMessageBox.information(None, 'TMV3',_s, QMessageBox.Ok)
+            logging.exception(_err)
+            return 0
 
 class RegFieldNames(object):
         def __init__(self, cursor, row):

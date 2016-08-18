@@ -42,6 +42,8 @@ class EditElement(QtGui.QMainWindow):
                 _h = self.ui.tableWidget.rowHeight(x)
                 self.ui.tableWidget.setRowHeight(x,3 * _h)
                 break
+
+
     def setCellComboBox(self,name,cBox):
         if cBox == None: return
         #loop through headers and find column number for given column name
@@ -53,6 +55,7 @@ class EditElement(QtGui.QMainWindow):
                 _item = cBox
                 self.ui.tableWidget.setCellWidget(x,0,_item)
                 break
+
     def setCellButton(self,name, pButton):
         if pButton == None: return
         #loop through headers and find column number for given column name
@@ -79,31 +82,35 @@ class EditElement(QtGui.QMainWindow):
                 break
 
 class CellChooseList(QtGui.QDialog):
+
     def __init__(self,table, row, text,cList, parent = None):
         QtGui.QDialog.__init__(self)
 
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
-        layout = QtGui.QVBoxLayout(self)
 
-#        self.cL = QtGui.QListWidget()
+        layout = QtGui.QGridLayout(self)
         self.cL = chooseListWidget(self)
-        self.cL.doubleClicked.connect(self.dClicked)
+        self.cL.clicked.connect(self.dClicked)
         self.cList = cList
         self.ret = False
         self.retChoose = ''
         self.dc = False
-
+        self.row = row
+        self.table = table
         table.setCellWidget(row,0,self)
         _height = len(cList) * 20 + 10
         self.setFixedHeight(_height)
+
 
         for i in\
                 cList:
             self.cL.addItem(i)
 
         self.cL.setCurrentRow(cList.index(text))
+
         layout.addWidget(self.cL)
+        layout.setMargin(1)
 
 
     def focusOutEvent(self, event):
@@ -119,6 +126,56 @@ class CellChooseList(QtGui.QDialog):
     def cancel(self) :
         self.retChoose = ''
         self.ret = False
+        self.table.removeCellWidget(self.row,0)
+        print ('cancel')
+        self.close()
+
+    def dClicked(self,mId):
+        self.dc = True
+
+        _text = self.cList[mId.row()]
+        self.retChoose = _text
+        self.ret = True
+        self.close()
+
+class CellEdit(QtGui.QDialog):
+
+    def __init__(self,table, row, text, parent = None):
+        QtGui.QDialog.__init__(self)
+
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+
+        layout = QtGui.QGridLayout(self)
+        self.ed = PlainTextEdit(self)
+        self.ed.setPlainText(text)
+#        self.ed.doubleClicked.connect(self.dClicked)
+        self.ret = False
+        self.retText = ''
+        self.dc = False
+        self.row = row
+        self.table = table
+        table.setCellWidget(row,0,self)
+        _height = 200
+        self.setFixedHeight(_height)
+        layout.addWidget(self.ed)
+        layout.setMargin(1)
+
+
+    def focusOutEvent(self, event):
+        if self.dc:
+            #focus lost by doubleClicked
+            return
+        if self.ed.hasFocus():
+            #focus changed to ListWidget
+            return
+
+        self.cancel()
+
+    def cancel(self) :
+        self.ret = False
+        self.table.removeCellWidget(self.row,0)
+        print ('cancel')
         self.close()
 
     def dClicked(self,mId):
@@ -133,6 +190,15 @@ class CellChooseList(QtGui.QDialog):
 class chooseListWidget(QtGui.QListWidget):
     def __init__(self,parent):
         QtGui.QListWidget.__init__(self)
+
+        self.parent = parent
+
+    def focusOutEvent(self, event):
+        self.parent.cancel()
+
+class PlainTextEdit(QtGui.QPlainTextEdit):
+    def __init__(self,parent):
+        QtGui.QPlainTextEdit.__init__(self)
 
         self.parent = parent
 

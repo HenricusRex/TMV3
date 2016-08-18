@@ -16,10 +16,10 @@
   <widget class="QTableWidget" name="tableWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>331</width>
-     <height>491</height>
+     <x>0</x>
+     <y>10</y>
+     <width>351</width>
+     <height>481</height>
     </rect>
    </property>
    <attribute name="horizontalHeaderVisible">
@@ -43,7 +43,12 @@
    </row>
    <row>
     <property name="text">
-     <string>TMV Version</string>
+     <string>TMV3 Version</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>Company</string>
     </property>
    </row>
    <row>
@@ -53,12 +58,12 @@
    </row>
    <row>
     <property name="text">
-     <string>ZOONING</string>
+     <string>Zooning</string>
     </property>
    </row>
    <row>
     <property name="text">
-     <string>Company</string>
+     <string>NATO</string>
     </property>
    </row>
    <row>
@@ -94,23 +99,48 @@
      <string/>
     </property>
    </item>
-   <item row="3" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="checkState">
-     <enum>Unchecked</enum>
-    </property>
+   <item row="2" column="0">
     <property name="flags">
-     <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+     <set>ItemIsSelectable</set>
+    </property>
+   </item>
+   <item row="3" column="0">
+    <property name="flags">
+     <set>ItemIsSelectable</set>
     </property>
    </item>
    <item row="4" column="0">
+    <property name="flags">
+     <set>ItemIsSelectable|ItemIsEnabled</set>
+    </property>
+   </item>
+   <item row="5" column="0">
+    <property name="flags">
+     <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsEnabled</set>
+    </property>
+   </item>
+   <item row="6" column="0">
     <property name="text">
      <string/>
     </property>
-    <property name="checkState">
-     <enum>Unchecked</enum>
+    <property name="flags">
+     <set>ItemIsSelectable|ItemIsEnabled</set>
+    </property>
+   </item>
+   <item row="7" column="0">
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flags">
+     <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
+    </property>
+   </item>
+   <item row="9" column="0">
+    <property name="text">
+     <string/>
+    </property>
+    <property name="flags">
+     <set>ItemIsSelectable</set>
     </property>
    </item>
   </widget>
