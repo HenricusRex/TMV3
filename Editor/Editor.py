@@ -8,6 +8,7 @@ Created on Tue Aug 20 14:42:08 2013
 from DB_Handler_TDS3 import *
 from pydispatch import dispatcher
 from NeedfullThings import *
+import cProfile
 
 PLAN_TYPE, PLOT_TYPE, ROUTINE_TYPE, LIMIT_TYPE, SETTING_TYPE, TRACE_TYPE, ROUTE_TYPE = range(1001, 1008)
 class MainForm(QtGui.QMainWindow):
@@ -44,6 +45,7 @@ class MainForm(QtGui.QMainWindow):
         self.dataSetFileName = ''
         self.signals = Signal()
         self.openTDS3()
+
     def openTDS3(self):
 
         dlg=QtGui.QFileDialog( self )
@@ -132,6 +134,7 @@ class MainForm(QtGui.QMainWindow):
     def onBtnCollapseAll(self):
         self.ui.treeWidget.collapseAll()
         pass
+
     def onLoadTDS(self, fileName):
         self.dataSetFileName = fileName
         #-loads ActiveTestPlan to TreeView
@@ -288,8 +291,11 @@ def main():
         app.setStyleSheet(fh.read())
     form = MainForm()
     form.show()
+    pr = cProfile.Profile()
+    pr.enable()
     app.exec_()
-
+    pr.disable()
+    pr.print_stats(sort="calls")
 
 
 

@@ -3,7 +3,8 @@ __author__ = 'HS'
 from PyQt4.QtCore import *
 from PyQt4 import QtGui,uic,QtCore
 import configparser
-
+import threading
+import cProfile
 
 class Signal(object):
     signalMeasConnected = pyqtSignal()
@@ -287,7 +288,6 @@ class Choose(QtGui.QDialog):
         resolution = QtGui.QDesktopWidget().screenGeometry()
         self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
-
 
 
 

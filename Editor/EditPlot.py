@@ -12,7 +12,7 @@ class EditPlot(EditElement.EditElement):
         self.ui = uic.loadUi("EditorPlot.ui", self)
         dispatcher.connect(self.onFillPlotID,signal=self.signals.EDIT_PLOTID,sender=dispatcher.Any)
         self.ui.tableWidget.doubleClicked.connect(self.dClicked)
-        self.chooseListDBDEV = ['5 dB', '10 dB', '15 dB', '20 dB']
+        self.chooseListDBDEV = ['5', '10', '15', '20']
         self.chooseListSCALE = ['logarithmic', 'linear']
         self.chooseListUNIT = ['dBµV', 'dBm','dBµV/m', 'dB']
 
@@ -32,30 +32,15 @@ class EditPlot(EditElement.EditElement):
         self.setCell('Ref',str(_plot.y2))
 
         _div = (_plot.y2 -_plot.y1) / 10
-        if _div < 10:
-            self.setCell('dB','5 dB')
-        elif _div < 15:
-            self.setCell('dB','10 dB')
-        elif _div < 20:
-            self.setCell('dB','15 dB')
-        elif _div >= 20:
-            self.setCell('dB','20 dB')
-
+        _db = str(round(_div/5)*5)
+        self.setCell('dB',_db)
 
         if _plot.log:
             self.setCell('Scale','logarithmic')
         else:
             self.setCell('Scale','linear')
 
-        if _plot.unit == 'dBµV':
-            self.setCell('Unit','dBµV')
-        elif _plot.unit == 'dBm':
-            self.setCell('Unit','dBm')
-        elif _plot.unit == 'dBµV/m':
-            self.setCell('Unit','dBµV/m')
-        elif _plot.unit == 'dB':
-            self.setCell('Unit','dB')
-
+        self.setCell('Unit',_plot.unit)
         self.setCell('Anno',_plot.annotation)
         self.setCell('Comment',_plot.comment)
 
@@ -92,6 +77,23 @@ class EditPlot(EditElement.EditElement):
             if _cl.ret:
                 self.setCell('Unit',_cl.retChoose)
 
+        elif header.startswith('Anno'):
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+            _pe = EditElement.CellEditPlain(self.ui.tableWidget,_row,_text)
+            _pe.exec()
+
+            if _pe.ret:
+                self.setCell('Anno',_pe.newText)
+
+        elif header.startswith('Comm'):
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+            _pe = EditElement.CellEditPlain(self.ui.tableWidget,_row,_text)
+            _pe.exec()
+
+            if _pe.ret:
+                self.setCell('Comm',_pe.newText)
 
         else:
             pass
