@@ -14,12 +14,10 @@ class EditPlot(EditElement.EditElement):
         dispatcher.connect(self.onFillPlotID,signal=self.signals.EDIT_PLOTID,sender=dispatcher.Any)
 
         self.ui.tableWidget.doubleClicked.connect(self.dClicked)
-        self.ui.tableWidget.cellChanged.connect(self.cChanged)
-
-        self.chooseListDBDEV = ['5 dB', '10 dB', '15 dB', '20 dB']
+        self.chooseListDBDEV = ['5', '10', '15', '20']
         self.chooseListSCALE = ['logarithmic', 'linear']
         self.chooseListUNIT = ['dBµV', 'dBm','dBµV/m', 'dB']
-        self.formater = EngFormat.Format()
+
 
 
 
@@ -31,36 +29,20 @@ class EditPlot(EditElement.EditElement):
         _plot = DatasetPlot(filename,ID)
         _plot.read()
         self.setCell('Title',_plot.title)
-
-        self.setCell('Start',self.formater.FloatToString(_plot.x1, 0))
-        self.setCell('Stop',self.formater.FloatToString(_plot.x2, 0))
-        self.setCell('Ref',self.formater.FloatToString(_plot.y2, 0))
+        self.setCell('Start',str(_plot.x1))
+        self.setCell('Stop',str(_plot.x2))
+        self.setCell('Ref',str(_plot.y2))
 
         _div = (_plot.y2 -_plot.y1) / 10
-        if _div < 10:
-            self.setCell('dB','5 dB')
-        elif _div < 15:
-            self.setCell('dB','10 dB')
-        elif _div < 20:
-            self.setCell('dB','15 dB')
-        elif _div >= 20:
-            self.setCell('dB','20 dB')
-
+        _db = str(round(_div/5)*5)
+        self.setCell('dB',_db)
 
         if _plot.log:
             self.setCell('Scale','logarithmic')
         else:
             self.setCell('Scale','linear')
 
-        if _plot.unit == 'dBµV':
-            self.setCell('Unit','dBµV')
-        elif _plot.unit == 'dBm':
-            self.setCell('Unit','dBm')
-        elif _plot.unit == 'dBµV/m':
-            self.setCell('Unit','dBµV/m')
-        elif _plot.unit == 'dB':
-            self.setCell('Unit','dB')
-
+        self.setCell('Unit',_plot.unit)
         self.setCell('Anno',_plot.annotation)
         self.setCell('Comment',_plot.comment)
 
@@ -97,37 +79,26 @@ class EditPlot(EditElement.EditElement):
             if _cl.ret:
                 self.setCell('Unit',_cl.retChoose)
 
+        elif header.startswith('Anno'):
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+            _pe = EditElement.CellEditPlain(self.ui.tableWidget,_row,_text)
+            _pe.exec()
+
+            if _pe.ret:
+                self.setCell('Anno',_pe.newText)
+
+        elif header.startswith('Comm'):
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+            _pe = EditElement.CellEditPlain(self.ui.tableWidget,_row,_text)
+            _pe.exec()
+
+            if _pe.ret:
+                self.setCell('Comm',_pe.newText)
 
         else:
             pass
 
         pass
        # self.blockSignals(False)
-    def cChanged(self,row,col):
-        self.ui.tableWidget.blockSignals(True)
-        _itemHeader = self.ui.tableWidget.verticalHeaderItem(row)
-        header = _itemHeader.text()
-
-        #try to build a valid float value in eng format
-        if header.startswith('Start'):
-            _item = self.ui.tableWidget.item(row, col)
-            _text = _item.text()
-            _fStartFreq = self.formater.StringToFloat(_text)
-            _sStartFreq = self.formater.FloatToString(_fStartFreq,0)
-            _item.setText(_sStartFreq)
-
-        if header.startswith('Stop'):
-            _item = self.ui.tableWidget.item(row, col)
-            _text = _item.text()
-            _fStopFreq = self.formater.StringToFloat(_text)
-            _sStopFreq = self.formater.FloatToString(_fStopFreq,0)
-            _item.setText(_sStopFreq)
-
-        if header.startswith('Ref'):
-            _item = self.ui.tableWidget.item(row, col)
-            _text = _item.text()
-            _fRef = self.formater.StringToFloat(_text)
-            _sRef = self.formater.FloatToString(_fRef,0)
-            _item.setText(_sRef)
-
-        self.ui.tableWidget.blockSignals(False)

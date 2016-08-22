@@ -22,12 +22,16 @@ class EditRoutine(EditElement.EditElement):
         self.getLimitList()
 
         self.limitComboBoxes = []
+        self.chooseListSigClass = ['1','2']
+        self.fsd = QtGui.QFileDialog()
 
+        self.ui.tableWidget.doubleClicked.connect(self.dClicked)
         dispatcher.connect(self.onFillRoutineID,signal=self.signals.EDIT_ROUTINEID,sender=dispatcher.Any)
         dispatcher.connect(self.onAddLimit,signal=self.signals.EDIT_ADD_LIMIT,sender=dispatcher.Any)
         dispatcher.connect(self.onAddLine,signal=self.signals.EDIT_ADD_LINE,sender=dispatcher.Any)
         dispatcher.connect(self.onAddDevice,signal=self.signals.EDIT_ADD_DEVICE,sender=dispatcher.Any)
         dispatcher.connect(self.onDelItem,signal=self.signals.EDIT_DEL_ITEM,sender=dispatcher.Any)
+
      #   self.ui.tableWidget.cellClicked.connect(self.onCellClicked)
         self.selectedTableItem = []
         self.firstStart = False
@@ -39,7 +43,61 @@ class EditRoutine(EditElement.EditElement):
         self.selectedTableItem.append(_item.text())
         self.selectedTableItem.append(_item.data([0]))
         print (self.selectedTableItem)
+    def dClicked(self,mi):
 
+        _row = mi.row()
+        _col = mi.column()
+        _itemHeader = self.ui.tableWidget.verticalHeaderItem(_row)
+        header = _itemHeader.text()
+        if header.startswith('Signal'):
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+            _cl = EditElement.CellChooseList(self.ui.tableWidget,_row,_text,self.chooseListSigClass)
+            _cl.exec_()
+
+            if _cl.ret:
+                self.setCell('Signal',_cl.retChoose)
+
+        elif header.startswith('InstructionFile'):
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = '?'
+            if _item is not None:
+                _text = _item.text()
+         #   _cl = EditElement.CellChooseFile(self.ui.tableWidget,_row,_text)
+         #   _cl.exec_()
+            _cl=QtGui.QFileDialog()
+            print (_cl.getOpenFileName())
+            if _cl.ret:
+                self.setCell('InstructionFile',_cl.retChoose)
+
+
+        elif header.startswith('InstructionText'):
+            assert isinstance(self.ui.tableWidget,QtGui.QTableWidget)
+
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+
+            _pe = EditElement.CellEditPlain(self.ui.tableWidget,_row,_text)
+            _pe.exec_()
+
+            if _pe.ret:
+                self.setCell('InstructionText',_pe.retChoose)
+
+
+
+        elif header.startswith('Comm'):
+            _item = self.ui.tableWidget.item(_row, _col)
+            _text = _item.text()
+            _pe = EditElement.CellEditPlain(self.ui.tableWidget,_row,_text)
+            _pe.exec()
+
+            if _pe.ret:
+                self.setCell('Comm',_pe.newText)
+
+        else:
+            pass
+
+        pass
 
     def onAddLimit(self):
         cb = self.getLimitCB('')
@@ -103,45 +161,23 @@ class EditRoutine(EditElement.EditElement):
         _routine = DatasetRoutine(filename,ID)
         _routine.read()
         self.setCell('Title',_routine.title)
+        self.setCell('SignalClass',str(_routine.signal_class))
 
-
-        self.cBoxSC = QtGui.QComboBox()
-        self.cBoxSC.addItem('1')
-        self.cBoxSC.addItem('2')
-        if _routine.signal_class == '1':
-            self.cBoxSC.setCurrentIndex(0)
-        else:
-            self.cBoxSC.setCurrentIndex(1)
-        self.setCellComboBox('SignalClass',self.cBoxSC)
-
-        self.pTextInstruction = QtGui.QPlainTextEdit()
-        self.pTextInstruction.setPlainText(str(_routine.instruction))
-        self.setCellPlainText('InstructionText',self.pTextInstruction)
-
-        if _routine.instruction_file == None:
-            self.setCell('InstructionFile','None')
-        else:
-            self.setCell('InstructionFile',_routine.instruction_file)
-
-        self.pTextComment = QtGui.QPlainTextEdit()
-        self.pTextComment.setPlainText(str(_routine.instruction))
-        self.setCellPlainText('Comment',self.pTextComment)
+        self.setCell('InstructionFile',_routine.instruction_file)
+        self.setCell('InstructionText',_routine.instruction)
+        self.setCell('Comment',_routine.comment)
 
         #Limits
-        self.getLimitList()
-        _rLimits = ast.literal_eval(_routine.limits)
-        for i in _rLimits:
-            _cb = self.getLimitCB(i)
-            self.limitComboBoxes.append(_cb)
-            idx = len(self.limitComboBoxes)-1
-
-            _rowPosition = self.ui.tableWidget.rowCount()
-            self.ui.tableWidget.insertRow(_rowPosition)
-            _item = QtGui.QTableWidgetItem("LimitCB")
-            _item.setData(Qt.UserRole,idx)
-            self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Limit"))
-            self.ui.tableWidget.setItem(_rowPosition,0,_item)
-            self.ui.tableWidget.setCellWidget(_rowPosition,0,_cb)
+        # self.getLimitList()
+        # _rLimits = ast.literal_eval(_routine.limits)
+        # for i in _rLimits:
+        #     _rowPosition = self.ui.tableWidget.rowCount()
+        #     self.ui.tableWidget.insertRow(_rowPosition)
+        #     _item = QtGui.QTableWidgetItem("LimitCB")
+        #     _item.setData(Qt.UserRole,idx)###############index des limits
+        #     self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Limit"))
+        #     self.ui.tableWidget.setItem(_rowPosition,0,_item)
+        #     self.ui.tableWidget.setCellWidget(_rowPosition,0,_cb)
 
 
 
