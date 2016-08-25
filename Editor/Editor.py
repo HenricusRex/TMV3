@@ -58,6 +58,9 @@ class MainForm(QtGui.QMainWindow):
             if _fname == '':
                 return
             if QtCore.QFile.exists(_fname[0]):
+                _tds = Dataset(_fname[0])
+                _tdsName = "../WorkingDir/EditTDS.tds3"
+                _tds.copy(_tdsName)
                 self.onLoadTDS(_fname[0])
             else:
                 print('new TDS', _fname)

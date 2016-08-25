@@ -78,19 +78,12 @@ class EditSetting(EditElement.EditElement):
 #        _modelIdx = self.ui.tableWidget.selectedIndexes()[0]
 
         ret = self.ui.tableWidget.currentRow()
-        print(ret)
         ret = self.ui.tableWidget.selectedItems()
-        print(ret)
-        print(self.ui.tableWidget.currentItem().data(0))
         if self.ui.tableWidget.currentItem() == None:
             return
 
-        if self.ui.tableWidget.currentItem().data(Qt.DisplayRole) == 'LimitCB':
-            _id = self.ui.tableWidget.currentItem().data(Qt.UserRole)
-            #self.limitComboBoxes.pop(_id)
-            _row = self.ui.tableWidget.currentRow()
-            self.ui.tableWidget.removeRow(_row)
-#            self.ui.tableWidget.show()
+        _row = self.ui.tableWidget.currentRow()
+        self.ui.tableWidget.removeRow(_row)
 
     def onFillRoutineID(self,par1,par2):
         if self.firstStart: return

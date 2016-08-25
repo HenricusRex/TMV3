@@ -657,14 +657,21 @@ class Tpl3Lines(object):
 
         _con.close()
         return(1)
-    def readLimitTitles(self):
+    def readLimitTitles(self,version = True):
         _error_text = 'can not read Lines of TPL3 %s '
         ret = []
         try:
             _con = lite.connect(self.filename)
             #_con.row_factory = lambda cursor, row: row[0]
-            _cur = _con.cursor()
-            _cur.execute ("SELECT [Title],[Version] FROM [Lines] WHERE ([Lines].[Type]='Limit')")
+            if version:
+                _cur = _con.cursor()
+                _cur.execute ("SELECT [Title],[Version] FROM [Lines] WHERE ([Lines].[Type]='Limit')")
+            else:
+                _con.row_factory = lambda cursor, row: row[0]
+                _cur = _con.cursor()
+
+                _cur.execute ("SELECT [Title] FROM [Lines] WHERE ([Lines].[Type]='Limit')")
+
             ret = _cur.fetchall()
 
         except  Exception as _err:
