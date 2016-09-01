@@ -1,0 +1,15 @@
+08.29.2016 11:20:19 'RegFieldNames' object has no attribute 'Zooning'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 459, in read
+    self.zooning = _r.Zooning
+AttributeError: 'RegFieldNames' object has no attribute 'Zooning'
+08.29.2016 11:20:55 'RegFieldNames' object has no attribute 'Zooning'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 459, in read
+    self.zooning = _r.Zooning
+AttributeError: 'RegFieldNames' object has no attribute 'Zooning'
+08.29.2016 11:21:03 'RegFieldNames' object has no attribute 'Zooning'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 459, in read
+    self.zooning = _r.Zooning
+AttributeError: 'RegFieldNames' object has no attribute 'Zooning'

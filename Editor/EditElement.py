@@ -116,6 +116,10 @@ class CellChooseList(QtGui.QDialog):
         self.retChoose = ''
         self.dc = False
 
+        self.ptable = table
+        self.prow = row
+
+
         table.setCellWidget(row,0,self)
         _height = len(cList) * 20 + 10
         self.setFixedHeight(_height)
@@ -135,12 +139,13 @@ class CellChooseList(QtGui.QDialog):
         if self.cL.hasFocus():
             #focus changed to ListWidget
             return
-
+        self.ptable.removeCellWidget(self.prow,0)
         self.cancel()
 
     def cancel(self) :
         self.retChoose = ''
         self.ret = False
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 
     def dClicked(self,mId):
@@ -149,6 +154,7 @@ class CellChooseList(QtGui.QDialog):
         _text = self.cList[mId.row()]
         self.retChoose = _text
         self.ret = True
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 class CellEditPlain(QtGui.QDialog):
     def __init__(self,table, row, text, parent = None):
@@ -167,6 +173,9 @@ class CellEditPlain(QtGui.QDialog):
         self.clBtn = QtGui.QPushButton('cancel')
         self.newText = '-'
 
+        self.ptable = table
+        self.prow = row
+
         table.setCellWidget(row,0,self)
         _height = 200
         self.setFixedHeight(_height)
@@ -183,10 +192,13 @@ class CellEditPlain(QtGui.QDialog):
     def onBtnOk(self):
         self.newText = self.eP.toPlainText()
         self.ret = True
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 
     def onBtnCl(self):
         self.ret = False
+        self.eP = None
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 
     def focusOutEvent(self, event):
@@ -197,21 +209,12 @@ class CellEditPlain(QtGui.QDialog):
             return
         elif self.clBtn.hasFocus():
             return
-
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 
     def cancel(self) :
         self.close()
-
-
-    def dClicked(self,mId):
-        self.dc = True
-
-        _text = self.cList[mId.row()]
-        self.retChoose = _text
-        self.ret = True
-        self.close()
-
+        pass
 class chooseListWidget(QtGui.QListWidget):
     def __init__(self,parent):
         QtGui.QListWidget.__init__(self)
@@ -228,4 +231,4 @@ class EditPlainText(QtGui.QPlainTextEdit):
         self.parent = parent
 
     def focusOutEvent(self, event):
-        self.parent.cancel()
+        self.parent.focusOutEvent(event)

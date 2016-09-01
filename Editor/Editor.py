@@ -6,8 +6,11 @@ Created on Tue Aug 20 14:42:08 2013
 """
 
 from DB_Handler_TDS3 import *
+from DB_Handler_TPL3 import *
 from pydispatch import dispatcher
 from NeedfullThings import *
+import Line
+import os
 
 PLAN_TYPE, PLOT_TYPE, ROUTINE_TYPE, LIMIT_TYPE, SETTING_TYPE, TRACE_TYPE, ROUTE_TYPE = range(1001, 1008)
 class MainForm(QtGui.QMainWindow):
@@ -43,7 +46,14 @@ class MainForm(QtGui.QMainWindow):
         self.disableBtns()
         self.dataSetFileName = ''
         self.signals = Signal()
+
+#        self.config = configparser.ConfigParser()
+#        self.config.read('TMV3.ini')
+#        self.workBenchDB = self.config['DataBases']['workbench']
+
+
         self.openTDS3()
+
     def openTDS3(self):
 
         dlg=QtGui.QFileDialog( self )
@@ -60,11 +70,14 @@ class MainForm(QtGui.QMainWindow):
             if QtCore.QFile.exists(_fname[0]):
                 _tds = Dataset(_fname[0])
                 _tdsName = "../WorkingDir/EditTDS.tds3"
+                if os.path.exists(_tdsName):
+                    os.remove(_tdsName)
+
                 _tds.copy(_tdsName)
                 self.onLoadTDS(_fname[0])
             else:
                 print('new TDS', _fname)
-    def setEditPage(self,type,id):
+    def setEditPage(self,type,id,title=None):
         if type == PLAN_TYPE:
             self.ui.stackedWidget.setCurrentIndex(0)
             par1 = self.dataSetFileName
@@ -98,6 +111,16 @@ class MainForm(QtGui.QMainWindow):
             self.ui.BtnAddItem4.setEnabled(False)
             self.ui.BtnDelItem.setEnabled(True)
             dispatcher.send(self.signals.EDIT_ROUTINEID,dispatcher.Anonymous, par1, par2)
+        elif type == LIMIT_TYPE:
+            print ("Limit",id)
+            limit = Tpl3Lines("../DB/TMV3Workbench.TPL3",0)
+            ret = limit.readLimitTitleID(title)
+            print(ret)
+            if (ret[0]):
+                editLimit = Line.Line(self, ret[1], False)
+                editLimit.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+                editLimit.showNormal()
+            pass
         elif type == SETTING_TYPE:
             self.ui.stackedWidget.setCurrentIndex(3)
             self.ui.lbEditor.setText('Setting')
@@ -180,7 +203,7 @@ class MainForm(QtGui.QMainWindow):
         _title = item.title
         _id = item.id
       ##  print('dclicked',_type,_title,_id)
-        self.setEditPage(_type,_id)
+        self.setEditPage(_type,_id,_title)
         pass
 
     def onCopied(self):

@@ -388,3 +388,23 @@ Traceback (most recent call last):
   File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
     _new_db.executescript(query)
 sqlite3.OperationalError: table [Commands] already exists
+08.29.2016 09:36:37 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.29.2016 02:21:04 no such table: Lines
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
+    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
+sqlite3.OperationalError: no such table: Lines
+08.29.2016 02:34:04 no such table: Lines
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
+    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
+sqlite3.OperationalError: no such table: Lines
+08.29.2016 02:38:01 no such column: z1_er_c
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
+    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
+sqlite3.OperationalError: no such column: z1_er_c

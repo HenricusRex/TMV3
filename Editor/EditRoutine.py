@@ -71,20 +71,18 @@ class EditRoutine(EditElement.EditElement):
             if _ret != '':
                 self.setCell('InstructionFile',_ret)
 
-
         elif header.startswith('InstructionText'):
-            assert isinstance(self.ui.tableWidget,QtGui.QTableWidget)
-
             _item = self.ui.tableWidget.item(_row, _col)
-            _text = _item.text()
+            _text = '?'
+            if _item is not None:
+                _text = _item.text()
 
             _pe = EditElement.CellEditPlain(self.ui.tableWidget,_row,_text)
+            _pe.setModal(True)
             _pe.exec_()
 
             if _pe.ret:
-                self.setCell('InstructionText',_pe.retChoose)
-
-
+                self.setCell('InstructionText',_pe.newText)
 
         elif header.startswith('Comm'):
             _item = self.ui.tableWidget.item(_row, _col)
@@ -94,7 +92,7 @@ class EditRoutine(EditElement.EditElement):
 
             if _pe.ret:
                 self.setCell('Comm',_pe.newText)
-
+            _pe = None
         else:
             pass
 

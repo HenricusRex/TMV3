@@ -9,6 +9,7 @@ import ast
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from Workbench import Ticket
+import DB_Handler_TPL3
 
 class Line(QtGui.QDialog):
 
@@ -16,7 +17,10 @@ class Line(QtGui.QDialog):
     def __init__(self,parent,ID,edit):
         #global model
         super(Line,self).__init__(parent)
-        self.ui = uic.loadUi("Line.ui", self)
+        try:
+            self.ui = uic.loadUi("Line.ui", self)
+        except:
+            self.ui = uic.loadUi("../Lib/Line.ui",self)
         self.centerOnScreen()
         self.signals = Signal()
     #    self._config = configparser.ConfigParser()
@@ -47,10 +51,10 @@ class Line(QtGui.QDialog):
         self.setAxes()
         self.figure_canvas.draw()
         #
-        self.ticket.data = ID
-        dispatcher.send(self.signals.WB_GET_LINE, dispatcher.Anonymous,self.ticket)
-        self.line = self.ticket.data
-
+        #access to Limit only via Editor => no Workbench-Process running => direct access to Workbench
+        self.line = DB_Handler_TPL3.Tpl3Lines('../DB/TMV3Workbench.TPL3',ID)
+       # dispatcher.send(self.signals.WB_GET_LINE, dispatcher.Anonymous,self.ticket)
+        self.line.read()
         self.fillForm()
 
 #        self.axes.xaxis.set_major_formatter(formatterHZ)
