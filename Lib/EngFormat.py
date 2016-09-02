@@ -1,6 +1,8 @@
 __author__ = 'HS'
 
 class Format():
+
+
     def FloatToString(self,value,d):
         #format double to string with cutting 0s and adding Unit
         if value >= 1e9:
@@ -41,7 +43,9 @@ class Format():
         for x in s:
             if x >= '0' and x <= '9' or x == '.':
                 _ds += x
-
-        _df = float(_ds)
-        _df *= _f
+        try:
+            _df = float(_ds)
+            _df *= _f
+        except Exception:
+            _df = 0
         return _df

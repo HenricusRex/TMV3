@@ -17,11 +17,17 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>30</y>
+      <x>440</x>
+      <y>10</y>
       <width>381</width>
-      <height>521</height>
+      <height>531</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="minimumSize">
      <size>
@@ -226,7 +232,7 @@
    <widget class="QLabel" name="lbEditor">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>320</x>
       <y>0</y>
       <width>55</width>
       <height>15</height>

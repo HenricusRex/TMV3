@@ -48,3 +48,363 @@ Traceback (most recent call last):
   File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
     _cur.execute ("SELECT * FROM main.Plan")
 sqlite3.OperationalError: no such table: main.Plan
+08.01.2016 02:51:12 'RegFieldNames' object has no attribute 'NATO'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 457, in read
+    self.nato = _r.NATO
+AttributeError: 'RegFieldNames' object has no attribute 'NATO'
+08.01.2016 02:51:44 'RegFieldNames' object has no attribute 'NATO'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 457, in read
+    self.nato = _r.NATO
+AttributeError: 'RegFieldNames' object has no attribute 'NATO'
+08.16.2016 09:58:22 no such table: main.Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+08.16.2016 10:00:12 no such table: main.Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+08.16.2016 10:07:05 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:07:10 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:10:10 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:10:15 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:15:19 no such table: main.Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
+    _cur.execute ("SELECT * FROM main.Plan")
+sqlite3.OperationalError: no such table: main.Plan
+08.16.2016 10:15:56 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:15:59 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:17:41 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:17:46 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
+    _con = lite.connect(self.filename)
+sqlite3.OperationalError: unable to open database file
+08.16.2016 10:23:12 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 452, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.22.2016 10:04:59 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 10:14:41 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 10:18:27 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 10:23:04 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 11:21:40 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:14:15 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:15:24 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:17:03 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:21:16 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:21:52 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:25:33 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:26:05 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:27:16 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:28:45 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:29:37 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:33:05 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:34:05 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:35:42 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:40:02 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:45:45 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:48:10 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:57:53 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 02:59:55 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.22.2016 03:03:41 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 09:42:06 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 09:44:27 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 09:47:34 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 09:49:06 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 09:53:16 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 09:54:49 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 09:56:18 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:01:05 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:04:35 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:05:18 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:07:00 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:08:39 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:09:26 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:10:48 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:31:19 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:36:06 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:38:29 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:39:32 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:41:18 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:49:04 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:54:10 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:56:13 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 10:57:28 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 11:03:26 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 11:04:29 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.23.2016 11:09:44 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.25.2016 09:18:55 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.25.2016 09:22:27 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.25.2016 09:23:45 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.25.2016 09:25:40 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.29.2016 09:36:37 table [Commands] already exists
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+08.29.2016 02:21:04 no such table: Lines
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
+    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
+sqlite3.OperationalError: no such table: Lines
+08.29.2016 02:34:04 no such table: Lines
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
+    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
+sqlite3.OperationalError: no such table: Lines
+08.29.2016 02:38:01 no such column: z1_er_c
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
+    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
+sqlite3.OperationalError: no such column: z1_er_c

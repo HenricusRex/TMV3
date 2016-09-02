@@ -657,15 +657,43 @@ class Tpl3Lines(object):
 
         _con.close()
         return(1)
-    def readLimitTitles(self):
+    def readLimitTitles(self,version = True):
         _error_text = 'can not read Lines of TPL3 %s '
         ret = []
         try:
             _con = lite.connect(self.filename)
             #_con.row_factory = lambda cursor, row: row[0]
-            _cur = _con.cursor()
-            _cur.execute ("SELECT [Title],[Version] FROM [Lines] WHERE ([Lines].[Type]='Limit')")
+            if version:
+                _cur = _con.cursor()
+                _cur.execute ("SELECT [Title],[Version] FROM [Lines] WHERE ([Lines].[Type]='Limit')")
+            else:
+                _con.row_factory = lambda cursor, row: row[0]
+                _cur = _con.cursor()
+
+                _cur.execute ("SELECT [Title] FROM [Lines] WHERE ([Lines].[Type]='Limit')")
+
             ret = _cur.fetchall()
+
+        except  Exception as _err:
+            #QMessageBox.information(None, 'TMV3',
+            #_error_text % self.filename, QMessageBox.Ok)
+            print (_err)
+            logging.exception(_err)
+            return 0,ret
+
+        _con.close()
+        return 1,ret
+    def readLimitTitleID(self,title):
+        _error_text = 'can not read Lines of TPL3 %s '
+        ret = []
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+
+            _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]='{0}' AND [Lines].[Type]='Limit')".format(str(title)))
+
+            ret = _cur.fetchone()
 
         except  Exception as _err:
             #QMessageBox.information(None, 'TMV3',
@@ -927,6 +955,7 @@ class Tpl3Plot(object):
             for _row in _rows:
               _t = Tpl3Traces(self.filename,_row[0])
               if _t.read() == 0:
+                  print ('no such trace',_row[0])
                   return 0
               self.traces.append(_t)
 
@@ -945,6 +974,7 @@ class Tpl3Plot(object):
                 for _ID in _lineIDs:
                     _line = Tpl3Lines(self.filename,_ID)
                     if _line.read() == 0:
+                        print ('no such line',_ID)
                         return 0
                     self.lineObjects.append(_line)
 

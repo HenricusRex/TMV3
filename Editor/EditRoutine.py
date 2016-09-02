@@ -20,6 +20,7 @@ class EditRoutine(EditElement.EditElement):
         self.limObList = []
         self.getDeviceList()
         self.getLimitList()
+
         self.limitComboBoxes = []
         self.chooseListSigClass = ['1','2']
         self.fsd = QtGui.QFileDialog()
@@ -34,6 +35,7 @@ class EditRoutine(EditElement.EditElement):
      #   self.ui.tableWidget.cellClicked.connect(self.onCellClicked)
         self.selectedTableItem = []
         self.firstStart = False
+        self.ui.tableWidget.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
     pass
     def onCellClicked(self,row,column):
         self.selectedTableItem.append(row)
@@ -64,25 +66,23 @@ class EditRoutine(EditElement.EditElement):
                 _text = _item.text()
          #   _cl = EditElement.CellChooseFile(self.ui.tableWidget,_row,_text)
          #   _cl.exec_()
-            _cl=QtGui.QFileDialog()
-            print (_cl.getOpenFileName())
-            if _cl.ret:
-                self.setCell('InstructionFile',_cl.retChoose)
-
+            fd = QtGui.QFileDialog()
+            _ret = fd.getOpenFileName(self,'Select InstructionFile','.',"PDF-Files (*.pdf)")
+            if _ret != '':
+                self.setCell('InstructionFile',_ret)
 
         elif header.startswith('InstructionText'):
-            assert isinstance(self.ui.tableWidget,QtGui.QTableWidget)
-
             _item = self.ui.tableWidget.item(_row, _col)
-            _text = _item.text()
+            _text = '?'
+            if _item is not None:
+                _text = _item.text()
 
             _pe = EditElement.CellEditPlain(self.ui.tableWidget,_row,_text)
+            _pe.setModal(True)
             _pe.exec_()
 
             if _pe.ret:
-                self.setCell('InstructionText',_pe.retChoose)
-
-
+                self.setCell('InstructionText',_pe.newText)
 
         elif header.startswith('Comm'):
             _item = self.ui.tableWidget.item(_row, _col)
@@ -92,28 +92,28 @@ class EditRoutine(EditElement.EditElement):
 
             if _pe.ret:
                 self.setCell('Comm',_pe.newText)
-
+            _pe = None
         else:
             pass
 
         pass
 
     def onAddLimit(self):
-        cb = self.getLimitCB('')
-        self.limitComboBoxes.append(cb)
-        _rowPosition = self.ui.tableWidget.rowCount()
-        self.ui.tableWidget.insertRow(_rowPosition)
-        _item = QtGui.QTableWidgetItem("LimitCB")
-        _idx = len(self.limitComboBoxes)-1
-        _item.setData(Qt.UserRole,_idx)
 
-        self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Limit"))
-        self.ui.tableWidget.setItem(_rowPosition,0,_item)
-        self.ui.tableWidget.setCellWidget(_rowPosition,0,cb)
-        self.limObList.append(cb)
+        try:
 
+            _rowPosition = self.ui.tableWidget.rowCount()
+            self.ui.tableWidget.insertRow(_rowPosition)
+            self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Limit"))
 
-
+            _cl = EditElement.CellChooseList(self.ui.tableWidget,_rowPosition,'',self.limList)
+            _cl.exec_()
+            _item = QtGui.QTableWidgetItem(_cl.retChoose)
+            self.ui.tableWidget.setItem(_rowPosition,0,_item)
+            del(_cl)
+        except Exception as _err:
+            print (_err)
+            return 0
 
         pass
     def onAddLine(self):
@@ -133,22 +133,16 @@ class EditRoutine(EditElement.EditElement):
     def onAddDevice(self):
         pass
     def onDelItem(self):
-#        _modelIdx = self.ui.tableWidget.selectedIndexes()[0]
 
-        ret = self.ui.tableWidget.currentRow()
-        print(ret)
-        ret = self.ui.tableWidget.selectedItems()
-        print(ret)
-        print(self.ui.tableWidget.currentItem().data(0))
-        if self.ui.tableWidget.currentItem() == None:
-            return
+        _row = self.ui.tableWidget.currentRow()
+        _headerText = self.ui.tableWidget.verticalHeaderItem(_row).text()
 
-        if self.ui.tableWidget.currentItem().data(Qt.DisplayRole) == 'LimitCB':
-            _id = self.ui.tableWidget.currentItem().data(Qt.UserRole)
-            #self.limitComboBoxes.pop(_id)
-            _row = self.ui.tableWidget.currentRow()
-            self.ui.tableWidget.removeRow(_row)
-#            self.ui.tableWidget.show()
+        if _headerText == 'Limit' or _headerText == 'Line':
+            if not self.ui.tableWidget.currentItem() is None:
+                self.ui.tableWidget.removeRow(_row)
+        else:
+            _text = 'You can not delete this item'
+            QtGui.QMessageBox.information(self, 'TMV3', _text , QtGui.QMessageBox.Ok)
 
     def onFillRoutineID(self,par1,par2):
         if self.firstStart: return
@@ -167,36 +161,38 @@ class EditRoutine(EditElement.EditElement):
         self.setCell('Comment',_routine.comment)
 
         #Limits
-        # self.getLimitList()
-        # _rLimits = ast.literal_eval(_routine.limits)
-        # for i in _rLimits:
-        #     _rowPosition = self.ui.tableWidget.rowCount()
-        #     self.ui.tableWidget.insertRow(_rowPosition)
-        #     _item = QtGui.QTableWidgetItem("LimitCB")
-        #     _item.setData(Qt.UserRole,idx)###############index des limits
-        #     self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Limit"))
-        #     self.ui.tableWidget.setItem(_rowPosition,0,_item)
-        #     self.ui.tableWidget.setCellWidget(_rowPosition,0,_cb)
+        self.limList = self.getLimitList()
+        print (self.limList)
+        _rLimits = ast.literal_eval(_routine.limits)
+        idx = 0
+        for i in _rLimits:
+             _rowPosition = self.ui.tableWidget.rowCount()
+             self.ui.tableWidget.insertRow(_rowPosition)
+             _item = QtGui.QTableWidgetItem()
+             _item.setData(Qt.DisplayRole,i[0])
+             _item.setData(Qt.UserRole,idx)###############index des limits
+             self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Limit"))
+             self.ui.tableWidget.setItem(_rowPosition,0,_item)
+             idx += 1
+          #   self.setCell('Limit'_rowPosition,0,_cb)
 
 
 
     def getDeviceList(self):
 
-        for _file in os.listdir('/opt/TMV3/DeviceDriver'):
+        for _file in os.listdir('../DeviceDriver'):
             if _file.startswith('DD_'):
                 self.driverList.append(_file)
 
     def getLimitList(self):
 
         ll = Tpl3Lines(self.workBenchDB,0)
-        ret, lim = ll.readLimitTitles()
-
-        self.limList = lim
+        ret, lim = ll.readLimitTitles(False)
+        return lim
     def getLineList(self):
         ll = Tpl3Lines(self.workBenchDB,0)
         ret, lines = ll.readLineTitles()
-
-        self.lineList = lines
+        return lines
 
     def getLimitCB(self,limit):
         _cb =  self.cBoxSC = QtGui.QComboBox()
@@ -218,7 +214,7 @@ class EditRoutine(EditElement.EditElement):
             _cb.addItem(_si,(i)) #store also index of limitlist and index of comboboxlist
 
         if line != '':
-            idx = _cb.findText('{}, Version {}'.format(limit[0],limit[1]))
+            idx = _cb.findText('{}, Version {}'.format(line[0],line[1]))
             if idx >= 0:
                 _cb.setCurrentIndex(idx)
 

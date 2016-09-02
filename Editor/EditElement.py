@@ -116,7 +116,9 @@ class CellChooseList(QtGui.QDialog):
         self.retChoose = ''
         self.dc = False
 
-        assert isinstance(table,QtGui.QListWidget)
+        self.ptable = table
+        self.prow = row
+
 
         table.setCellWidget(row,0,self)
         _height = len(cList) * 20 + 10
@@ -137,12 +139,13 @@ class CellChooseList(QtGui.QDialog):
         if self.cL.hasFocus():
             #focus changed to ListWidget
             return
-
+        self.ptable.removeCellWidget(self.prow,0)
         self.cancel()
 
     def cancel(self) :
         self.retChoose = ''
         self.ret = False
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 
     def dClicked(self,mId):
@@ -151,6 +154,7 @@ class CellChooseList(QtGui.QDialog):
         _text = self.cList[mId.row()]
         self.retChoose = _text
         self.ret = True
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 class CellEditPlain(QtGui.QDialog):
     def __init__(self,table, row, text, parent = None):
@@ -161,13 +165,16 @@ class CellEditPlain(QtGui.QDialog):
         layout = QtGui.QVBoxLayout(self)
         layoutH = QtGui.QHBoxLayout()
 
-        self.eP = editPlainText(self)
+        self.eP = EditPlainText(self)
 #        self.ePcL.doubleClicked.connect(self.dClicked)
         self.ret = False
         self.retChoose = ''
         self.okBtn = QtGui.QPushButton('Ok')
         self.clBtn = QtGui.QPushButton('cancel')
         self.newText = '-'
+
+        self.ptable = table
+        self.prow = row
 
         table.setCellWidget(row,0,self)
         _height = 200
@@ -185,10 +192,13 @@ class CellEditPlain(QtGui.QDialog):
     def onBtnOk(self):
         self.newText = self.eP.toPlainText()
         self.ret = True
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 
     def onBtnCl(self):
         self.ret = False
+        self.eP = None
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 
     def focusOutEvent(self, event):
@@ -199,32 +209,25 @@ class CellEditPlain(QtGui.QDialog):
             return
         elif self.clBtn.hasFocus():
             return
-
+        self.ptable.removeCellWidget(self.prow,0)
         self.close()
 
     def cancel(self) :
         self.close()
-
-
-    def dClicked(self,mId):
-        self.dc = True
-
-        _text = self.cList[mId.row()]
-        self.retChoose = _text
-        self.ret = True
-        self.close()
-
+        pass
 class chooseListWidget(QtGui.QListWidget):
     def __init__(self,parent):
         QtGui.QListWidget.__init__(self)
+
         self.parent = parent
 
     def focusOutEvent(self, event):
         self.parent.cancel()
 
-class editPlainText(QtGui.QPlainTextEdit):
+class EditPlainText(QtGui.QPlainTextEdit):
     def __init__(self,parent):
         QtGui.QPlainTextEdit.__init__(self)
+
         self.parent = parent
 
     def focusOutEvent(self, event):

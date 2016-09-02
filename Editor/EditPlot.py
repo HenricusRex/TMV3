@@ -4,6 +4,7 @@ from pydispatch import dispatcher
 from NeedfullThings import *
 from DB_Handler_TDS3 import *
 import EditElement
+import EngFormat
 
 class EditPlot(EditElement.EditElement):
 
@@ -11,6 +12,7 @@ class EditPlot(EditElement.EditElement):
         super(EditPlot, self).__init__()
         self.ui = uic.loadUi("EditorPlot.ui", self)
         dispatcher.connect(self.onFillPlotID,signal=self.signals.EDIT_PLOTID,sender=dispatcher.Any)
+
         self.ui.tableWidget.doubleClicked.connect(self.dClicked)
         self.chooseListDBDEV = ['5', '10', '15', '20']
         self.chooseListSCALE = ['logarithmic', 'linear']
