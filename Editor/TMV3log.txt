@@ -408,3 +408,87 @@ Traceback (most recent call last):
   File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
     _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
 sqlite3.OperationalError: no such column: z1_er_c
+09.02.2016 10:37:47 unable to open database file
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 502, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+09.02.2016 10:37:48 zip argument #2 must support iteration
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 454, in read
+    _r = RegFieldNames(_cur,_plan)
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 520, in __init__
+    for (attr, val) in zip((d[0] for d in cursor.description), row):
+TypeError: zip argument #2 must support iteration
+09.02.2016 10:39:12 unable to open database file
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 502, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+09.02.2016 10:39:13 zip argument #2 must support iteration
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 454, in read
+    _r = RegFieldNames(_cur,_plan)
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 520, in __init__
+    for (attr, val) in zip((d[0] for d in cursor.description), row):
+TypeError: zip argument #2 must support iteration
+09.02.2016 10:40:30 unable to open database file
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 502, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+09.02.2016 10:40:31 zip argument #2 must support iteration
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 454, in read
+    _r = RegFieldNames(_cur,_plan)
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 520, in __init__
+    for (attr, val) in zip((d[0] for d in cursor.description), row):
+TypeError: zip argument #2 must support iteration
+09.02.2016 10:42:14 unable to open database file
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 502, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+09.02.2016 10:42:14 zip argument #2 must support iteration
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 454, in read
+    _r = RegFieldNames(_cur,_plan)
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 520, in __init__
+    for (attr, val) in zip((d[0] for d in cursor.description), row):
+TypeError: zip argument #2 must support iteration
+09.02.2016 10:45:36 unable to open database file
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 502, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+09.02.2016 10:45:36 zip argument #2 must support iteration
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 454, in read
+    _r = RegFieldNames(_cur,_plan)
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 520, in __init__
+    for (attr, val) in zip((d[0] for d in cursor.description), row):
+TypeError: zip argument #2 must support iteration
+09.02.2016 10:46:31 unable to open database file
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 502, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+09.02.2016 10:46:32 zip argument #2 must support iteration
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 454, in read
+    _r = RegFieldNames(_cur,_plan)
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 520, in __init__
+    for (attr, val) in zip((d[0] for d in cursor.description), row):
+TypeError: zip argument #2 must support iteration
+09.02.2016 10:48:46 unable to open database file
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 502, in copy
+    _new_db = lite.connect(dest) # create a memory database
+sqlite3.OperationalError: unable to open database file
+09.02.2016 10:48:47 zip argument #2 must support iteration
+Traceback (most recent call last):
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 454, in read
+    _r = RegFieldNames(_cur,_plan)
+  File "/opt/ TMV3/Lib/DB_Handler_TDS3.py", line 520, in __init__
+    for (attr, val) in zip((d[0] for d in cursor.description), row):
+TypeError: zip argument #2 must support iteration
