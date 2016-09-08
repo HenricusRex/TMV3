@@ -408,3 +408,23 @@ Traceback (most recent call last):
   File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
     _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
 sqlite3.OperationalError: no such column: z1_er_c
+09.07.2016 09:54:57 'RegFieldNames' object has no attribute 'Zooning'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 459, in read
+    self.zooning = _r.Zooning
+AttributeError: 'RegFieldNames' object has no attribute 'Zooning'
+09.07.2016 09:57:15 'RegFieldNames' object has no attribute 'Zooning'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 459, in read
+    self.zooning = _r.Zooning
+AttributeError: 'RegFieldNames' object has no attribute 'Zooning'
+09.08.2016 03:09:05 no such table: Settings
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
+    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
+sqlite3.OperationalError: no such table: Settings
+09.08.2016 03:11:37 no such table: Settings
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
+    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
+sqlite3.OperationalError: no such table: Settings

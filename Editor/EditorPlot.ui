@@ -7,246 +7,116 @@
     <x>0</x>
     <y>0</y>
     <width>356</width>
-    <height>499</height>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Edit Plot</string>
   </property>
-  <widget class="QTableWidget" name="tableWidget">
+  <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>331</width>
-     <height>491</height>
+     <width>341</width>
+     <height>531</height>
     </rect>
    </property>
-   <attribute name="horizontalHeaderVisible">
-    <bool>false</bool>
-   </attribute>
-   <attribute name="horizontalHeaderStretchLastSection">
-    <bool>true</bool>
-   </attribute>
-   <attribute name="verticalHeaderVisible">
-    <bool>true</bool>
-   </attribute>
-   <row>
-    <property name="text">
-     <string>Title</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Start [Hz]</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Stop [Hz]</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>RefLine [dB..]</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>dB / Dev</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Scale</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Unit</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Annotation</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Comment</string>
-    </property>
-   </row>
-   <column>
-    <property name="text">
-     <string>item</string>
-    </property>
-   </column>
-   <item row="0" column="0">
-    <property name="text">
-     <string/>
-    </property>
-   </item>
-   <item row="1" column="0">
-    <property name="text">
-     <string/>
-    </property>
-   </item>
-   <item row="4" column="0">
-    <property name="text">
-     <string/>
-    </property>
-   </item>
-   <item row="5" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsEnabled</set>
-    </property>
-   </item>
-  </widget>
-  <widget class="QTableWidget" name="tableWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>40</y>
-     <width>121</width>
-     <height>221</height>
-    </rect>
+   <property name="title">
+    <string>Plot</string>
    </property>
-   <attribute name="horizontalHeaderVisible">
-    <bool>false</bool>
-   </attribute>
-   <attribute name="horizontalHeaderStretchLastSection">
-    <bool>true</bool>
-   </attribute>
-   <attribute name="verticalHeaderVisible">
-    <bool>false</bool>
-   </attribute>
-   <row>
-    <property name="text">
-     <string>Title</string>
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>321</width>
+      <height>501</height>
+     </rect>
     </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Version</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>TMV3 Version</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Company</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>KMV</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Zooning</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>NATO</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Operator</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Date</string>
-    </property>
-   </row>
-   <row>
-    <property name="text">
-     <string>Comment</string>
-    </property>
-   </row>
-   <column>
-    <property name="text">
-     <string>item</string>
-    </property>
-   </column>
-   <item row="0" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsEnabled</set>
-    </property>
-   </item>
-   <item row="1" column="0">
-    <property name="text">
-     <string/>
-    </property>
-   </item>
-   <item row="2" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable</set>
-    </property>
-   </item>
-   <item row="3" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable</set>
-    </property>
-   </item>
-   <item row="4" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable|ItemIsEnabled</set>
-    </property>
-   </item>
-   <item row="5" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsEnabled</set>
-    </property>
-   </item>
-   <item row="6" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable|ItemIsEnabled</set>
-    </property>
-   </item>
-   <item row="7" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
-    </property>
-   </item>
-   <item row="9" column="0">
-    <property name="text">
-     <string/>
-    </property>
-    <property name="flags">
-     <set>ItemIsSelectable</set>
-    </property>
-   </item>
+    <attribute name="horizontalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>true</bool>
+    </attribute>
+    <row>
+     <property name="text">
+      <string>Title</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Start [Hz]</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Stop [Hz]</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>RefLine [dB..]</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>dB / Dev</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Scale</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Unit</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Annotation</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>Comment</string>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>item</string>
+     </property>
+    </column>
+    <item row="0" column="0">
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item row="1" column="0">
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item row="4" column="0">
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item row="5" column="0">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsEnabled</set>
+     </property>
+    </item>
+   </widget>
   </widget>
  </widget>
  <resources/>

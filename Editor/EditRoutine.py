@@ -105,7 +105,6 @@ class EditRoutine(EditElement.EditElement):
             _rowPosition = self.ui.tableWidget.rowCount()
             self.ui.tableWidget.insertRow(_rowPosition)
             self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Limit"))
-
             _cl = EditElement.CellChooseList(self.ui.tableWidget,_rowPosition,'',self.limList)
             _cl.exec_()
             _item = QtGui.QTableWidgetItem(_cl.retChoose)

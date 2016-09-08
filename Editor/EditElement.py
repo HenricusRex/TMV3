@@ -91,7 +91,7 @@ class CellChooseFile(QtGui.QFileDialog):
         _width = 600
         #self.setFixedHeight(_height)
         #self.setFixedWidth(_width)
-        _geo = table.geometry()
+
 
         self.setGeometry(200,30,600,300)
       #  self.setGeometry(table.geometry())
@@ -107,6 +107,7 @@ class CellChooseList(QtGui.QDialog):
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         layout = QtGui.QVBoxLayout(self)
+        self.scrollArea = QtGui.QScrollArea(self)
 
 #        self.cL = QtGui.QListWidget()
         self.cL = chooseListWidget(self)
@@ -127,9 +128,10 @@ class CellChooseList(QtGui.QDialog):
         for i in\
                 cList:
             self.cL.addItem(i)
-
-        self.cL.setCurrentRow(cList.index(text))
+        if text != '' :
+            self.cL.setCurrentRow(cList.index(text))
         layout.addWidget(self.cL)
+        layout.addWidget(self.scrollArea)
 
 
     def focusOutEvent(self, event):

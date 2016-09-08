@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>354</width>
-    <height>498</height>
+    <width>381</width>
+    <height>574</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>10</x>
      <y>0</y>
      <width>351</width>
      <height>531</height>
@@ -37,7 +37,7 @@
       <x>10</x>
       <y>50</y>
       <width>331</width>
-      <height>441</height>
+      <height>471</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -53,7 +53,47 @@
         <property name="columnCount">
          <number>1</number>
         </property>
+        <row>
+         <property name="text">
+          <string>Title</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>StartFreq</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>StopFreq</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Autorange</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Order</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Instruction</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>Comment</string>
+         </property>
+        </row>
         <column/>
+        <item row="0" column="0">
+         <property name="text">
+          <string/>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
@@ -89,7 +129,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QRadioButton" name="radioButton">
+   <widget class="QRadioButton" name="RBtnSweep">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -105,7 +145,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton_2">
+   <widget class="QRadioButton" name="RBtnStep">
     <property name="geometry">
      <rect>
       <x>80</x>
