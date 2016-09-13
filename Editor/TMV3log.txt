@@ -428,3 +428,23 @@ Traceback (most recent call last):
   File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
     "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
 sqlite3.OperationalError: no such table: Settings
+09.12.2016 09:11:34 no such table: Settings
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
+    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
+sqlite3.OperationalError: no such table: Settings
+09.12.2016 09:16:36 no such table: Settings
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
+    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
+sqlite3.OperationalError: no such table: Settings
+09.12.2016 09:50:58 no such table: Settings
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
+    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
+sqlite3.OperationalError: no such table: Settings
+09.12.2016 09:55:22 no such table: Settings
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
+    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
+sqlite3.OperationalError: no such table: Settings

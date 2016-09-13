@@ -49,7 +49,7 @@
      </attribute>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QTableWidget" name="tableWidget_2">
+       <widget class="QTableWidget" name="tableWidget_0">
         <property name="columnCount">
          <number>1</number>
         </property>
@@ -60,12 +60,12 @@
         </row>
         <row>
          <property name="text">
-          <string>StartFreq</string>
+          <string>StartFreq [Hz]</string>
          </property>
         </row>
         <row>
          <property name="text">
-          <string>StopFreq</string>
+          <string>StopFreq [Hz]</string>
          </property>
         </row>
         <row>
@@ -104,7 +104,7 @@
      </attribute>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QTableWidget" name="tableWidget_3">
+       <widget class="QTableWidget" name="tableWidget_2">
         <property name="columnCount">
          <number>1</number>
         </property>
@@ -119,7 +119,7 @@
      </attribute>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
-       <widget class="QTableWidget" name="tableWidget">
+       <widget class="QTableWidget" name="tableWidget_1">
         <property name="columnCount">
          <number>1</number>
         </property>

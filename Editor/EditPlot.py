@@ -28,23 +28,23 @@ class EditPlot(EditElement.EditElement):
 
         _plot = DatasetPlot(filename,ID)
         _plot.read()
-        self.setCell('Title',_plot.title)
-        self.setCell('Start',str(_plot.x1))
-        self.setCell('Stop',str(_plot.x2))
-        self.setCell('Ref',str(_plot.y2))
+        self.setCell(self.ui.tableWidget,'Title',_plot.title)
+        self.setCell(self.ui.tableWidget,'Start',str(_plot.x1))
+        self.setCell(self.ui.tableWidget,'Stop',str(_plot.x2))
+        self.setCell(self.ui.tableWidget,'Ref',str(_plot.y2))
 
         _div = (_plot.y2 -_plot.y1) / 10
         _db = str(round(_div/5)*5)
-        self.setCell('dB',_db)
+        self.setCell(self.ui.tableWidget,'dB',_db)
 
         if _plot.log:
-            self.setCell('Scale','logarithmic')
+            self.setCell(self.ui.tableWidget,'Scale','logarithmic')
         else:
-            self.setCell('Scale','linear')
+            self.setCell(self.ui.tableWidget,'Scale','linear')
 
-        self.setCell('Unit',_plot.unit)
-        self.setCell('Anno',_plot.annotation)
-        self.setCell('Comment',_plot.comment)
+        self.setCell(self.ui.tableWidget,'Unit',_plot.unit)
+        self.setCell(self.ui.tableWidget,'Anno',_plot.annotation)
+        self.setCell(self.ui.tableWidget,'Comment',_plot.comment)
 
     def dClicked(self,mi):
 

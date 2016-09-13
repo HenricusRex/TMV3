@@ -15,12 +15,10 @@ class EditRoutine(EditElement.EditElement):
         self.config = configparser.ConfigParser()
         self.config.read('../Lib/TMV3.ini')
         self.workBenchDB = self.config['DataBases']['workbench']
-        self.driverList = []
+        self.deviceList = []
+        self.deviceCooseList = []
         self.limList = []
         self.limObList = []
-        self.getDeviceList()
-        self.getLimitList()
-
         self.limitComboBoxes = []
         self.chooseListSigClass = ['1','2']
         self.fsd = QtGui.QFileDialog()
@@ -43,7 +41,6 @@ class EditRoutine(EditElement.EditElement):
         _item = self.ui.tableWidget.itemAt(row,column)
         self.selectedTableItem.append(_item.text())
         self.selectedTableItem.append(_item.data([0]))
-        print (self.selectedTableItem)
     def dClicked(self,mi):
 
         _row = mi.row()
@@ -99,9 +96,7 @@ class EditRoutine(EditElement.EditElement):
         pass
 
     def onAddLimit(self):
-
         try:
-
             _rowPosition = self.ui.tableWidget.rowCount()
             self.ui.tableWidget.insertRow(_rowPosition)
             self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Limit"))
@@ -130,6 +125,18 @@ class EditRoutine(EditElement.EditElement):
         self.limObList.append(cb)
         pass
     def onAddDevice(self):
+        try:
+            _rowPosition = self.ui.tableWidget.rowCount()
+            self.ui.tableWidget.insertRow(_rowPosition)
+            self.ui.tableWidget.setVerticalHeaderItem(_rowPosition,QtGui.QTableWidgetItem("Device"))
+            _cl = EditElement.CellChooseList(self.ui.tableWidget,_rowPosition,'',self.deviceCooseList)
+            _cl.exec_()
+            _item = QtGui.QTableWidgetItem(_cl.retChoose)
+            self.ui.tableWidget.setItem(_rowPosition,0,_item)
+            del(_cl)
+        except Exception as _err:
+            print (_err)
+            return 0
         pass
     def onDelItem(self):
 
@@ -144,24 +151,27 @@ class EditRoutine(EditElement.EditElement):
             QtGui.QMessageBox.information(self, 'TMV3', _text , QtGui.QMessageBox.Ok)
 
     def onFillRoutineID(self,par1,par2):
+
+
         if self.firstStart: return
         self.firstStart = True
+        self.getDeviceList()
+        self.getLimitList()
+
         filename = par1
         ID = par2
-        print ('filename,ID',filename,ID)
 
         _routine = DatasetRoutine(filename,ID)
         _routine.read()
-        self.setCell('Title',_routine.title)
-        self.setCell('SignalClass',str(_routine.signal_class))
+        self.setCell(self.ui.tableWidget,'Title',_routine.title)
+        self.setCell(self.ui.tableWidget,'SignalClass',str(_routine.signal_class))
 
-        self.setCell('InstructionFile',_routine.instruction_file)
-        self.setCell('InstructionText',_routine.instruction)
-        self.setCell('Comment',_routine.comment)
+        self.setCell(self.ui.tableWidget,'InstructionFile',_routine.instruction_file)
+        self.setCell(self.ui.tableWidget,'InstructionText',_routine.instruction)
+        self.setCell(self.ui.tableWidget,'Comment',_routine.comment)
 
         #Limits
         self.limList = self.getLimitList()
-        print (self.limList)
         _rLimits = ast.literal_eval(_routine.limits)
         idx = 0
         for i in _rLimits:
@@ -181,7 +191,19 @@ class EditRoutine(EditElement.EditElement):
 
         for _file in os.listdir('../DeviceDriver'):
             if _file.startswith('DD_'):
-                self.driverList.append(_file)
+                _filepath = "../DeviceDriver/" + _file
+
+                with open(_filepath) as f:
+                    for line in f:
+                        x = line.find('super().__init__')
+                        if x != -1:
+                            x2 = line.find("('")
+                            x3 = line.find("')")
+                            _title = line[x2+2:x3]
+                            _entry = (_file,_title)
+                            self.deviceList.append(_entry)
+                            self.deviceCooseList.append(_title)
+
 
     def getLimitList(self):
 

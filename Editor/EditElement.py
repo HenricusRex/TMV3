@@ -13,18 +13,18 @@ class EditElement(QtGui.QMainWindow):
         pass
     pass
 
-    def setCell(self,name,value):
+    def setCell(self,table,name,value):
 
         if value == None: return
         #loop through headers and find column number for given column name
-        _headerCount = self.ui.tableWidget.rowCount()
+        _headerCount = table.rowCount()
         for x in range(_headerCount):
 
-            _headerText = self.ui.tableWidget.verticalHeaderItem(x).text()
+            _headerText = table.verticalHeaderItem(x).text()
             if _headerText.startswith (name):
 
                 _item = QtGui.QTableWidgetItem(value)
-                self.ui.tableWidget.setItem(x,0,_item)
+                table.setItem(x,0,_item)
                 break
 
       # cell = widget.item(row,matchcol).text()   # get cell at row, col
@@ -107,10 +107,9 @@ class CellChooseList(QtGui.QDialog):
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         layout = QtGui.QVBoxLayout(self)
-        self.scrollArea = QtGui.QScrollArea(self)
 
-#        self.cL = QtGui.QListWidget()
         self.cL = chooseListWidget(self)
+        self.cL.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.cL.doubleClicked.connect(self.dClicked)
         self.cList = cList
         self.ret = False
@@ -122,7 +121,7 @@ class CellChooseList(QtGui.QDialog):
 
 
         table.setCellWidget(row,0,self)
-        _height = len(cList) * 20 + 10
+        _height = 100
         self.setFixedHeight(_height)
 
         for i in\
@@ -131,7 +130,6 @@ class CellChooseList(QtGui.QDialog):
         if text != '' :
             self.cL.setCurrentRow(cList.index(text))
         layout.addWidget(self.cL)
-        layout.addWidget(self.scrollArea)
 
 
     def focusOutEvent(self, event):

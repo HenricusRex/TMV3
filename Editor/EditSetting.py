@@ -5,6 +5,7 @@ from NeedfullThings import *
 from DB_Handler_TDS3 import *
 from DB_Handler_TPL3 import Tpl3Lines
 import EditElement
+import EngFormat
 import os
 import ast
 
@@ -20,15 +21,16 @@ class EditSetting(EditElement.EditElement):
         self.settingID = 0
         self.filename = ''
         self.mode = BASE_MODE
-        self.editBase = EditSettingBase(self)
-        dispatcher.connect(self.onFillSettingID,signal=self.signals.EDIT_ROUTINEID,sender=dispatcher.Any)
-        self.editBase.fillTable(self.filename,self.settingID)
+        self.formater = EngFormat.Format()
+        dispatcher.connect(self.onFillSettingID,signal=self.signals.EDIT_SETTINGID,sender=dispatcher.Any)
+
 
 
     pass
     def onFillSettingID(self,par1,par2):
         self.filename = par1
         self.settingID = par2
+        self.fillTable(self.filename,self.settingID)
     def onTabChanged(self,idx):
         self.mode = idx
         pass
@@ -51,12 +53,34 @@ class EditSetting(EditElement.EditElement):
         _row = self.ui.tableWidget.currentRow()
         self.ui.tableWidget.removeRow(_row)
 
+    def fillTable(self,par1,par2):
+        if self.mode == BASE_MODE:
+            filename = par1
+            ID = par2
+            _setting = DatasetSetting(filename,ID)
+            _setting.read()
+
+            self.setCell(self.ui.tableWidget_0,'Title',_setting.title)
+            self.setCell(self.ui.tableWidget_0,'Start',self.formater.FloatToString(_setting.start_freq,0))
+            self.setCell(self.ui.tableWidget_0,'Stop',self.formater.FloatToString(_setting.stop_freq,0))
+            if _setting.autorange:
+                self.setCell(self.ui.tableWidget_0,'Auto','yes')
+            else:
+                self.setCell(self.ui.tableWidget_0,'Auto','no')
+            self.setCell(self.ui.tableWidget_0,'Order',str(_setting.order))
+            self.setCell(self.ui.tableWidget_0,'Inst',_setting.instruction)
+            if _setting.step_width == 0:
+                self.ui.RBtnSweep.checked = True
+            else:
+                self.ui.RBtnStep.checked = True
+
 
 
 class EditSettingBase(EditElement.EditElement):
-    def __init__(self, parent=None):
+    def __init__(self,ui ,parent=None):
         super(EditSettingBase, self).__init__()
-
+        self.ui = ui
+        self.parent = parent
     pass
 
     def onCellClicked(self,row,column):
