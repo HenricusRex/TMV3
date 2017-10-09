@@ -33,10 +33,13 @@ class ServerGraph(QtCore.QObject):
     signalItemComplete = QtCore.pyqtSignal(list) #access Gui
     signalMeasStarted = QtCore.pyqtSignal() #access Gui
     signalWait = threading.Event()
-    def __init__( self ):
+    signalWaitForProcessThumbnail = threading.Event()
+
+    def __init__( self,parent = None ):
         QtCore.QObject.__init__(self)
         self.signals=Signal()
         self.graphName = ''
+        self.parent = parent
 
         snakemq.init_logging()
         logger = logging.getLogger("snakemq")
@@ -53,7 +56,7 @@ class ServerGraph(QtCore.QObject):
         rh = snakemq.messaging.ReceiveHook(self.messaging)
         srpc = snakemq.rpc.RpcServer(rh)
         srpc.register_object(myClass(),"test")
-
+        self.signalWaitForProcessThumbnail.set()
         t = threading.Thread(name="ClientWorker",target=self.worker)
         t.start()
 
@@ -132,11 +135,16 @@ class ServerGraph(QtCore.QObject):
                     elif _sdata[0] == self.signals.MEAS_PLOT_COMPLETE:
                         dispatcher.send(self.signals.MEAS_PLOT_COMPLETE, dispatcher.Anonymous)
 
+
                     elif _sdata[0] == self.signals.MEAS_RESULT:
                         dispatcher.send(self.signals.MEAS_RESULT, dispatcher.Anonymous,_sdata[1])
 
                     elif _sdata[0] == self.signals.GRAPH_THUMBNAIL_READY:
+                        print ("SG:ThumbnailReady")
                         dispatcher.send(self.signals.GRAPH_THUMBNAIL_READY, dispatcher.Anonymous)
+
+                       # self.parent().signalWaitForFinishedLastPlot.set()
+                       # print ("SignaSEt")
                   #  elif _sdata[0] == self.signals.GRAPH_STARTED:
                    #     logging.info('GRAPH_STARTED')
                    #    dispatcher.send(self.signals.GRAPH_STARTED,dispatcher.Any)

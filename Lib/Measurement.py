@@ -28,10 +28,13 @@ logging.basicConfig(filename="TMV3log.txt",
 logging.raiseExceptions = False
 
 
+
 class MainForm(QtGui.QMainWindow):
     signalShowMessage = QtCore.pyqtSignal(str)
     signalShowInstruction = QtCore.pyqtSignal(str)
     signalShowInstructionEnd = threading.Event()
+    signalShowMessageBox = QtCore.pyqtSignal(str,str)
+    signalShowMessageBoxEnd = threading.Event()
     signalWait = threading.Event()
     signalErrorEnd = threading.Event()
     signalPause = threading.Event()
@@ -53,11 +56,15 @@ class MainForm(QtGui.QMainWindow):
         self.deviceList = []
 
         self.pa = threading.Thread(name = "Parser",target = self.parser)
+
+
         #self.client.sendMeasStarted()
         #Messages
         dispatcher.connect(self.onShowMessageA, self.signals.SHOW_MESSAGE, dispatcher.Any)
         self.signalShowMessage.connect(self.onShowMessageB)
         self.signalShowInstruction.connect(self.showInstruction)
+        self.signalShowMessageBox.connect(self.showMessageBox)
+        self.msgBoxRet = 0
 
       #  dispatcher.connect(self.onStop, self.signals.MEAS_STOP, dispatcher.Any)
         dispatcher.connect(self.onPause, self.signals.MEAS_PAUSE, dispatcher.Any)
@@ -94,11 +101,35 @@ class MainForm(QtGui.QMainWindow):
     def onShowInstruction(self,text):
         self.signalShowInstruction.emit(text)
         self.signalShowInstructionEnd.wait()
+
     def showInstruction(self,text):
         instr = Instruction(text)
         instr.exec_()
         instr.close()
         self.signalShowInstructionEnd.set()
+
+    def onShowMessageBox(self,text,mode='0'):
+        print("onShowMessageBox")
+        self.signalShowMessageBoxEnd.clear()
+        self.signalShowMessageBox.emit(text,mode)
+        self.signalShowMessageBoxEnd.wait()
+        return self.msgBoxRet
+
+    def showMessageBox(self,text,mode):
+        print('showMessageBox')
+        msgBox = QMessageBox()
+        msgBox.setText(text)
+        msgBox.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+        sshFile = "../Templates/darkorange.css"
+        with open(sshFile, "r") as fh:
+            msgBox.setStyleSheet(fh.read())
+        if mode == '0':
+            msgBox.setStandardButtons(QMessageBox.Ok )
+        if mode == '1':
+            msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No )
+
+        self.msgBoxRet = msgBox.exec()
+        self.signalShowMessageBoxEnd.set()
 
     def onShowMessageB(self, text):
         self.addItem(text)
@@ -205,7 +236,8 @@ class MainForm(QtGui.QMainWindow):
 
                     #copy driver and routines to working dir
                     if (self.config['Development']['development'] == '0'):
-                        self.deviceList = list(_ds_routine.device1.split(','))
+                        devices = _ds_routine.device1.replace('\r', '')
+                        self.deviceList = list(devices.split('\n'))
                         for d in self.deviceList:
                             _error_text = 'can not read Driver '
                             _module_name = d

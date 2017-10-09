@@ -22,6 +22,24 @@ class SpectrumAnalyzer():
         self.sa = self.rm
         pass
 
+    def getDeviceName(self):
+        return self.name
+    # def getFunctions(self):
+    #     #paramter given by editor
+    #     #[alias],[function´]
+    #     function = [
+    #         ('StartFreq [Hz]',   'set_StartFreq', 'get_StartFreq', 'float'),
+    #         ('StopFreq[Hz]',    'set_StopFreq', 'get_StopFreq', 'float'),
+    #         ('ResBW [Hz]',       'set_ResBW', 'get_ResBW', 'float'),
+    #         ('SweepTime [s]',   'set_StepTime', 'get_StepTime','float'),
+    #         ('Amplifier [dB]',   'set_PreAmplifier', 'get_PreAmplifier','float'),
+    #         ('Preselector', 'set_PreSelector', 'get_PreSelector','string'),
+    #         ('RefLevel [dB..]',    'set_RefLevel', 'get_RefLevel','float'),
+    #         ('Detector ',    'set_Detector', 'get_Detector','string')]
+    #     return function
+
+
+
     def checkStatusCode(self,status):
         if str(status).startswith('error') or str(status).startswith('warning'):
             return False
@@ -37,7 +55,7 @@ class SpectrumAnalyzer():
         except visa.VisaIOError as _err:
             _msg = visa.Error(_err)
             logging.exception(_msg)
-           # self.showMessage(_msg)
+            self.showMessage(_msg)
             return False
         return True
 
@@ -67,6 +85,7 @@ class SpectrumAnalyzer():
             if not self.checkStatusCode(self.sa.write("INP:ATT 30DB; *WAI")): return False
             if not self.checkStatusCode(self.sa.write("SENSE:DET:FUNC POS; *WAI")): return False
             if not self.checkStatusCode(self.sa.write("UNIT:POW DBUV; *WAI")): return False
+            if not self.checkStatusCode(self.sa.write("INP:COUP DC; *WAI")): return False
 
 
 
@@ -244,7 +263,7 @@ class SpectrumAnalyzer():
         if not self.errorQueueHandler() : return False
         return ret
         pass
-    def set_ContSweep(self,bSweepCont):
+    def set_SweepCont(self,bSweepCont):
         if bSweepCont:
             self.sa.write("INIT:CONT ON")
         else:
@@ -296,7 +315,6 @@ class SpectrumAnalyzer():
         return float(sFreq)
 
     def set_StartFreq (self,*par):
-
         sFreq = str(par[0]) + "HZ"
         self.sa.write("SENSE:FREQ:START " + sFreq)
         if not self.errorQueueHandler(): return False
@@ -351,20 +369,22 @@ class SpectrumAnalyzer():
         self.sa.write("DISP:TRAC:Y:RLEV " + sRevLevel)
         if not self.errorQueueHandler(): return False
         return True
+
     def get_RefLevel(self):
         ret = self.sa.query("DISP:TRAC:Y:RLEV?")
         if not self.errorQueueHandler(): return False,0
         return True,float(ret)
-
 
     def set_Attenuator(self,fAttenuator):
         sAttenuator=str(fAttenuator)
         self.sa.write("INP:ATT " + sAttenuator)
         if not self.errorQueueHandler(): return False
         return True
+
     def get_Attenuator(self):
         sAtt = self.sa.query("INP:ATT?")
         return float(sAtt)
+
     def set_AmplifierState (self,*par):
         if par[0] == '1':
             self.sa.write("INP:GAIN:STATE ON; *WAI")
@@ -373,12 +393,14 @@ class SpectrumAnalyzer():
 
         if not self.errorQueueHandler() : return False
         return True
+
     def get_AmplifierState(self):
         _sAs= self.sa.query("INP:GAIN:STAT?")
         if _sAs[0] == '1':
             return True
         else:
             return False
+
     def set_Amplifier(self, *par):
         _sAs= self.sa.query("INP:GAIN:STAT?")
         if _sAs[0] == '0':
@@ -386,18 +408,20 @@ class SpectrumAnalyzer():
         self.sa.write ("INP:GAIN {0}; *WAI".format(par[0]))
         if not self.errorQueueHandler() : return False
         return True
+
     def get_Amplifier(self):
         _sAs= self.sa.query("INP:GAIN?")
         return float(_sAs)
 
     def set_PreselectorState(self,*par):
-        if par[0] == '1':
+        if par[0] == '1' or par[0] == 'On':
             self.sa.write("INP:PRES:STAT ON; *WAI")
         else:
             self.sa.write("INP:PRES:STAT OFF; *WAI")
 
         if not self.errorQueueHandler() : return False
         return True
+
     def get_PreselectorState(self):
         _sPs= self.sa.query("INP:PRES:STAT?")
         if _sPs[0] == '1':

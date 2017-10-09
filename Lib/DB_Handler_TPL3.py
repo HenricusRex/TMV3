@@ -15,18 +15,25 @@ from datetime import datetime, timedelta
 from EngFormat import Format
 
 
-from PyQt4.QtGui import QMessageBox
+#from PyQt4.QtGui import QMessageBox
 
 
 logging.basicConfig(filename="TMV3log.txt",
                     level=logging.ERROR,
                     format='%(asctime)s %(message)s',
                     datefmt='%m.%d.%Y %I:%M:%S')
+
 def changeCharToBool(c):
     if c == 'True':
         return True
     else:
         return False
+
+def changeCharToInt(c):
+    if c == "False":
+        return 0
+    else:
+        return 1
 
 class Tpl3Filter(object):
 
@@ -315,6 +322,7 @@ class Tpl3Routes(object):
 
         _con.close()
         return(1)
+
     def readAlias(self):
         _error_text = 'can not read Route of TPL3 %s '
         try:
@@ -341,6 +349,25 @@ class Tpl3Routes(object):
 
         _con.close()
         return(1)
+
+    def readAliasTitle(self):
+        _error_text = 'can not read Route of TPL3 %s '
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute ("SELECT [Alias] FROM [Routes]")
+            routeList = _cur.fetchall()
+
+        except  Exception as _err:
+            print (_err)
+            logging.exception(_err)
+            return (None)
+
+        _con.close()
+        return(routeList)
+
+
     def add(self):
         try:
             _con = lite.connect(self.filename)
@@ -456,6 +483,7 @@ class Tpl3Files(object):
             logging.exception(_err)
             return 0
         return _lastRowID
+
     def delete(self):
         try:
             _con = lite.connect(self.filename)
@@ -469,6 +497,62 @@ class Tpl3Files(object):
             return 0
         return 1
         pass
+
+    def testplanExists(self):
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute ("SELECT FileID FROM [Files] WHERE [Files].[Type]='Testplan' AND [Files].[Version]='{0}'"
+                          .format(str(self.version)))
+            fileID = _cur.fetchone()
+            if fileID is None:
+                return(0)
+
+        except  Exception as _err:
+            return (0)
+
+        _con.close()
+        return(fileID)
+
+
+    def findTestplan(self):
+        _error_text = 'can not read Files of TPL3 %s '
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute ("SELECT FileID FROM [Files] WHERE [Files].[Type]='Testplan'")
+
+            files = _cur.fetchall()
+
+            if len(files) == 0:
+               return(0)
+
+        except  Exception as _err:
+            print(_err)
+            logging.exception(_err)
+            return (0)
+
+        _con.close()
+        return(files)
+
+    def findTestplanReference(self):
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute("SELECT Count(*) FROM [Tests] WHERE TestplanID='{0}'".format( str(self.file_id)))
+            _ret = _cur.fetchone()
+            _con.close()
+            if _ret == None:
+                return 0
+
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        return _ret
+
 
     def export(self):
         _error_text = 'can not export File of TPL3 %s '
@@ -488,14 +572,36 @@ class Tpl3Files(object):
         _con.close()
         return(1)
 
+    def update(self):
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _blob = lite.Binary(self.data)
+#            _cur.execute("UPDATE [Files] SET [Date]='%s',[Version]='%s',[Data]='%s',[Comment]='%s' WHERE [FileID]='%s'"
+ #                        %(self.date,self.version,_blob,self.comment,self.file_id))
+
+            _sql = "UPDATE [Files] SET [Date]=?,[Version]=?,[Data]=?,[Comment]=? WHERE FileID=?"
+            _cur.execute(_sql,(str(self.date), str(self.version), _blob ,str(self.comment),str(self.file_id)))
+            _con.commit()
+            lastRowID = _cur.lastrowid
+            _con.close()
+        except Exception as _err:
+            print(_err)
+            return False
+        return lastRowID
+
 class Tpl3Marks(object):
 
     def __init__(self,filename,mark_id):
         self.mark_id = mark_id
         self.filename = filename
+        self.plotID = 0
         self.x = 0
-        self.x = 0
-        self.marker_text = ""
+        self.y = 0
+        self.xT = 0
+        self.yT = 0
+        self.marker_text = ''
+        self.localIdx = ''
 
     def read(self):
         _error_text = 'can not read Marks of TPL3 %s '
@@ -505,9 +611,12 @@ class Tpl3Marks(object):
             _cur.execute ("SELECT * FROM [Marks] WHERE [Marks].[MarkID] = {0}".format(str(self.mark_id)))
             _mark = _cur.fetchone()
             _r = RegFieldNames(_cur,_mark)
-            self.x = _r.X
-            self.y = _r.Y
+            self.x = _r.x
+            self.y = _r.y
+            self.xT = _r.xT
+            self.yT = _r.yT
             self.marker_text = _r.MarkerText
+            self.localIdx = _r.localIdx
 
         except  Exception as _err:
             #QMessageBox.information(None, 'TMV3',
@@ -517,7 +626,36 @@ class Tpl3Marks(object):
             return (0)
 
         _con.close()
-        return(1)
+
+    def add(self):
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute("INSERT INTO [Marks] (PlotID,x,y,xT,yT,MarkerText,localIdx)"
+                         "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                         (self.plotID, self.x, self.y, self.xT, self.yT, self.marker_text, self.localIdx))
+
+            _con.commit()
+            _lastRowID = _cur.lastrowid
+            _con.close()
+        except Exception as _err:
+            print(_err)
+            logging.exception(_err)
+            return 0, 0
+        return 1, _lastRowID
+
+    def remove(self):
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            s ="DELETE FROM [Marks] WHERE PlotID={0} AND localIdx='{1}'".format(str(self.plotID),str(self.localIdx))
+            _cur.execute(s)
+            _con.commit()
+            _con.close()
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        pass
 
 class Tpl3Lines(object):
     #all lines like Limits, CorrectionLines, etc
@@ -569,6 +707,7 @@ class Tpl3Lines(object):
 
         _con.close()
         return(1)
+
     def readIDs(self):
         _error_text = 'can not read Lines of TPL3 %s '
         try:
@@ -588,6 +727,7 @@ class Tpl3Lines(object):
 
         _con.close()
         return(1)
+
     def readCorrIDs(self):
         _error_text = 'can not read Lines of TPL3 %s '
         try:
@@ -607,6 +747,7 @@ class Tpl3Lines(object):
 
         _con.close()
         return(1)
+
     def readPlotCorr(self):
         #read all corr-lines of plot x
         _error_text = 'can not read Lines of TPL3 %s '
@@ -639,6 +780,7 @@ class Tpl3Lines(object):
 
         _con.close()
         return(1)
+
     def readLimitIDs(self):
         _error_text = 'can not read Lines of TPL3 %s '
         try:
@@ -657,6 +799,7 @@ class Tpl3Lines(object):
 
         _con.close()
         return(1)
+
     def readLimitTitles(self,version = True):
         _error_text = 'can not read Lines of TPL3 %s '
         ret = []
@@ -681,8 +824,73 @@ class Tpl3Lines(object):
             logging.exception(_err)
             return 0,ret
 
+
         _con.close()
         return 1,ret
+
+
+    def readLimitTitle(self):
+        _error_text = 'can not read Lines of TPL3 %s '
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _s="SELECT * FROM [Lines] WHERE ([Lines].[Type]='Limit' AND [Lines].[Title]='{0}' AND [Lines].[Version]='{1}')".format(str(self.title),str(self.version))
+            print (_s)
+            _cur.execute(_s)
+
+            _line = _cur.fetchone()
+            if not _line is None:
+                _r = RegFieldNames(_cur, _line)
+                self.line_id = _r.LineID
+                self.type = _r.Type
+                self.title = _r.Title
+                self.version = _r.Version
+                self.color = _r.Color
+                self.width = _r.Width
+                self.style = _r.Style
+                self.data_xy = _r.DataXY
+                self.used = _r.Used
+                self.date = _r.Date
+                self.comment = _r.Comment
+
+
+        except  Exception as _err:
+            # QMessageBox.information(None, 'TMV3',
+            # _error_text % self.filename, QMessageBox.Ok)
+            print(_err)
+            logging.exception(_err)
+            return (0)
+
+        _con.close()
+        return (1)
+
+    def readLineTitles(self,version = True):
+        _error_text = 'can not read Lines of TPL3 %s '
+        ret = []
+        try:
+            _con = lite.connect(self.filename)
+            #_con.row_factory = lambda cursor, row: row[0]
+            if version:
+                _cur = _con.cursor()
+                _cur.execute ("SELECT [Title],[Version] FROM [Lines] WHERE ([Lines].[Type]='Line')")
+            else:
+                _con.row_factory = lambda cursor, row: row[0]
+                _cur = _con.cursor()
+
+                _cur.execute ("SELECT [Title] FROM [Lines] WHERE ([Lines].[Type]='Line')")
+
+            ret = _cur.fetchall()
+
+        except  Exception as _err:
+            #QMessageBox.information(None, 'TMV3',
+            #_error_text % self.filename, QMessageBox.Ok)
+            print (_err)
+            logging.exception(_err)
+            return 0,ret
+
+        _con.close()
+        return 1,ret
+
     def readLimitTitleID(self,title):
         _error_text = 'can not read Lines of TPL3 %s '
         ret = []
@@ -778,7 +986,7 @@ class Tpl3Traces(object):
         self.x2 = 0
         self.y1 = 0
         self.y2 = 0
-        self.amplifier = 0
+        self.amplifier = 0.0
         self.attenuator = 0
         self.rbw = 0
         self.autorange = 0
@@ -805,8 +1013,10 @@ class Tpl3Traces(object):
             self.x2 = _r.X2
             self.y1 = _r.Y1
             self.y2 = _r.Y2
+#            self.amplifier = changeCharToInt(_r.Amplifier)
+#            self.attenuator = changeCharToInt(_r.Attenuator)
             self.amplifier = _r.Amplifier
-            self.attenuator =_r.Attenuator
+            self.attenuator = _r.Attenuator
             self.rbw = _r.RBW
             self.autorange = changeCharToBool(_r.Autorange)
             self.hf_overload = changeCharToBool(_r.HFOverload)
@@ -975,8 +1185,9 @@ class Tpl3Plot(object):
                     _line = Tpl3Lines(self.filename,_ID)
                     if _line.read() == 0:
                         print ('no such line',_ID)
-                        return 0
-                    self.lineObjects.append(_line)
+                       # return 0
+                    else:
+                        self.lineObjects.append(_line)
 
 
         except Exception as _err:
@@ -988,6 +1199,7 @@ class Tpl3Plot(object):
 
         _con.close()
         return 1
+
     def add(self):
         try:
             _con = lite.connect(self.filename)
@@ -1016,6 +1228,7 @@ class Tpl3Plot(object):
             return 0
         self.plot_id = _lastRowID
         return True
+
     def delete(self):
         try:
             _con = lite.connect(self.filename)
@@ -1029,6 +1242,7 @@ class Tpl3Plot(object):
             return 0
         return str(self.plot_id)
         pass
+
     def updateLines(self,lineID):
         try:
             _con = lite.connect(self.filename)
@@ -1049,6 +1263,7 @@ class Tpl3Plot(object):
             logging.exception(_err)
             return 0
         return _lastRowID
+
     def updateResult(self,result):
         try:
             _con = lite.connect(self.filename)
@@ -1059,10 +1274,15 @@ class Tpl3Plot(object):
             _con.commit()
             _lastRowID = _cur.lastrowid
             _con.close()
+            _result = self.findZone() #test all other plots of given test_id
+         #   _tplTest = TPL3Test(self.filename,self.test_id)
+         #   _tplTest.updateResult(_result)
+
         except  Exception as _err:
             logging.exception(_err)
             return 0
         return _lastRowID
+
     def updateRoutine(self,routine):
         try:
             _con = lite.connect(self.filename)
@@ -1077,6 +1297,7 @@ class Tpl3Plot(object):
             logging.exception(_err)
             return 0
         return _lastRowID
+
     def updateImage(self):
         print("update")
         try:
@@ -1090,6 +1311,8 @@ class Tpl3Plot(object):
             _con.commit()
             _lastRowID = _cur.lastrowid
             _con.close()
+
+
         except  Exception as _err:
             logging.exception(_err)
             return 0
@@ -1109,6 +1332,7 @@ class Tpl3Plot(object):
             logging.exception(_err)
             return 0
         return _lastRowID
+
     def findMasterPlot(self):
         try:
             _con = lite.connect(self.filename)
@@ -1125,6 +1349,7 @@ class Tpl3Plot(object):
             logging.exception(_err)
             return 0
         return _ret
+
     def findGroups(self):
         try:
             _con = lite.connect(self.filename)
@@ -1132,7 +1357,6 @@ class Tpl3Plot(object):
             _cur = _con.cursor()
             _cur.execute("SELECT DISTINCT [Group] FROM [Plot]")
             _ret = _cur.fetchall()
-            print (_ret)
             _con.close()
             if _ret == None:
                 return 0
@@ -1141,6 +1365,39 @@ class Tpl3Plot(object):
             logging.exception(_err)
             return 0
         return _ret
+
+    def findCompanies(self):
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute("SELECT DISTINCT [Company] FROM [Plot]")
+            _ret = _cur.fetchall()
+            _con.close()
+            if _ret == None:
+                return 0
+
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        return _ret
+
+    def findProjects(self):
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute("SELECT DISTINCT [Project] FROM [Plot]")
+            _ret = _cur.fetchall()
+            _con.close()
+            if _ret == None:
+                return 0
+
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        return _ret
+
     def findPlotTitle(self):
         try:
             _con = lite.connect(self.filename)
@@ -1148,7 +1405,6 @@ class Tpl3Plot(object):
             _cur = _con.cursor()
             _cur.execute("SELECT DISTINCT [PlotTitle] FROM [Plot]")
             _ret = _cur.fetchall()
-            print (_ret)
             _con.close()
             if _ret == None:
                 return 0
@@ -1157,6 +1413,57 @@ class Tpl3Plot(object):
             logging.exception(_err)
             return 0
         return _ret
+
+    def findFinalPlots(self):
+        try:
+            _con = lite.connect(self.filename)
+           # _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute("SELECT [PlotTitle],[Group] FROM [Plot] WHERE [TestID]={0}".format (str(self.test_id)))
+            _ret = _cur.fetchall()
+            _con.close()
+            if _ret == None:
+                return 0
+
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        return _ret
+
+    def findZone(self):
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _error_text = 'can not read TPL3Test %s '
+            _s = ("SELECT Result FROM [Plot] WHERE [Plot].[TestID] = '{0}'".format(str(self.test_id)))
+            _cur.execute(_s)
+            _resultList = _cur.fetchall()
+            _zone = 0
+            _zoneText = "unkown"
+
+            for i in _resultList:
+                if i == "Zone1" and _zone < 1:
+                    _zoneText = "Zone1"
+                    _zone = 1
+                elif i == "Zone 2" and _zone < 2:
+                    _zoneText = "Zone2"
+                    _zone = 2
+                elif i == "Zone3" and _zone < 3:
+                    _zoneText = "Zone3"
+                    _zone = 3
+                else :
+                    _zoneText = "unkown"
+                    _zone = 4
+
+
+
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        return _zoneText
+
+        pass
 
 class Tpl3PlotInfo(object):
     def __init__(self,filename,plot_id):
@@ -1271,6 +1578,7 @@ class TPL3Test(object):
         self.filename = filename
         self.test_id = test_id
         self.project_id = 0
+        self.testplan_id = 0
         self.test_no = ""
         self.category = ""
         self.group = ""
@@ -1285,6 +1593,7 @@ class TPL3Test(object):
         self.technician = "?"
         self.lab = "?"
         self.result = "?"
+        self.reference = "?"
         self.procedure = "?"
         self.label_no = "?"
         self.tempest_z_no = '?'
@@ -1338,20 +1647,25 @@ class TPL3Test(object):
                 self.readMode = ''
 
             if self.readMode == 'first':
-                _cur.execute ("SELECT * FROM [Tests] WHERE [TestID] = (SELECT MIN([TestID]) FROM [Tests]) AND [Tests].[Category] = '{0}'".format(str(category)))
+                _cur.execute ("SELECT * FROM [Tests] WHERE [TestID] = (SELECT MIN([TestID]) FROM [Tests] WHERE [Tests].[Category] = '{0}')".format(str(category)))
                 self.readMode = ''
 
             if self.readMode == 'last':
-                _s = ("SELECT * FROM [Tests] WHERE [TestID] = (SELECT MAX([TestID]) FROM [Tests]) AND [Tests].[Category] = '{0}'".format(str(category)))
+                _s = ("SELECT * FROM [Tests] WHERE [TestID] = (SELECT MAX([TestID]) FROM [Tests] WHERE [Tests].[Category] = '{0}')".format(str(category)))
+
+                print (_s)
                 _cur.execute (_s)
                 self.readMode = ''
 
             _test = _cur.fetchone()
+            _ret = 0
             if _test != None:
+                _ret = 1
                 _r = RegFieldNames(_cur, _test)
                 self.test_id = _r.TestID
                 self.test_no = _r.TestNo
                 self.project_id = _r.ProjectID
+                self.testplan_id = _r.TestplanID
                 self.setup = _r.Setup
                 self.procedure = _r.Procedure
                 self.category = _r.Category
@@ -1368,6 +1682,7 @@ class TPL3Test(object):
                 self.technician = _r.Technician
                 self.date_time = _r.DateTime
                 self.result = _r.Result
+                self.reference = _r.Reference
                 self.tempest_z_no = _r.TempestZNo
                 self.label_no = _r.LabelNo
                 self.report_no = _r.ReportNo
@@ -1375,13 +1690,14 @@ class TPL3Test(object):
                 self.type_of_user = _r.TypeOfUser
                 self.type_of_test = _r.TypeOfTest
                 self.type_of_eut = _r.TypeOfEut
+                _plot = Tpl3Plot(self.filename,0)
 
+                assert isinstance(_plot,Tpl3Plot)
+                _plot.test_id = self.test_id
+                _result = _plot.findZone()
+                self.result = _result
                 _cur.execute ("SELECT FileID,Title,Version,Date,Comment FROM [Files] WHERE [Files].[TestID] = {0} AND [Files].[Type] = 'Testplan'".format(str(self.test_id)))
                 self.plan_list = _cur.fetchall()
-             #       _test =  TPL3Test(self.filename, _id[0])
-             #       if _test.read() == 0 :
-             #           return 0
-             #       self.test_list.append(_test)
 
         except Exception as _err:
             #QMessageBox.information(None, 'TMV3',
@@ -1392,7 +1708,28 @@ class TPL3Test(object):
             return 0
 
         _con.close()
-        return 1
+        return _ret
+
+
+    def findReferenced(self):
+        _error_text = 'can not open TPL3 %s '
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _error_text = 'can not read TPL3Test %s '
+            _s = ("SELECT [TestID],[Category] FROM [Tests] WHERE [Tests].[Reference] = 'yes' AND [Tests].[ProjectID] = {'1'}".format(str(self.ProjectID)))
+            _cur.execute (_s)
+            ret = _cur.fetchall()
+
+        except Exception as _err:
+            print (_error_text % self.filename)
+            logging.exception(_err)
+            return None
+
+        _con.close()
+        return ret
+
 
     def findCategory(self):
 
@@ -1431,22 +1768,6 @@ class TPL3Test(object):
             return 0
         return _ret
 
-    def findProjects(self):
-        try:
-            _con = lite.connect(self.filename)
-            _con.row_factory = lambda cursor, row: row[0]
-            _cur = _con.cursor()
-            _cur.execute("SELECT DISTINCT [Project] FROM [Tests]")
-            _ret = _cur.fetchall()
-            _con.close()
-            if _ret == None:
-                return 0
-
-        except  Exception as _err:
-            logging.exception(_err)
-            return 0
-        return _ret
-
     def updateTestNo(self):
         'only for tests: generate testNo from date'
         try:
@@ -1469,6 +1790,8 @@ class TPL3Test(object):
             logging.exception(_err)
             return 0
         return _ret
+
+
 
     def getNumber(self,d):
         #get seconds since 2014 converted to base34 (base 36 without I and O)
@@ -1524,6 +1847,7 @@ class TPL3Test(object):
         pass
 
         pass
+
     def update(self):
         _error_text = 'can not open TPL3 %s '
         try:
@@ -1533,12 +1857,12 @@ class TPL3Test(object):
             _s = ("UPDATE Tests SET TestNo='{0}',ProjectID='{1}',Setup='{2}',Category='{3}',EUT='{4}',SerialNo='{5}',"
                   "ModelNo='{6}',ModelName='{7}',UserNo='{8}',ReportNo='{9}',Environment='{10}',"
                   "TempestZNo='{11}',Company='{12}',Technician='{13}',Lab='{14}',Procedure='{15}',Result='{16}',LabelNo='{17}',"
-                  "DateTime='{18}',Comment='{19}',TypeOfUser='{20}',TypeOfTest='{21}',TypeOfEut='{22}',[Group]='{24}' "
+                  "DateTime='{18}',Comment='{19}',TypeOfUser='{20}',TypeOfTest='{21}',TypeOfEut='{22}',[Group]='{24}',[Reference]='{25}',[TestplanID]='{26}' "
                   "WHERE TestID={23}". format(self.test_no, self.project_id,self.setup,self.category, self.eut,self.serial_no,
                                               self.model_no,self.model_name,self.user_no,self.report_no,self.environment,
                                               self.tempest_z_no,self.company,self.technician,self.lab,self.procedure,self.result,self.label_no,
                                               self.date_time,self.comment,self.type_of_user, self.type_of_test,self.type_of_eut,
-                                              str(self.test_id),self.group))
+                                              str(self.test_id),self.group,self.reference,self.testplan_id))
 
             _cur.execute(_s)
             _con.commit()
@@ -1548,6 +1872,7 @@ class TPL3Test(object):
             #_error_text % self.filename, QMessageBox.Ok)
             print (_err)
             print (_error_text % self.filename)
+            print (_s)
             logging.exception(_err)
             return 0
 
@@ -1694,6 +2019,24 @@ class Tpl3Projects(object):
             logging.exception(_err)
             return 0
         return _lastRowID
+
+    def findProjects(self):
+        try:
+            _con = lite.connect(self.filename)
+            _con.row_factory = lambda cursor, row: row[0]
+            _cur = _con.cursor()
+            _cur.execute("SELECT DISTINCT [Title] FROM [Projects]\r\n")
+            _ret = _cur.fetchall()
+            _con.close()
+            if _ret == None:
+                return 0
+
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        return _ret
+
+
 class TPL3TestInfo(object):
     # TPL3 handler for short information about all Test
     def __init__(self,filename):

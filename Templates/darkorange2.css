@@ -13,13 +13,18 @@ QWidget
 	padding: 0px;
 	margin: 0px;
 }
-
+/*
 QMainWindow
 {
 	background: #727272;
 	padding: 0px;
 	margin: 0px;
 	border: 0px solid #1a1a1a;
+}
+*/
+QMainWindow {
+	background-color: #454545;
+	color: #dddddd;
 }
 
 QMainWindow::separator:horizontal

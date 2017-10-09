@@ -123,6 +123,8 @@ class Signal(object):
         self.GRAPH_RESULT = "GRAPH_Result"
         self.GRAPH_MAKE_THUMBNAIL = "GRAPH_Make_Thumbnail"
         self.GRAPH_THUMBNAIL_READY = "GRAPH_Make_Thumbnail_Ready"
+        self.GRAPH_NEW_MARKER = "GRAPH_New_Marker"
+        self.GRAPH_DEL_MARKER = "GRAPH_Del_Marker"
 
         self.EDIT_PLANID ="EDIT_PlanID"
         self.EDIT_PLOTID ="EDIT_PlotID"
@@ -162,6 +164,27 @@ class StateRegister():
         self.MEAS_FAILED = False
         pass
 
+class BaseCommand(object):
+    def __init__(self,title,type,memberSet,memberValidate,values):
+        self.title = ''
+        self.type = str
+        self.memberSet = None
+        self.memberValidate = None
+        self.values = None
+
+    def getType(self):
+        pass
+    def getMemberSet(self):
+        return self.memberSet
+    def getMemberValidate(self):
+        return self.memberSet
+    def getType(self):
+        return self.type
+    def getValues(self):
+        return self.values
+
+
+
 
 class TableModel(QAbstractTableModel):
     def __init__(self, header, parent = None):
@@ -177,24 +200,54 @@ class TableModel(QAbstractTableModel):
         return len(self._header)
 
     def data(self, index, role):
-        _row = index.row()
-        _col = index.column()
+        try:
+            _row = index.row()
+            _col = index.column()
 
-        if not index.isValid():
-            return None
-        elif role == Qt.DisplayRole:
-           # print(_row,_col)
-            return self._data[_row][_col]
+            if not index.isValid():
+                return None
+            elif role == Qt.DisplayRole:
+                return self._data[_row][_col]
+            elif role == Qt.EditRole:
+                return self._data[_row][_col]
+        except Exception as _err:
+            print("TableModel data err: {0} {1} {2}".format(str(_err),_row,_col))
+            return 'err'
 
+    def setEditorData(self, editor, index):
+        # Gets display text if edit data hasn't been set.
+        text = index.data(Qt.EditRole) or index.data(Qt.DisplayRole)
+        editor.setText(text)
 
     def addData(self, data):
         self._data.append(data)
         self.emit(SIGNAL("layoutChanged()"))
-    def setData(self, index, value):
-        self._data[index.row()][index.column()] = value
-        self.emit(SIGNAL('dataChanged(const QModelIndex &, '
-        'const QModelIndex &)'), index, index)
+
+    def getColumnByName(self,name):
+        headercount = self.columnCount()
+        for x in range(headercount):
+            if self._header[x] == name:
+                return x
+
+    def setData(self, index, value, role=QtCore.Qt.DisplayRole, setSignal=True):
+      #  print (type(value))
+        newValue = value
+        _row = index.row()
+        _col = index.column()
+        if role == QtCore.Qt.CheckStateRole:
+            if value == Qt.Checked:
+                newValue = 0
+            else:
+                newValue = 1#
+
+        rowData = list(self._data[_row])
+        rowData[_col] = newValue
+        self._data[_row] = rowData
+        if setSignal:
+            self.emit(SIGNAL('dataChanged(const QModelIndex &, '
+            'const QModelIndex &)'), index, index)
         return True
+
 
     def headerData(self, col, orientation, role):
         if role == Qt.DisplayRole :
@@ -211,6 +264,7 @@ class TableModel(QAbstractTableModel):
         return True
 
 
+
     def sort(self, Ncol, order):
         """
         Sort table by given column number.
@@ -223,10 +277,12 @@ class TableModel(QAbstractTableModel):
 
         return None
 
-
-
     def updateView(self):
         self.emit(SIGNAL('dataChanged()'))
+
+
+    def flags(self, index):
+        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
 
 class ImageDelegate(QtGui.QStyledItemDelegate):
     def __init__(self,parent):
@@ -243,11 +299,107 @@ class ImageDelegate(QtGui.QStyledItemDelegate):
             option.rect.y(),
             _iconQPixmap.scaled(200, 120, QtCore.Qt.KeepAspectRatio))
 
+    def sizeHint(self, option, index):
+        return QSize(200,90)
+
+class CheckBoxDelegate(QtGui.QStyledItemDelegate):
+    """
+    A delegate that places a fully functioning QCheckBox in every
+    cell of the column to which it's applied
+    """
+    def __init__(self, parent):
+        QtGui.QItemDelegate.__init__(self, parent)
+
+    def createEditor(self, parent, option, index):
+        '''
+        Important, otherwise an editor is created if the user clicks in this cell.
+        ** Need to hook up a signal to the model
+        '''
+        return None
+
+    def paint(self, painter, option, index):
+         '''
+         Paint a checkbox without the label.
+         '''
+         checked = index.model().data(index, QtCore.Qt.DisplayRole)
+       #  print ('checked',checked)
+         check_box_style_option = QtGui.QStyleOptionButton()
+         if (index.flags() & QtCore.Qt.ItemIsEditable) :
+             check_box_style_option.state |= QtGui.QStyle.State_Enabled
+         else:
+             check_box_style_option.state |= QtGui.QStyle.State_ReadOnly
+
+         if checked == 0:
+             check_box_style_option.state |= QtGui.QStyle.State_On
+         else:
+             check_box_style_option.state |= QtGui.QStyle.State_Off
+
+         check_box_style_option.rect = self.getCheckBoxRect(option)
+
+         # this will not run - hasFlag does not exist
+         # if not index.model().hasFlag(index, QtCore.Qt.ItemIsEditable):
+         # check_box_style_option.state |= QtGui.QStyle.State_ReadOnly
+
+         check_box_style_option.state |= QtGui.QStyle.State_Enabled
+
+         QtGui.QApplication.style().drawControl(QtGui.QStyle.CE_CheckBox, check_box_style_option, painter)
+
+    def editorEvent(self, event, model, option, index):
+        '''
+        Change the data in the model and the state of the checkbox
+        if the user presses the left mousebutton or presses
+        Key_Space or Key_Select and this cell is editable. Otherwise do nothing.
+        '''
+        # if not (index.flags() & QtCore.Qt.ItemIsEditable):
+        #    return False
+
+        # Do not change the checkbox-state
+        if event.type() == QtCore.QEvent.MouseButtonPress:
+            return False
+        if event.type() == QtCore.QEvent.MouseButtonRelease or event.type() == QtCore.QEvent.MouseButtonDblClick:
+            if event.button() != QtCore.Qt.LeftButton or not self.getCheckBoxRect(option).contains(event.pos()):
+                return False
+            if event.type() == QtCore.QEvent.MouseButtonDblClick:
+                return True
+        elif event.type() == QtCore.QEvent.KeyPress:
+            if event.key() != QtCore.Qt.Key_Space and event.key() != QtCore.Qt.Key_Select:
+                return False
+            else:
+                return False
+
+     # Change the checkbox-state
+        self.setModelData(None, model, index, QtCore.Qt.CheckStateRole)
+        return True
+
+    def setModelData (self, editor, model, index, role = QtCore.Qt.DisplayRole):
+        '''i
+        The user wanted to change the old state in the opposite.
+        '''
+
+        if index.data() == 0:
+            newValue = QtCore.Qt.Unchecked
+        else:
+            newValue = QtCore.Qt.Checked
+        #newValue = not index.data().toBool()
+        #print 'New Value : {0}'.format(newValue)
+        model.setData(index, newValue, QtCore.Qt.CheckStateRole)
+
+    def getCheckBoxRect(self, option):
+        check_box_style_option = QtGui.QStyleOptionButton()
+        check_box_rect = QtGui.QApplication.style().subElementRect(QtGui.QStyle.SE_CheckBoxIndicator, check_box_style_option, None)
+        check_box_point = QtCore.QPoint (option.rect.x() +
+                            option.rect.width() / 2 -
+                            check_box_rect.width() / 2,
+                            option.rect.y() +
+                            option.rect.height() / 2 -
+                            check_box_rect.height() / 2)
+        return QtCore.QRect(check_box_point, check_box_rect.size())
+
 class Choose(QtGui.QDialog):
 
-    def __init__(self, model, title):
+    def __init__(self, model, title,parent=None):
         #global model
-        QtGui.QDialog.__init__(self)
+        QtGui.QDialog.__init__(self,parent)
         self.ui = uic.loadUi("Choose.ui", self)
         self.centerOnScreen()
         self.signals = Signal()
@@ -262,8 +414,11 @@ class Choose(QtGui.QDialog):
         self.ui.BtnOk.clicked.connect(self.onBtnOk)
         self.ui.BtnCancel.clicked.connect(self.onBtnCancel)
         self.ui.tableView.doubleClicked.connect(self.onBtnOk)
+        try:
+            self.ui.show()
+        except Exception as err:
+            print(err)
 
-        self.ui.show()
 
     def onBtnCancel(self):
         #print('onBtnCancel')

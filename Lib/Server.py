@@ -27,14 +27,17 @@ class Server(QtCore.QObject):
     signalItemComplete = QtCore.pyqtSignal(list) #access Gui
     signalMeasStarted = QtCore.pyqtSignal() #access Gui
     signalWait = threading.Event()
+    signalWaitForProcessThumbnail = threading.Event()
     def __init__( self, parent = None ):
+
         QtCore.QObject.__init__(self)
         self.signals=Signal()
         self.graphName = ''
-
+        self.parent = parent
         snakemq.init_logging()
         logger = logging.getLogger("snakemq")
         logger.setLevel(logging.ERROR)
+        self.signalWaitForProcessThumbnail.set()
         self.q = queue.Queue()
         self.qRun = False
 
@@ -144,12 +147,20 @@ class Server(QtCore.QObject):
 
                     elif _sdata[0] == self.signals.MEAS_PLOT_COMPLETE:
                         dispatcher.send(self.signals.MEAS_PLOT_COMPLETE, dispatcher.Anonymous)
+                        #prevent controller to start new plot before  current plot complete
+                        self.parent.signalWaitForFinishedLastPlot.clear()
 
                     elif _sdata[0] == self.signals.MEAS_RESULT:
                         dispatcher.send(self.signals.MEAS_RESULT, dispatcher.Anonymous,_sdata[1])
 
                     elif _sdata[0] == self.signals.GRAPH_THUMBNAIL_READY:
                         dispatcher.send(self.signals.GRAPH_THUMBNAIL_READY, dispatcher.Anonymous)
+                        #thumbnail was last action for current plot, so allow controller to start new plot
+#                        print ("set Signal WaitForProcessThumbnail")
+                        #self.parent.signalWaitForFinishedLastPlot.set()
+ #                       self.parent.signalWaitForProcessThumbnail.set()
+ #                       print ("set Signal WaitForProcessThumbnail")
+
                   #  elif _sdata[0] == self.signals.GRAPH_STARTED:
                    #     logging.info('GRAPH_STARTED')
                    #    dispatcher.send(self.signals.GRAPH_STARTED,dispatcher.Any)

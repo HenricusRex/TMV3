@@ -22,7 +22,8 @@ import mmap
 
 
 class Workbench(object):
-    def __init__(self,workbench):
+    def __init__(self,workbench, parent = None):
+        self.parent = parent
         self.config = configparser.ConfigParser()
         self.config.read('TMV3.ini')
         self.signals = Signal()
@@ -55,7 +56,7 @@ class Workbench(object):
         dispatcher.connect(self.onGetTestPrev, signal=self.signals.WB_GET_TEST_PREV, sender=dispatcher.Any)
         dispatcher.connect(self.onGetTestNext, signal=self.signals.WB_GET_TEST_NEXT, sender=dispatcher.Any)
         dispatcher.connect(self.onGetTestLast, signal=self.signals.WB_GET_TEST_LAST, sender=dispatcher.Any)
-        dispatcher.connect(self.onGetTestIDs, signal=self.signals.WB_GET_MASTER_IDS, sender=dispatcher.Any)
+        dispatcher.connect(self.onGetMasterTestIDs, signal=self.signals.WB_GET_MASTER_IDS, sender=dispatcher.Any)
         dispatcher.connect(self.onGetTestIDs, signal=self.signals.WB_GET_TEST_IDS, sender=dispatcher.Any)
         dispatcher.connect(self.onGetMasterPlot, signal=self.signals.WB_GET_MASTER_PLOT, sender=dispatcher.Any)
         dispatcher.connect(self.onGetProjectTestIDs, signal=self.signals.WB_GET_PROJECTS_TEST_IDS, sender=dispatcher.Any)
@@ -106,7 +107,7 @@ class Workbench(object):
 #        dispatcher.connect(self.onImportCorr,signal=self.signals.WB_IMPORT_CORE,sender=dispatcher.Any)
 #        dispatcher.connect(self.onImportLimit,signal=self.signals.WB_IMPORT_LIMIT,sender=dispatcher.Any)
     #                t = threading.Thread(target = _meas_class.parser)
-    #                t.start()
+    #                t.start()3
 
         # Autobackup !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -212,6 +213,7 @@ class Workbench(object):
             ticket.data = None
         else:
             ticket.data = _test
+            ticket.testID = _test.test_id
         pass
 
     def onGetTestPrev(self, ticket):
@@ -221,6 +223,7 @@ class Workbench(object):
             ticket.data = None
         else:
             ticket.data = _test
+            ticket.testID = _test.test_id
         pass
 
     def onGetTestNext(self, ticket):
@@ -230,6 +233,7 @@ class Workbench(object):
             ticket.data = None
         else:
             ticket.data = _test
+            ticket.testID = _test.test_id
         pass
 
     def onGetTestLast(self, ticket):
@@ -239,10 +243,10 @@ class Workbench(object):
             ticket.data = None
         else:
             ticket.data = _test
+            ticket.testID = _test.test_id
         pass
 
     def onGetProjectTestIDs(self,ticket):
-        #find all TestIDs of KMV-Masters
         _test = ticket.data
         _ret = _test.findProject()
         if _ret == 0:
@@ -252,7 +256,6 @@ class Workbench(object):
         pass
 
     def onGetTestIDs(self,ticket):
-        #find all TestIDs of KMV-Masters
         _test = DB_Handler_TPL3.TPL3Test(self.name,0)
         _test.category = ticket.data
         _ret = _test.findCategory()
@@ -260,7 +263,20 @@ class Workbench(object):
             ticket.data = None
         else:
             ticket.data = _test
+            ticket.testID = _test.test_id
         pass
+
+    def onGetMasterTestIDs(self,ticket):
+        _test = DB_Handler_TPL3.TPL3Test(self.name,0)
+        _test.category = ticket.data
+        _ret = _test.findCategory()
+        if _ret == 0:
+            ticket.data = None
+        else:
+            ticket.data = _test
+            ticket.testID = _test.test_id
+        pass
+
 
     def onGetMasterPlot(self,ticket):
         #find all TestIDs of KMV-Masters
@@ -299,12 +315,14 @@ class Workbench(object):
         _ret = _test.update()
         if _ret == 0:
             ticket.data = None
+
     def onUpdateProject(self,ticket):
        # assert isinstance(test,DB_Handler_TPL3.Tpl3Test)
         _project = ticket.data
         _ret = _project.update()
         if _ret == 0:
             ticket.data = None
+
     def onGetNewProject(self, ticket):
         _project = DB_Handler_TPL3.Tpl3Projects(self.name,0)
         _ret = _project.add()
@@ -465,7 +483,7 @@ class Workbench(object):
 
     def addTrace(self,ticket):
 
-        assert isinstance(ticket.data, DB_Handler_TPL3.Tpl3Traces)
+#        assert isinstance(ticket.data, DB_Handler_TPL3.Tpl3Traces)
         _trace = ticket.data
         _trace.filename = self.name
         _trace.plotID = ticket.plotID
@@ -502,6 +520,7 @@ class Workbench(object):
     def onSetResult(self,ticket):
         _command = "SetResult", ticket
         self.q.put(_command)
+
     def onSetImage(self,ticket):
         _command = "SetImage", ticket
         self.q.put(_command)
@@ -512,11 +531,14 @@ class Workbench(object):
             _plot.updateResult(ticket.data)
         except Exception as _err:
             print (_err)
+
     def setImage(self,ticket):
         print("WB Set Image 2")
         try:
             _plot = DB_Handler_TPL3.Tpl3Plot(self.name,ticket.plotID)
             _plot.updateImage()
+            self.parent.signalWaitForProcessThumbnail.set()
+
         except Exception as _err:
             print (_err)
 
@@ -635,9 +657,9 @@ class Workbench(object):
         plotID = ticket.data
         trace = DB_Handler_TPL3.Tpl3Traces(self.name,0)
         ret = trace.readCorrIDs(plotID)
-        if ret != None:
-            for x in ret:
-                for y in x:
+        for x in ret:
+            for y in x:
+                if not y is None:
                     yi = eval(y)
                     for z in yi :
                         if z not in corrIDList:

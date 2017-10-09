@@ -1,13 +1,15 @@
 __author__ = 'Heinz'
 
-
+import os
 from NeedfullThings import *
 from DB_Handler_TPL3 import *
+from DB_Handler_TDS3 import *
 from Workbench import  Ticket
 from datetime import datetime
 from Protocol import Protocol
 from GetSerialNo import GetSerialNo
 import configparser
+import DialogTempestNo
 
 
 
@@ -16,6 +18,7 @@ class TestDataZZ(QtGui.QWidget):
     def __init__(self, parent=None):
         super(QtGui.QWidget, self).__init__(parent)
         self.test = self.ui = uic.loadUi("TestDataZZ.ui", self)
+        self.parent = parent
         self.ticket = Ticket()
         self.signals = Signal()
         self.config = configparser.ConfigParser()
@@ -48,6 +51,9 @@ class TestDataZZ(QtGui.QWidget):
         self.currentTest = TPL3Test('', int(self.config['Current']['current_testID_ZZ']))
         self.currentTestID = int(self.config['Current']['current_testID_ZZ'])
         self.currentProjectID = int(self.config['Current']['current_project_id'])
+        self.currentTestIDZZ = int(self.config['Current']['current_testID_ZZ'])
+        self.currentTestIDZKZ = int(self.config['Current']['current_testID_ZZ'])
+
         self.currentProject = Tpl3Projects
         self.planID_ZZ = int (self.config['Current']['current_planID_ZZ'])
         self.planID_ZK = int (self.config['Current']['current_planID_ZK'])
@@ -60,6 +66,7 @@ class TestDataZZ(QtGui.QWidget):
         self.testTableModel = None
         self.currentPlotNo = 0
         self.currentMeasNo = 0
+        self.plotList = []
 
         #get current Project
         self.ticket.data = self.currentProjectID
@@ -86,7 +93,7 @@ class TestDataZZ(QtGui.QWidget):
         self.BtnNewTest('ZZ',self.planID_ZZ)
 
     def onBtnNewTestZK(self):
-        self.BtnNewTest('ZKMV',self.planID_ZK)
+        self.BtnNewTest('ZK',self.planID_ZK)
         pass
 
     def BtnNewTest(self,type,tds):
@@ -99,7 +106,7 @@ class TestDataZZ(QtGui.QWidget):
         sDialog.fillDialog()
         sDialog.exec()
         if sDialog.ret ==  True:
-            self.getNewTest(True, type)
+            self.getNewTest(False, type)
             self.currentTDS = tds
 
             self.currentTest.serial_no = sDialog.serialNo
@@ -134,10 +141,12 @@ class TestDataZZ(QtGui.QWidget):
             self.currentTest.category = category
             self.currentTest.project_id = self.currentProjectID
 
-        if category == 'ZZ':
+        if category == 'ZK':
             self.currentTest.procedure = 'ZONE KMV'
+            self.currentTest.category = 'ZK'
         else:
             self.currentTest.procedure = 'ZONE APP'
+            self.currentTest.category = 'ZZ'
 
         self.currentTest.setup = 'Normal'
         self.currentTestSave = False
@@ -167,6 +176,22 @@ class TestDataZZ(QtGui.QWidget):
         dispatcher.send(self.signals.CTR_LOAD_TESTPLAN, dispatcher.Anonymous)
         pass
 
+    def getTDSPlotTitles(self):
+        _file =  Tpl3Files(self.currentTest.filename,0)
+        _file.file_id = self.currentTDS
+        _file.destination = '../WorkingDir/TempTestPlan.TDS3'
+        _file.export()
+
+        _ds = Dataset('../WorkingDir/TempTestPlan.TDS3')
+        _ds.read()
+
+        self.plotList = []
+        for item in _ds.db.plot_list:
+            self.plotList.append(item.title)
+
+
+
+
     def onBtnNewProject(self):
         dispatcher.send(self.signals.WB_GET_NEW_POJECT, dispatcher.Anonymous, self.ticket)
         if (self.ticket.data != None):
@@ -182,6 +207,7 @@ class TestDataZZ(QtGui.QWidget):
             self.ui.lbProject.setText(self.currentProject.title)
             self.ui.lbTestNo.setText(self.currentTest.test_no)
             self.ui.pteComment.setPlainText(self.currentTest.comment)
+
 
             self.fillDialog()
             self.saveInitFile()
@@ -235,28 +261,98 @@ class TestDataZZ(QtGui.QWidget):
         self.fillDialog()
 
     def onBtnMarkAsReference(self):
+        #mark as Reference is possible for ZZ and ZK
+        #1 ZZ and 1 ZK is allowed
 
-        _tm = TableModel(['CertificationNo', 'EUT-Name', 'Date', 'ID'])
+        #_tm = TableModel(['CertificationNo', 'EUT-Name', 'Date', 'ID'])
 
         _idx = self.ui.twTest.selectedIndexes()
         if len(_idx) == 0:
             return
-        _ret = self.testTableModel.data(_idx[3], Qt.DisplayRole)
-        if _ret == "ZKMV-Master":
-            self.testTableModel.setData(_idx[3], "ZKMV")
+        _ret = self.testTableModel.data(_idx[8], Qt.DisplayRole)
+
+        #switch to no
+        if _ret == "yes":
+            self.testTableModel.setData(_idx[8], "no")
+            self.testTableModel.setData(_idx[9], "?")
+            self.currentTest.tempest_z_no = "?"
+            self.ticket.data = self.currentTest
+            dispatcher.send(self.signals.WB_UPDATE_TEST, dispatcher.Anonymous, self.ticket)
+            return
+
+
+        if self.testTableModel.data(_idx[5], Qt.DisplayRole) == 'ZK':
+            #test of other referenced ZK
+            test = TPL3Test('',0)
+            assert  isinstance(test,TPL3Test)
+            test.project_id = self.currentTest.project_id
+            ret = test.findReferenced()
+
+
+        #test Plots of final attribut
+        tpl3Plot = Tpl3Plot(self.currentTest.filename,0)
+        tpl3Plot.test_id =  self.currentTest.test_id
+        ret = tpl3Plot.findFinalPlots()
+        self.getTDSPlotTitles()
+        dtext = ''
+        _final = True
+
+        for i in self.plotList:
+            test = (i, 'final')
+            if test in ret:
+                pass
+            else:
+                dtext = dtext + str(i) +  '\n'
+                _final = False
+
+        if not _final:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setWindowTitle("Information")
+            msg.setInformativeText("one or more plots not exists or not final")
+            msg.setDetailedText((dtext))
+            msg.setStandardButtons(QMessageBox.Ok )
+            msg.exec_()
+            return
+
+            if self.testTableModel.data(_idx[5], Qt.DisplayRole) == 'ZK':
+                self.testTableModel.setData(_idx[8], "yes")
+            else:
+                #find ZK-Test in Project with final plots
+
+
+
+
+
+                dT = DialogTempestNo.DialogTempestNo()
+                dT.exec()
+                if dT.ret:
+                    self.testTableModel.setData(_idx[9],dT.tempestNo)
+                    self.currentTest.tempest_z_no = dT.tempestNo
+                    self.ticket.data = self.currentTest
+                    dispatcher.send(self.signals.WB_UPDATE_TEST, dispatcher.Anonymous, self.ticket)
+
+
+
         else:
-            self.testTableModel.setData(_idx[3], "ZKMV-Master")
-            _id = self.testTableModel.data(_idx[4], Qt.DisplayRole)
-            _data = []
-            _data.append(_id)
-            _data.append('final')
-            self.ticket.data = _data
-        #    dispatcher.send(self.signals.WB_SET_GROUP, dispatcher.Anonymous, self.ticket)
-            _d = self.currentTest.date_time
-            _t = ('{}{}{}??{}{}?'.format(_d[2:4],_d[5:7],_d[8:10],_d[11:13],_d[14:16]))
-            self.ui.leZNo.setText(_t)
-            _text = 'please complete CertificationNo'
-            QtGui.QMessageBox.information(self, 'TMV3',_text)
+            self.testTableModel.setData(_idx[8], "no")
+            self.testTableModel.setData(_idx[9], "?")
+            self.currentTest.tempest_z_no = "?"
+            self.ticket.data = self.currentTest
+            dispatcher.send(self.signals.WB_UPDATE_TEST, dispatcher.Anonymous, self.ticket)
+            return
+#
+#        if self.testTableModel.data(_idx[5], Qt.DisplayRole) == 'ZZ':
+#            dT = DialogTempestNo.DialogTempestNo()
+#            dT.exec()
+#            if dT.ret:
+#                self.testTableModel.setData(_idx[9],dT.tempestNo)
+#                self.currentTest.tempest_z_no = dT.tempestNo
+#                self.ticket.data = self.currentTest
+#                dispatcher.send(self.signals.WB_UPDATE_TEST, dispatcher.Anonymous, self.ticket)
+
+
+
 
     def onBtnShowPlot(self):
         _idx = self.ui.twMeas.selectedIndexes()
@@ -284,18 +380,31 @@ class TestDataZZ(QtGui.QWidget):
         if len(_idx) == 0:
             return
 
+        ret = QtGui.QMessageBox.information(self, 'TMV3', 'are you shure to delete this test?', QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        if ret == QtGui.QMessageBox.No:
+            return
+
         # draw selected plot
         _id = self.testTableModel.data(_idx[6], Qt.DisplayRole)
         self.ticket.testID = _id
         dispatcher.send(self.signals.WB_DEL_TEST,dispatcher.Anonymous, self.ticket)
+        self.currentProject.test_ids.remove(_id)
         self.fillDialog()
+
     def onBtnMarkAsFinal(self):
-        _idx = self.ui.twTest.selectedIndexes()
+        _idx = self.ui.twMeas.selectedIndexes()
         if len(_idx) == 0:
             return
-        self.testTableModel.setData(_idx[4], "final")
 
-        # _id = self.measTableModel.data(_idx[6], Qt.DisplayRole)
+        self.measTableModel.setData(_idx[5], "final")
+
+        id = int(self.measTableModel.data(_idx[6], Qt.DisplayRole))
+        print (id)
+        tpl3Plot = Tpl3Plot(self.currentTest.filename,id)
+        tpl3Plot.test_id = self.currentTest.test_id
+        ret = tpl3Plot.updateGroup("final")
+
+        #_id = self.measTableModel.data(_idx[6], Qt.DisplayRole)
         # _data = []
         # _data.append(_id)
         # _data.append('final')
@@ -308,11 +417,16 @@ class TestDataZZ(QtGui.QWidget):
         pass
 
     def onBtnMarkAsTryOut(self):
-        _idx = self.ui.twTest.selectedIndexes()
+        _idx = self.ui.twMeas.selectedIndexes()
         if len(_idx) == 0:
             return
-        self.testTableModel.setData(_idx[4], "try out")
+        self.measTableModel.setData(_idx[5], "try out")
 
+        id = int(self.measTableModel.data(_idx[6], Qt.DisplayRole))
+        print (id)
+        tpl3Plot = Tpl3Plot(self.currentTest.filename,id)
+        tpl3Plot.test_id = self.currentTest.test_id
+        ret = tpl3Plot.updateGroup("try out")
         # _id = self.measTableModel.data(_idx[6], Qt.DisplayRole)
         # _data = []
         # _data.append(_id)
@@ -342,6 +456,7 @@ class TestDataZZ(QtGui.QWidget):
             self.ui.lbProject.setText(self.currentProject.title)
             self.fillDialog()
             self.saveInitFile()
+
     def onBtnFwd(self):
         self.ticket.data = self.currentProjectID
         dispatcher.send(self.signals.WB_GET_PROJECT_NEXT, dispatcher.Anonymous, self.ticket)
@@ -365,7 +480,7 @@ class TestDataZZ(QtGui.QWidget):
     def fillDialog(self):
 
         if self.testTableModel == None:
-            self.testTableModel = TableModel(['TestNo','SerialNo','ModelNo','Model Name','Date','TestPlan','ID'])
+            self.testTableModel = TableModel(['TestNo','SerialNo','ModelNo','Model Name','Date','TestPlan','ID','Result','Ref.','Tempest-ZNo'])
         else:
             self.clearTTTable()
         for _testID in self.currentProject.test_ids:
@@ -375,12 +490,12 @@ class TestDataZZ(QtGui.QWidget):
             if self.ticket.data != None:
                 _test = self.ticket.data
                 self.testTableModel.addData([_test.test_no,_test.serial_no, _test.model_no, _test.model_name,
-                                             _test.date_time, _test.category, _test.test_id])
+                                             _test.date_time, _test.category, _test.test_id,_test.result,_test.reference,_test.tempest_z_no])
 
         self.ui.twTest.setModel(self.testTableModel)
         _header = self.ui.twTest.horizontalHeader()
         _header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
-
+        self.ui.twTest.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
 
         if not self.selectTest(self.currentTestID):
             return
@@ -421,17 +536,15 @@ class TestDataZZ(QtGui.QWidget):
              _i += 1
         self.ui.twMeas.setModel(self.measTableModel)
         _header = self.ui.twMeas.horizontalHeader()
-       # _header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
-        # self.ui.twMeas.setColumnHidden(6,True)
-        self.ui.twMeas.setColumnWidth(8,200)
-        self.ui.twMeas.setColumnWidth(0,40)
-        self.ui.twMeas.setColumnWidth(1,40)
-        self.ui.twMeas.setColumnWidth(3,70)
+        _header.setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        _header.setStretchLastSection(True)
+        self.ui.twMeas.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.ui.twMeas.setColumnHidden(7, True)
         self.ui.twMeas.scrollToBottom()
         self.measTableModel.endResetModel()
 
     def selectTest(self,id):
+
         rows = self.testTableModel.rowCount()
 
         for x in range (0, rows):
@@ -450,7 +563,14 @@ class TestDataZZ(QtGui.QWidget):
         self.ticket.testID = self.currentTestID
         dispatcher.send(self.signals.WB_GET_TEST, dispatcher.Anonymous, self.ticket)
         self.currentTest = self.ticket.data
+        if self.currentTest.category == 'ZZ':
+            self.currentTest.procedure = 'ZONE APP'
+            self.currentTDS = self.planID_ZZ
+        else:
+            self.currentTest.procedure = 'ZONE KMV'
+            self.currentTDS = self.planID_ZK
         self.fillDialog2()
+
     def onTestTableDClick(self):
         return
      #    _idx = self.ui.twTest.selectedIndexes()

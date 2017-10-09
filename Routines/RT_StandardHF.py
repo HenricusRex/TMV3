@@ -86,14 +86,14 @@ class RT_StandardHF(object):
         return 1
 
     def startRoutine(self, ds_routine, job_table):
+        #use first useable device in list
+        devices = ds_routine.device1.replace('\r','')
+        self.deviceList = list(devices.split('\n'))
 
-        self.deviceList = list(ds_routine.device1.split(','))
         self.job_table = job_table
-        assert isinstance(ds_routine,DatasetRoutine)
-        _ds_routine = ds_routine
         self.activeRoutine = ds_routine.title
         #operator-instructions
-        if (_ds_routine.instruction != ""):
+        if (ds_routine.instruction != ""):
             # show instructions text
             pass
 
@@ -111,6 +111,7 @@ class RT_StandardHF(object):
         _ret = self.parser
 
         return _ret
+
     def loadDriver(self,device):
         _error_text = "error load DeviceDriver"
         #Test Device 1 (always Spectrum Analyser)
@@ -118,12 +119,6 @@ class RT_StandardHF(object):
             #export Driver-Script to WorkingDir
             _module_name = device
             _module_path =os.path.abspath(os.path.join(self.workingDir,_module_name)+".py")
-
-            #---for comfortable development
-            #_ret = self.config['Development']['development']
-            #if (self.config['Development']['development'] == '1'):
-            #    _module_name = self.config['Development']['modulname_devicedriver']
-            #    _module_path = self.config['Development']['modulpath_devicedriver']
 
             _error_text = "error load DeviceDriver {0} {1}".format(str(_module_name),str(_module_path))
 
@@ -257,7 +252,9 @@ class RT_StandardHF(object):
                 if (self.job_table.Name == "Trace"):
                     print ("Trace setRouteF",self.setRouteFlag)
                     if self.setRouteFlag:
-                        self.startRoute()
+                        _ret = self.startRoute()
+                        if not _ret:
+                            return (0)
                         self.setRouteFlag = False
 
                     self.startOfTrace()
@@ -295,7 +292,7 @@ class RT_StandardHF(object):
         if self.currentSetting.autorange:
             self.startAutoRange = True
 
-        if not self.currentSetting.instruction == None:
+        if not (self.currentSetting.instruction == None or self.currentSetting.instruction == 'None'):
             print("i = ",self.currentSetting.instruction)
             self.parent.onShowInstruction(self.currentSetting.instruction)
           # instr = Instruction(self.currentSetting.instruction,self)
@@ -315,6 +312,7 @@ class RT_StandardHF(object):
             for row in self.currentSetting.command_list:
                 _func = getattr(self.spec_analyzer, row.command)
                 _error_text = 'can not set command {0}'.format(str(_func))
+                print (row.parameter)
                 _ret = _func(row.parameter)
                 if _ret == False:
                     return False
@@ -336,7 +334,7 @@ class RT_StandardHF(object):
         if _ret == 0:
             return True
 
-        _router = Router()
+        _router = Router(self)
         _router.cutFreqX1 = self.currentSetting.start_freq
         _router.cutFreqX2 = self.currentSetting.stop_freq
 
@@ -573,4 +571,5 @@ class RT_StandardHF(object):
         pass
     def endOfPlot(self):
         pass
+
 

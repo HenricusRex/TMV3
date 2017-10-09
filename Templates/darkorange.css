@@ -9,8 +9,10 @@ QToolTip
 
 QWidget
 {
-    color: #c1c1c1;
-    background-color: #323232;
+/*    color: #c1c1c1;
+    background-color: #323232;*/
+    color: #eeeeee;
+    background-color: #152535;
 }
 
 QWidget:item:hover
@@ -98,7 +100,7 @@ QLineEdit:focus,QTextEdit:focus
 
 QPushButton
 {
-    color: #b1b1b1;
+    color: #eeeeee;
     background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);
     border-width: 1px;
     border-color: #1e1e1e;
@@ -399,7 +401,8 @@ QTabBar::tab:first:!selected
 
 QTabBar::tab:!selected
 {
-    color: #b1b1b1;
+  /*  color: #b1b1b1;*/
+    color: #eeeeee;
     border-bottom-style: solid;
     margin-top: 3px;
     background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);
@@ -407,6 +410,7 @@ QTabBar::tab:!selected
 
 QTabBar::tab:selected
 {
+    color: #eeeeee;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     margin-bottom: 0px;
@@ -422,7 +426,7 @@ QTabBar::tab:!selected:hover
 }
 
 QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{
-    color: #b1b1b1;
+    color: #eeeeee;
     background-color: #323232;
     border: 1px solid #b1b1b1;
     border-radius: 6px;

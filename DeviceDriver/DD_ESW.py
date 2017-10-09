@@ -20,8 +20,14 @@ class DD_ESW(SpectrumAnalyzer):
             return False
         #not attenuator protection
         _ret = self.sa.write("INP:ATT:PROT 0")
+        if not _ret:
+            return False
         #calculate autorange with transducer
-        self.sa.write("CORR:TRAN:ADJ:RLEV ON")
+        _ret = self.sa.write("CORR:TRAN:ADJ:RLEV ON")
+        if not _ret:
+            return False
+        #DC - Input
+        _ret = self.sa.write("INP:COUP DC")
         if not _ret:
             return False
 

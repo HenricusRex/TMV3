@@ -3,54 +3,80 @@ import math
 
 class DD_FSET(SpectrumAnalyzer):
     def __init__(self):
-        super().__init__('FSET')
+        super(DD_FSET,self).__init__('FSET')
         self.stepMode = False
         self.Mode22 = False
         self.ResBw = 0
+        self.editableCommands = ['set_StartFreq',
+                                'set_StopFreq',
+                                'set_ResBW',
+                                'set_VidBW',
+                                'set_Attenuator',
+                                'set_PreAmplifier',
+                                'set_PreSelector',
+                                'set_RefLevel',
+                                'set_SweepTime',
+                                'set_Detector']
         pass
 
 
-    def __enter__(self):
-        return self
 
-    def __exit__(self, type, value, traceback):
-        return 1
+    def set_ResBW(self,*par:['1','2','3','5',
+                   '10','20','30','50',
+                   '100','200','300','500',
+                   '1k','2k','3k','5k',
+                   '10k','20k','30k','50k',
+                   '100k','200k','300k','500k',
+                   '1M','2M','3M','5M',
+                   '10M', '20M', '30M', '50M',
+                   '100M', '200M', '300M', '500M']):
+        return(super().set_ResBW(par))
 
-    def setup(self):
-        self.Mode22 = False
-        ret = super().setup()
-        return ret
-    def set_ResBW(self,ResBW):
-        self.ResBw = float(ResBW) #remember for autorange
-        ret = super().set_ResBW(ResBW)
-        return ret
+    def set_VidBW(self,*par:['auto','1','2','3','5',
+                   '10','20','30','50',
+                   '100','200','300','500',
+                   '1k','2k','3k','5k',
+                   '10k','20k','30k','50k',
+                   '100k','200k','300k','500k',
+                   '1M','2M','3M','5M','10M','30M','50M']):
+        return(super().set_VidBW(par))
 
-    def set_StepTime(self,sec):
-        if self.stepMode == False:
-            super().set_SweepTime(sec)
+    def set_StartFreq(self,*par:'S3'):
+        f = float(*par[0])
+        if f >= 2e9:
+            if not self.Mode22: self.set22GHz()
+        else:
+            if self.Mode22: self.set2GHz()
 
-    def set_PreSelector(self,pre):
+        return super().set_StartFreq(f)
+
+    def set_StopFreq(self,*par:'S3'):
+        return super().set_StopFreq(par)
+
+    def set_SweepTime(self,*par:'S0'):
+        self.stepMode = False
+        return super().set_SweepTime(par)
+
+    def set_StepTime(self,*par:'S0'):
+        self.stepMode = True
+        return super().set_SweepTime(par)
+
+    def set_PreSelector (self,*par:['NARROW','NORMAL','WIDE']):
         # not PreSelector in 22GHZ-Mode
         if self.Mode22: return True
-
-        _ret = True
-        if pre != 'WIDE':
-            pre = 'NARROW'
         _ret = super().get_PreselectorState()
         if _ret == False:
             super().set_PreselectorState('1')
-        _ret = super().set_Preselector(pre)
+        _ret = super().set_Preselector(par)
         return _ret
-    def set_PreAmplifier(self,amp):
+
+    def set_PreAmplifier(self,*par:['0','10','20','30']):
         if self.Mode22: return
-        if amp == 0:
-            _ret = super().set_AmplifierState('0')
-        else:
-            _ret = super().get_AmplifierState()
-            if _ret == False:
-                super().set_AmplifierState('1')
-            _ret = super().set_Amplifier(amp)
+        if par != '0':
+            super().set_AmplifierState('1')
+        _ret = super().set_Amplifier(par)
         return _ret
+
     def get_PreAmplifier(self):
         if self.Mode22: return ('20')
         _ret = super().get_AmplifierState()
@@ -60,22 +86,18 @@ class DD_FSET(SpectrumAnalyzer):
             _ret =  super().get_Amplifier()
             return _ret
 
-    def set_VidBW(self,VBw):
-        if float(VBw) > 50e6:
-            return True
-        else:
-            _ret =  super().set_VidBW(VBw)
-            return _ret
+    def set_RefLevel(self, *par: 'S0'):
+        return super().set_RefLevel(par)
 
-    def set_StartFreq(self,StartFreq):
-        if float(StartFreq) >= 2e9:
-            if not self.Mode22: self.set22GHz()
-        else:
-            if self.Mode22: self.set2GHz()
+    def set_Detector(self,*par:['Max Peak','Min Peak','Average','AC Video']):
+        return (super().set_Detector(par))
 
-        super().set_StartFreq(StartFreq)
+    def validate(self, *args):
+        return True
 
-        pass
+    def getEditableCommands(self):
+        return (self.editableCommands)
+
     def set22GHz(self):
         super().writeSA("FREQ:RANG 22GHz")
         if not super().errorQueueHandler(): return False
@@ -87,6 +109,7 @@ class DD_FSET(SpectrumAnalyzer):
         if not super().errorQueueHandler(): return False
         self.Mode22 = False
         return True
+
     def autoRange(self):
         #start position
         _HF_Overload = False

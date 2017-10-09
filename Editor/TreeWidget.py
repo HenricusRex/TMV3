@@ -37,8 +37,11 @@ class TreeWidgetItem(QtGui.QTreeWidgetItem):
              else:
                  text,flags = 'test',None
 
-         text = text + title
-         self.setText(0, title)
+         if isinstance(title,tuple):
+             self.setText(0, title[0]+','+title[1])
+         else:
+             self.setText(0, title)
+
          self.setFlags(self.flags() & flags)
 
 
@@ -54,7 +57,7 @@ class TreeWidget(QtGui.QTreeWidget):
         self.setDragEnabled(True)
         self.setDropIndicatorShown(True)
         self.invisibleRootItem().setFlags(QtCore.Qt.NoItemFlags)
-
+        self.parentWidget = parent
 #        TreeWidgetItem(self, PLAN_TYPE,0)
 
     def rowsInserted(self, parent, start, end):
@@ -151,6 +154,7 @@ class TreeWidget(QtGui.QTreeWidget):
                      self.insertTopLevelItem(min(target,
                          self.topLevelItemCount()), taken.pop(0))
          return True
+
     def copySelection(self, parent, position):
 
          selection = [QtCore.QPersistentModelIndex(i)
@@ -210,4 +214,5 @@ class TreeWidget(QtGui.QTreeWidget):
         if item.childCount() > 0:
             for i in range(item.childCount()):
                 self.addCind(item.child(i))
+
 

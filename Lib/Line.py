@@ -12,8 +12,6 @@ from Workbench import Ticket
 import DB_Handler_TPL3
 
 class Line(QtGui.QDialog):
-
-
     def __init__(self,parent,ID,edit):
         #global model
         super(Line,self).__init__(parent)
@@ -23,11 +21,10 @@ class Line(QtGui.QDialog):
             self.ui = uic.loadUi("../Lib/Line.ui",self)
         self.centerOnScreen()
         self.signals = Signal()
-    #    self._config = configparser.ConfigParser()
-    #    self._config.read('TMV3.ini')
         self.formater = Format()
         self.ticket = Ticket
         self.line = 0
+        self.edit = edit
 
         #Buttons
         self.ui.BtnAdd.clicked.connect(self.onBtnAdd)
@@ -57,12 +54,6 @@ class Line(QtGui.QDialog):
         self.line.read()
         self.fillForm()
 
-#        self.axes.xaxis.set_major_formatter(formatterHZ)
-#        self.axes.yaxis.set_major_formatter(formatterDB)
-#        self.navigation_toolbar = CustomToolbar(self.figure_canvas, self)
- #       layout.addWidget(self.navigation_toolbar, 0)
-        #self.figure_canvas.mpl_connect('button_press_event',self.OnClick)
-        #self.figure_canvas.mpl_connect('pick_event',self.onPick1)
     def fillForm(self):
         _item1 = QtGui.QTableWidgetItem(self.line.title)
         _item2 = QtGui.QTableWidgetItem(self.line.version)
@@ -74,15 +65,7 @@ class Line(QtGui.QDialog):
         self.ui.tableWidget.setItem(3,0,_item4)
 
         _row = self.ui.tableWidget_2.rowCount()
-       #  print(self.line.data_xy)
-       # # _xys = self.line.data_xy.decode()
-       # _xys = self.line.data_xy
         _xyf = ast.literal_eval(self.line.data_xy)
-       #
-       #  _x, _y = zip(*_xyf)
-       #
-       #  self.axes.plot(_x, _y, picker=5, label=self.line.title, color="red",
-       #                         ls='-', lw=3)
 
         for it in _xyf:
             _itemX = MyTableWidgetItem(str(it[0]))
@@ -96,6 +79,9 @@ class Line(QtGui.QDialog):
 
         self.onBtnDraw()
 
+        if not self.edit:
+            self.ui.tableWidget.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+            self.ui.tableWidget_2.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
     def setAxes(self):
         self.axes.set_ylabel('dBµV')
         self.axes.set_xlabel('Hz')
@@ -209,6 +195,7 @@ class Line(QtGui.QDialog):
 
     def onClose(self):
         self.close()
+
 class MyTableWidgetItem(QtGui.QTableWidgetItem):
     def __lt__(self, other):
         if ( isinstance(other, QtGui.QTableWidgetItem) ):

@@ -1,450 +1,380 @@
-07.08.2016 10:27:09 no such table: main.Plan
+06.06.2017 10:19:50 'RegFieldNames' object has no attribute 'Zoning'
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-07.08.2016 10:27:26 no such table: main.Plan
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 620, in read
+    self.zoning = _r.Zoning
+AttributeError: 'RegFieldNames' object has no attribute 'Zoning'
+06.08.2017 10:40:28 'RegFieldNames' object has no attribute 'Type'
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-07.08.2016 10:36:48 no such table: main.Plan
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:40:29 'RegFieldNames' object has no attribute 'Type'
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-07.08.2016 10:37:05 no such table: main.Plan
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:40:31 'RegFieldNames' object has no attribute 'Type'
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-07.08.2016 10:44:35 no such table: main.Plan
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:40:35 'RegFieldNames' object has no attribute 'Type'
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-07.08.2016 10:47:30 no such table: main.Plan
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:42:39 'RegFieldNames' object has no attribute 'Type'
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-07.08.2016 11:15:57 no such table: main.Plan
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:47:07 'RegFieldNames' object has no attribute 'Type'
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-07.08.2016 11:22:18 unable to open database file
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:54:30 'RegFieldNames' object has no attribute 'Type'
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 445, in read
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:55:04 'RegFieldNames' object has no attribute 'Type'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:56:52 'RegFieldNames' object has no attribute 'Type'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:59:49 'RegFieldNames' object has no attribute 'Type'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.08.2017 10:59:50 'RegFieldNames' object has no attribute 'Type'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 614, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.26.2017 11:24:37 'str' object has no attribute 'filename'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 504, in findDatasets
     _con = lite.connect(self.filename)
+AttributeError: 'str' object has no attribute 'filename'
+06.26.2017 02:46:16 no such column: file_id
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 506, in findDatasets
+    _cur.execute ("SELECT file_id FROM [Files] WHERE [Files].[Type]='Testplan'")
+sqlite3.OperationalError: no such column: file_id
+06.26.2017 02:47:32 no such column: file_id
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 506, in findDatasets
+    _cur.execute ("SELECT file_id FROM [Files] WHERE [Files].[Type]='Testplan'")
+sqlite3.OperationalError: no such column: file_id
+06.26.2017 02:48:02 no such column: file_id
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 506, in findDatasets
+    _cur.execute ("SELECT file_id FROM [Files] WHERE [Files].[Type]='Testplan'")
+sqlite3.OperationalError: no such column: file_id
+06.26.2017 02:49:00 near ",": syntax error
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 444, in read
+    _cur.execute ("SELECT * FROM [Files] WHERE [Files].[FileID] = {0}".format(str(self.file_id)))
+sqlite3.OperationalError: near ",": syntax error
+06.26.2017 02:49:00 near ",": syntax error
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 444, in read
+    _cur.execute ("SELECT * FROM [Files] WHERE [Files].[FileID] = {0}".format(str(self.file_id)))
+sqlite3.OperationalError: near ",": syntax error
+06.26.2017 02:49:00 near ",": syntax error
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 444, in read
+    _cur.execute ("SELECT * FROM [Files] WHERE [Files].[FileID] = {0}".format(str(self.file_id)))
+sqlite3.OperationalError: near ",": syntax error
+06.27.2017 06:31:09 'RegFieldNames' object has no attribute 'Zoning'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 729, in read
+    self.zoning = _r.Zoning
+AttributeError: 'RegFieldNames' object has no attribute 'Zoning'
+06.27.2017 06:31:19 'RegFieldNames' object has no attribute 'Zoning'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 729, in read
+    self.zoning = _r.Zoning
+AttributeError: 'RegFieldNames' object has no attribute 'Zoning'
+06.27.2017 07:09:59 near "z1_er_d": syntax error
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 803, in readLimitTitle
+    _cur.execute(_s)
+sqlite3.OperationalError: near "z1_er_d": syntax error
+06.27.2017 07:09:59 'RegFieldNames' object has no attribute 'Type'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 653, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+06.28.2017 07:06:54 'RegFieldNames' object has no attribute 'Type'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 653, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+07.03.2017 02:31:26 unable to open database file
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 801, in copy
+    _old_db = lite.connect(self.filename)
 sqlite3.OperationalError: unable to open database file
-07.08.2016 11:22:26 unable to open database file
+07.03.2017 02:32:07 table [Commands] already exists
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 445, in read
-    _con = lite.connect(self.filename)
-sqlite3.OperationalError: unable to open database file
-07.22.2016 08:45:42 no such table: main.Plan
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 805, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+07.03.2017 02:33:57 table [Commands] already exists
 Traceback (most recent call last):
-  File "/opt/TMV3/Lib/DB_Handler_TDS3.py", line 449, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-08.01.2016 02:51:12 'RegFieldNames' object has no attribute 'NATO'
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 805, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+07.03.2017 02:45:13 table [Commands] already exists
 Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 457, in read
-    self.nato = _r.NATO
-AttributeError: 'RegFieldNames' object has no attribute 'NATO'
-08.01.2016 02:51:44 'RegFieldNames' object has no attribute 'NATO'
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 805, in copy
+    _new_db.executescript(query)
+sqlite3.OperationalError: table [Commands] already exists
+07.03.2017 03:04:32 no such table: Plan
 Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 457, in read
-    self.nato = _r.NATO
-AttributeError: 'RegFieldNames' object has no attribute 'NATO'
-08.16.2016 09:58:22 no such table: main.Plan
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-08.16.2016 10:00:12 no such table: main.Plan
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-08.16.2016 10:07:05 unable to open database file
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
-    _new_db = lite.connect(dest) # create a memory database
-sqlite3.OperationalError: unable to open database file
-08.16.2016 10:07:10 unable to open database file
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
-    _con = lite.connect(self.filename)
-sqlite3.OperationalError: unable to open database file
-08.16.2016 10:10:10 unable to open database file
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
-    _new_db = lite.connect(dest) # create a memory database
-sqlite3.OperationalError: unable to open database file
-08.16.2016 10:10:15 unable to open database file
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
-    _con = lite.connect(self.filename)
-sqlite3.OperationalError: unable to open database file
-08.16.2016 10:15:19 no such table: main.Plan
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 451, in read
-    _cur.execute ("SELECT * FROM main.Plan")
-sqlite3.OperationalError: no such table: main.Plan
-08.16.2016 10:15:56 unable to open database file
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
-    _new_db = lite.connect(dest) # create a memory database
-sqlite3.OperationalError: unable to open database file
-08.16.2016 10:15:59 unable to open database file
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
-    _con = lite.connect(self.filename)
-sqlite3.OperationalError: unable to open database file
-08.16.2016 10:17:41 unable to open database file
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 501, in copy
-    _new_db = lite.connect(dest) # create a memory database
-sqlite3.OperationalError: unable to open database file
-08.16.2016 10:17:46 unable to open database file
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 447, in read
-    _con = lite.connect(self.filename)
-sqlite3.OperationalError: unable to open database file
-08.16.2016 10:23:12 no such table: Plan
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 452, in read
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 724, in read
     _cur.execute ("SELECT * FROM [Plan]")
 sqlite3.OperationalError: no such table: Plan
-08.22.2016 10:04:59 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 10:14:41 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 10:18:27 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 10:23:04 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 11:21:40 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:14:15 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:15:24 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:17:03 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:21:16 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:21:52 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:25:33 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:26:05 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:27:16 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:28:45 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:29:37 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:33:05 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:34:05 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:35:42 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:40:02 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:45:45 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:48:10 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:57:53 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 02:59:55 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.22.2016 03:03:41 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 09:42:06 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 09:44:27 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 09:47:34 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 09:49:06 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 09:53:16 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 09:54:49 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 09:56:18 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:01:05 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:04:35 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:05:18 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:07:00 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:08:39 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:09:26 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:10:48 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:31:19 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:36:06 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:38:29 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:39:32 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:41:18 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:49:04 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:54:10 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:56:13 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 10:57:28 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 11:03:26 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 11:04:29 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.23.2016 11:09:44 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.25.2016 09:18:55 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.25.2016 09:22:27 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.25.2016 09:23:45 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.25.2016 09:25:40 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.29.2016 09:36:37 table [Commands] already exists
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 507, in copy
-    _new_db.executescript(query)
-sqlite3.OperationalError: table [Commands] already exists
-08.29.2016 02:21:04 no such table: Lines
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
-    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
-sqlite3.OperationalError: no such table: Lines
-08.29.2016 02:34:04 no such table: Lines
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
-    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
-sqlite3.OperationalError: no such table: Lines
-08.29.2016 02:38:01 no such column: z1_er_c
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 694, in readLimitTitleID
-    _cur.execute ("SELECT [LineID] FROM [Lines] WHERE ([Lines].[Title]={0} AND [Lines].[Type]='Limit')".format(title))
-sqlite3.OperationalError: no such column: z1_er_c
-09.07.2016 09:54:57 'RegFieldNames' object has no attribute 'Zooning'
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 459, in read
-    self.zooning = _r.Zooning
-AttributeError: 'RegFieldNames' object has no attribute 'Zooning'
-09.07.2016 09:57:15 'RegFieldNames' object has no attribute 'Zooning'
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 459, in read
-    self.zooning = _r.Zooning
-AttributeError: 'RegFieldNames' object has no attribute 'Zooning'
-09.08.2016 03:09:05 no such table: Settings
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
-    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
-sqlite3.OperationalError: no such table: Settings
-09.08.2016 03:11:37 no such table: Settings
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
-    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
-sqlite3.OperationalError: no such table: Settings
-09.12.2016 09:11:34 no such table: Settings
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
-    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
-sqlite3.OperationalError: no such table: Settings
-09.12.2016 09:16:36 no such table: Settings
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
-    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
-sqlite3.OperationalError: no such table: Settings
-09.12.2016 09:50:58 no such table: Settings
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
-    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
-sqlite3.OperationalError: no such table: Settings
-09.12.2016 09:55:22 no such table: Settings
-Traceback (most recent call last):
-  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 268, in read
-    "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
-sqlite3.OperationalError: no such table: Settings
+07.03.2017 03:05:07 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 724, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+07.03.2017 03:06:32 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 724, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+07.03.2017 03:07:20 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 724, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+07.03.2017 03:12:13 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 724, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+07.03.2017 03:21:02 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 724, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+07.03.2017 03:26:47 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 724, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+07.03.2017 03:29:30 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 724, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+07.05.2017 02:42:49 no such table: Files
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 143, in add
+    (str(self.title),self.data,str(self.type)))
+sqlite3.OperationalError: no such table: Files
+07.05.2017 02:55:16 no such table: Files
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 144, in add
+    (str(self.title),self.data,str(self.type)))
+sqlite3.OperationalError: no such table: Files
+07.05.2017 03:14:32 no such table: Files
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 144, in add
+    (str(self.title),self.data,str(self.type)))
+sqlite3.OperationalError: no such table: Files
+07.05.2017 03:19:22 no such table: Files
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 144, in add
+    (str(self.title),self.data,str(self.type)))
+sqlite3.OperationalError: no such table: Files
+07.05.2017 03:20:06 no such table: Files
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 144, in add
+    (str(self.title),self.data,str(self.type)))
+sqlite3.OperationalError: no such table: Files
+07.13.2017 02:10:33 'RegFieldNames' object has no attribute 'Zoning'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 781, in read
+    self.zoning = _r.Zoning
+AttributeError: 'RegFieldNames' object has no attribute 'Zoning'
+07.18.2017 07:42:03 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 07:42:52 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 07:43:14 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 07:44:40 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 07:45:38 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 07:47:56 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 09:12:04 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 09:45:47 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 09:46:07 'RegFieldNames' object has no attribute 'TableEntry'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 48, in read
+    self.tableEntry = _r.TableEntry
+AttributeError: 'RegFieldNames' object has no attribute 'TableEntry'
+07.18.2017 10:23:27 'NoneType' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'NoneType' does not support the buffer interface
+07.18.2017 10:23:31 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 773, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+07.18.2017 10:40:16 'NoneType' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'NoneType' does not support the buffer interface
+07.18.2017 10:40:18 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.01.2017 11:14:03 'str' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'str' does not support the buffer interface
+08.01.2017 11:14:11 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.01.2017 11:17:19 'str' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'str' does not support the buffer interface
+08.01.2017 11:17:26 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.01.2017 11:18:23 'str' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'str' does not support the buffer interface
+08.01.2017 11:18:26 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.01.2017 11:19:35 'str' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'str' does not support the buffer interface
+08.01.2017 11:19:36 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.01.2017 03:20:39 'str' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'str' does not support the buffer interface
+08.01.2017 03:20:48 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.01.2017 03:23:36 'str' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'str' does not support the buffer interface
+08.01.2017 03:23:41 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.01.2017 03:37:25 'str' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'str' does not support the buffer interface
+08.01.2017 03:37:30 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.01.2017 03:43:27 'str' does not support the buffer interface
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 565, in export
+    output_file.write(_file[0])
+TypeError: 'str' does not support the buffer interface
+08.01.2017 03:43:29 no such table: Plan
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 771, in read
+    _cur.execute ("SELECT * FROM [Plan]")
+sqlite3.OperationalError: no such table: Plan
+08.02.2017 09:30:32 'RegFieldNames' object has no attribute 'Type'
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TPL3.py", line 690, in read
+    self.type = _r.Type
+AttributeError: 'RegFieldNames' object has no attribute 'Type'
+08.03.2017 09:38:19 no such column: Routine
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 182, in deleteFiles
+    _cur.execute("DELETE FROM [Files] WHERE [Type]={0}".format( str(type)))
+sqlite3.OperationalError: no such column: Routine
+08.03.2017 09:38:19 no such column: Driver
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 182, in deleteFiles
+    _cur.execute("DELETE FROM [Files] WHERE [Type]={0}".format( str(type)))
+sqlite3.OperationalError: no such column: Driver
+08.03.2017 09:49:10 no such column: Routine
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 184, in deleteFiles
+    _cur.execute(_sql)
+sqlite3.OperationalError: no such column: Routine
+08.03.2017 09:49:10 no such column: Driver
+Traceback (most recent call last):
+  File "C:\TMV3\Lib\DB_Handler_TDS3.py", line 184, in deleteFiles
+    _cur.execute(_sql)
+sqlite3.OperationalError: no such column: Driver

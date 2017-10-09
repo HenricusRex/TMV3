@@ -21,11 +21,20 @@ class DatasetCommand(object):
         self.order = 0
         self.command = ''
         self.parameter = ''
+        self.format = ''
+        self.dim = ''
+        self.pList = []
+        self.driver = ''
+        self.tableEntry = ''
 
-    def read(self):
+    def read(self,con=None):
         _error_text = 'can not read Commands of Dataset %s '
         try:
-            _con = lite.connect(self.filename)
+            if con == None:
+                _con = lite.connect(self.filename)
+            else:
+                _con = con
+
             _cur = _con.cursor()
             _cur.execute ("SELECT * FROM [Commands] " +
                   "WHERE [Commands].[CommandID] = " + str(self.id_command) +
@@ -36,6 +45,7 @@ class DatasetCommand(object):
             self.order = _r.Order
             self.command = _r.Command
             self.parameter = _r.Parameter
+            self.tableEntry = _r.TableEntry
 
         except  Exception as _err:
             QMessageBox.information(None, 'TMV3',
@@ -43,8 +53,61 @@ class DatasetCommand(object):
             logging.exception(_err)
             return 0
 
+       # _con.close()
+        return 1
+
+    def readCommand(self,command,settingID):
+        _error_text = 'no such commands %s '
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute ("SELECT Parameter FROM [Commands] " +
+                  "WHERE [Commands].[Command] = '{0}' AND [Commands].[SettingID] = {1}".format (command,str(settingID)))
+
+            _command = _cur.fetchone()
+            _r = RegFieldNames(_cur,_command)
+            self.parameter = _r.Parameter
+
+        except  Exception as _err:
+            QMessageBox.information(None, 'TMV3',
+            _error_text % command, QMessageBox.Ok)
+            logging.exception(_err)
+            self.parameter = None
+            return 0
+
         _con.close()
         return 1
+
+    def readCommands(self,settingID):
+        _error_text = 'can not read Commands of Dataset %s '
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _s =  ("SELECT [Commands].[Command],[Commands].[Parameter] FROM [Commands] " +
+                "WHERE [Commands].[SettingID] = {0} ORDER BY [Commands].[Order]".format (str(settingID)))
+            _cur.execute (_s)
+
+            commands = _cur.fetchall()
+
+        except  Exception as _err:
+            QMessageBox.information(None, 'TMV3',
+            _error_text % self.filename, QMessageBox.Ok)
+            logging.exception(_err)
+            return None
+
+        _con.close()
+        return commands
+
+    def add(self):
+        _con = lite.connect(self.filename)
+        _cur = _con.cursor()
+        _cur.execute("INSERT INTO [Commands] (SettingID,[Order],Command,Parameter,TableEntry) " +
+                     "VALUES (?,?,?,?,?)",
+                     (str(self.id_setting), str(self.order), self.command,self.parameter,self.tableEntry))
+        _con.commit()
+        lastRowID = _cur.lastrowid
+        _con.close()
+        return lastRowID
 
 class DatasetFile(object):
     def __init__(self,filename,id_file):
@@ -71,14 +134,48 @@ class DatasetFile(object):
             QMessageBox.information(None, 'TMV3',
             _error_text % self.filename, QMessageBox.Ok)
             logging.exception(_err)
+            _con.close()
             return 0
 
         _con.close()
         return 1
 
+    def add(self):
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute("INSERT INTO [Files] (Title, Data, Type) VALUES (?, ?, ?)",
+                         (str(self.title),self.data,str(self.type)))
+            _con.commit()
+            _lastRowID = _cur.lastrowid
+            _con.close()
+        except  Exception as _err:
+            print ('add',_err)
+            logging.exception(_err)
+            return 0
+        return _lastRowID
+
+
+    def deleteFiles(self,type):
+        try:
+            _con = lite.connect(self.filename)
+           # _con.execute("PRAGMA foreign_keys = OFF")
+            _cur = _con.cursor()
+            _sql = "DELETE FROM [Files] WHERE [Type]='{0}'".format( str(type))
+            print(_sql)
+            _cur.execute(_sql)
+            _con.commit()
+            _con.close()
+        except  Exception as _err:
+            print (_err)
+            logging.exception(_err)
+            return 0
+        return 1
+
+
     def export(self, source, type, destfile):
         _error_text = 'can not export File of TDS3 %s '
-        #print(source,type,destfile)
+        print('export',source,type,destfile)
         try:
             _con = lite.connect(self.filename)
             _cur = _con.cursor()
@@ -128,11 +225,16 @@ class DatasetLine(object):
         self.dataXY = 0
         self.comment = ''
         self.signals = Signal()
+        self.treeviewItem = None
 
-    def readID(self):
+    def readID(self,con=None):
         _error_text = 'can not read Line %s ',self.id_line
         try:
-            _con = lite.connect(self.filename)
+            if con == None:
+                _con = lite.connect(self.filename)
+            else:
+                _con = con
+
             _cur = _con.cursor()
             _cur.execute ("SELECT * FROM [Lines] " +
                   "WHERE [Lines].[LineID] = " + str(self.id_line) )
@@ -210,15 +312,21 @@ class DatasetLine(object):
 class DatasetTrace(object):
     def __init__(self,filename,id_trace):
         self.id_trace = id_trace
+        self.id_setting = 0
         self.filename = filename
         self.title = ''
         self.start_freq = 0
         self.stop_freq = 0
+        self.treeviewItem = None
 
-    def read(self):
+    def read(self,con=None):
         _error_text = 'can not read Traces of Dataset %s '
         try:
-            _con = lite.connect(self.filename)
+            if con == None:
+                _con = lite.connect(self.filename)
+            else:
+                _con = con
+
             _cur = _con.cursor()
             _cur.execute ("SELECT * FROM [Traces] " +
                   "WHERE [Traces].[TraceID] = " + str(self.id_trace))
@@ -236,13 +344,72 @@ class DatasetTrace(object):
             logging.exception(_err)
             return 0
 
-        _con.close()
+       # _con.close()
         return 1
+
+    def readTraces(self,settingID):
+        _error_text = 'can not read Traces of Dataset %s '
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute ("SELECT StartFreq,StopFreq,TraceID FROM [Traces] " +
+                  "WHERE [Traces].[SettingID] = " + str(settingID))
+
+            traces = _cur.fetchall()
+        except  Exception as _err:
+            QMessageBox.information(None, 'TMV3',
+            _error_text % self.filename, QMessageBox.Ok)
+            logging.exception(_err)
+            return None
+
+        _con.close()
+        return traces
+
+    def add(self):
+        _con = lite.connect(self.filename)
+        _cur = _con.cursor()
+        _cur.execute("INSERT INTO [Traces] (SettingID,StartFreq,StopFreq) " +
+                     "VALUES (?,?,?)",
+                     (str(self.id_setting), str(self.start_freq), str(self.stop_freq)))
+        _con.commit()
+        lastRowID = _cur.lastrowid
+        _con.close()
+        return lastRowID
+
+    def update(self):
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute("UPDATE [Traces] SET SettingID='{0}' ,StartFreq='{1}',StopFreq='{2}'"
+                     "WHERE TracesID='{3}'".format(str(self.id_setting), str(self.start_freq), str(self.stop_freq),str(self.id_trace)))
+            _con.commit()
+            lastRowID = _cur.lastrowid
+            _con.close()
+        except Exception as _err:
+            print(_err)
+            return False
+
+        return lastRowID
+
+    def delete(self):
+        try:
+            _con = lite.connect(self.filename)
+            _con.execute("PRAGMA foreign_keys = ON")
+            _cur = _con.cursor()
+            _cur.execute("DELETE FROM [Traces] WHERE TraceID={0}".format( str(self.id_trace)))
+            _con.commit()
+            _con.close()
+        except  Exception as _err:
+            logging.exception(_err)
+            return 0
+        return 1
+        pass
 
 class DatasetSetting(object):
     def __init__(self,filename,id_setting):
         self.filename = filename
         self.id_setting = id_setting
+        self.id_routine = 0
         self.title = ""
         self.order = 0
         self.route = ''
@@ -255,14 +422,18 @@ class DatasetSetting(object):
         self.step_time = 0
         self.trace_list = []
         self.command_list = []
+        self.treeviewItem = None
 
 
 
-    def read(self):
+    def read(self,con=None):
         _error_text = 'can not read Setting of Dataset %s '
         try:
             _error_text = 'can not read Setting of Dataset %s '
-            _con = lite.connect(self.filename)
+            if con == None:
+                _con = lite.connect(self.filename)
+            else:
+                _con = con
             _cur = _con.cursor()
             _cur.execute ("SELECT * FROM [Settings] " +
                     "WHERE [Settings].[SettingID] = {0} ORDER BY [Settings].[Order]".format(str(self.id_setting)))
@@ -285,7 +456,7 @@ class DatasetSetting(object):
             _rows = _cur.fetchall()
             for _row in _rows:
                 _ret =  DatasetTrace(self.filename,_row[0])
-                if _ret.read() == 0 :
+                if _ret.read(_con) == 0 :
                     return 0
                 self.trace_list.append(_ret)
 
@@ -294,7 +465,7 @@ class DatasetSetting(object):
             _rows = _cur.fetchall()
             for _row in _rows:
                 _ret = DatasetCommand(self.filename,_row[0])
-                if _ret.read() == 0:
+                if _ret.read(_con) == 0:
                     return 0
                 self.command_list.append(_ret)
 
@@ -305,14 +476,81 @@ class DatasetSetting(object):
             logging.exception(_err)
             return 0
 
-        _con.close()
+       # _con.close()
         return 1
+
+    def add(self):
+        _con = lite.connect(self.filename)
+        _cur = _con.cursor()
+        _s = "INSERT INTO [Settings] (RoutineID,Title,[Order],Route,Instruction,Autorange,StartFreq,StopFreq,Step,StepWidth,StepTime)" \
+             " VALUES ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}')"\
+            .format(str(self.id_routine),str(self.title),str(self.order),self.route,str(self.instruction),str(self.autorange),str(self.start_freq),\
+             str(self.stop_freq),str(self.step),str(self.step_width),str(self.step_time))
+        #print (_s)
+        _cur.execute((_s))
+        _con.commit()
+        lastRowID = _cur.lastrowid
+        _con.close()
+        return lastRowID
+
+    def update(self):
+        print (self.title)
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            s = ("UPDATE [Settings] SET Title=?,[Order]=?,Route=?,Instruction=?,Autorange=?,StartFreq=?,StopFreq=?,"
+                 "Step=?,StepWidth=?,StepTime=? "
+                 "WHERE SettingID=?")
+            vals = (str(self.title),str(self.order),self.route,str(self.instruction),str(self.autorange),str(self.start_freq),
+                 str(self.stop_freq),str(self.step),str(self.step_width),str(self.step_time), self.id_setting)
+            _cur.execute(s, vals)
+            _con.commit()
+           # lastRowID = _cur.lastrowid
+            _con.close()
+        except Exception as _err:
+            print ('Update setting',_err)
+            return False
+
+        return True
+
+        pass
+
+    def delTraces(self):
+
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute("DELETE  from [Traces]"
+                         "WHERE [Traces].[SettingID] = '{0}'".format(str(self.id_setting)))
+            _con.commit()
+            _con.close()
+        except  Exception as _err:
+            print(_err)
+            logging.exception(_err)
+            return  False
+        return True
+
+    def delCommands(self):
+
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute("DELETE  from [Commands]"
+                         "WHERE [Commands].[SettingID] = '{0}'".format(str(self.id_setting)))
+            _con.commit()
+            _con.close()
+        except  Exception as _err:
+            print(_err)
+            logging.exception(_err)
+            return False
+        return True
 
 class DatasetRoutine(object):
 
     def __init__(self, filename, id_routine):
         self.id_routine = id_routine
         self.filename = filename
+        self.id_plot = 0
         self.title = ''
         self.device1 = ''
         self.device2 = ''
@@ -322,14 +560,21 @@ class DatasetRoutine(object):
         self.signal_class = 0
         self.order = 0
         self.comment = ''
-        self.Limits=''
-        self.Lines=""
+        self.limits=''
+        self.lines=''
         self.setting_list = []
+        self.treeviewItem = None
+        self.routinePath = ""
+        self.driverPathes = []
 
-    def read(self):
+    def read(self,con=None):
 
         try:
-            _con = lite.connect(self.filename)
+            if con == None:
+                _con = lite.connect(self.filename)
+            else:
+                _con = con
+
             _cur = _con.cursor()
             _cur.execute ("SELECT * FROM [Routines] " +
                   "WHERE [Routines].[RoutineID] = " + str(self.id_routine) +
@@ -353,7 +598,7 @@ class DatasetRoutine(object):
             _rows = _cur.fetchall()
             for _row in _rows:
                 _ret = DatasetSetting(self.filename,_row[0])
-                if _ret.read() == 0:
+                if _ret.read(_con) == 0:
                     return 0
                 self.setting_list.append(_ret)
 
@@ -363,13 +608,49 @@ class DatasetRoutine(object):
             logging.exception(_err)
             return 0
 
-        _con.close()
+        #_con.close()
         return 1
+
+    def add(self):
+        _con = lite.connect(self.filename)
+        _cur = _con.cursor()
+        _cur.execute("INSERT INTO [Routines] (PlotID,Title,Device1,Device2,Device3,Instruction,InstructionFile,SignalClass,[Order],Comment,Limits,Lines) " +
+                     "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                     (str(self.id_plot), self.title, self.device1,self.device2,self.device3, self.instruction, self.instruction_file,
+                      self.signal_class,self.order,self.comment,self.limits,self.lines))
+
+        _con.commit()
+        lastRowID = _cur.lastrowid
+        _con.close()
+        return lastRowID
+
+    def update(self):
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+           # self.limits=""
+            s=("UPDATE [Routines] SET Title=?,Device1=?,Device2=?,Device3=?,Instruction=?,"
+                         "InstructionFile=?,SignalClass=?,[Order]=?,Comment=?,Limits=?,Lines=? "
+                         "WHERE RoutineID=?")
+            vals = (self.title, self.device1,self.device2,self.device3,self.instruction,self.instruction_file,
+                    self.signal_class, self.order, self.comment,str(self.limits),self.lines, self.id_routine)
+            _cur.execute(s,vals)
+
+            _con.commit()
+            print('commit')
+            lastRowID = _cur.lastrowid
+            _con.close()
+        except Exception as _err:
+            print(_err)
+            return False
+
+        return lastRowID
 
 class DatasetPlot(object):
 
     def __init__(self,filename,id_plot):
         self.id_plot = id_plot
+        self.id_plan = 0
         self.filename = filename
         self.routine_list = []
         self.title = ""
@@ -382,17 +663,22 @@ class DatasetPlot(object):
         self.order = 0
         self.annotation = ''
         self.comment = ''
+        self.treeviewItem = None
 
-    def read(self):
+    def read(self,con=None):
         _error_text = 'can not read Plot of Dataset %s '
         try:
-            _con = lite.connect(self.filename)
+            if con == None:
+                _con = lite.connect(self.filename)
+            else:
+                _con = con
             _cur = _con.cursor()
             _cur.execute ("SELECT * FROM [Plots] " +
                   "WHERE [Plots].[PlotID] = " + str(self.id_plot) +
             " ORDER BY [Plots].[Order]")
             _plot = _cur.fetchone()
             _r = RegFieldNames(_cur, _plot)
+            self.id_plan = _r.PlanID
             self.title = _r.Title
             self.x1 = _r.X1
             self.x2 = _r.X2
@@ -400,18 +686,16 @@ class DatasetPlot(object):
             self.y2 = _r.Y2
             self.log = _r.Log
             self.unit = _r.Unit
-            self.order = _r.Order
             self.annotation = _r.Annotation
+            self.order = _r.Order
             self.comment = _r.Comment
 
             _cur.execute ("SELECT RoutineID FROM [Routines] " +
                              "WHERE [Routines].[PlotID] = " + str(_r.PlotID))
-
             _rows=_cur.fetchall()
-
             for _row in _rows:
                 _ret =  DatasetRoutine(self.filename,_row[0])
-                if _ret.read() == 0:
+                if _ret.read(_con) == 0:
                     return 0
                 self.routine_list.append(_ret)
         except  Exception as _err:
@@ -420,28 +704,60 @@ class DatasetPlot(object):
             logging.exception(_err)
             return 0
 
-        _con.close()
+       # _con.close()
         return 1
+
+    def add(self):
+        _con = lite.connect(self.filename)
+        _cur = _con.cursor()
+        _cur.execute("INSERT INTO [Plots] (PlanID,Title,X1,X2,Y1,Y2,Log,Unit,Annotation,[Order],Comment) " +
+                     "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                     (str(self.id_plan), self.title, str(self.x1), str(self.x2), str(self.y1), str(self.y2),
+                      str(self.log),self.unit, self.annotation,str(self.order), self.comment))
+
+
+        _con.commit()
+        _lastRowID = _cur.lastrowid
+        print(_lastRowID)
+        _con.close()
+
+    def update(self):
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute("UPDATE [Plots] SET PlanID='{0}' ,Title='{1}',X1={2},X2={3},Y1={4},Y2={5},Log={6},Unit='{7}',"
+                         "Annotation='{8}',[Order]={9},Comment='{10}'"
+                         "WHERE PlotID='{11}'".format(str(self.id_plan), str(self.title), str(self.x1),str(self.x2),
+                          str(self.y1),str(self.y2),self.log, self.unit, self.annotation, self.order, self.comment, self.id_plot))
+
+            _con.commit()
+            lastRowID = _cur.lastrowid
+            _con.close()
+        except Exception as _err:
+            print(_err)
+            return False
+
+        return lastRowID
+
 
 class DatasetPlan(object):
     def __init__(self,filename):
+        self.planID = 0
         self.version = ""
         self.tmv_version = ""
         self.comment = ""
         self.title = ""
         self.operator = ""
         self.kmv = ''
-        self.zooning = ''
+        self.zoning = ''
         self.nato = ''
         self.company = ""
         self.date = ""
         self.plot_list = []
         self.filename = filename
-
-
+        self.treeviewItem = None
 
     def read(self):
-
         _error_text = 'can not open Dataset %s '
         try:
             _con = lite.connect(self.filename)
@@ -452,11 +768,12 @@ class DatasetPlan(object):
             _cur.execute ("SELECT * FROM [Plan]")
             _plan = _cur.fetchone()
             _r = RegFieldNames(_cur,_plan)
+            self.planID = _r.PlanID
             self.version = _r.Version
             self.tmv_version = _r.TMVVersion
             self.title = _r.Title
             self.kmv = _r.KMV
-            self.zooning = _r.Zooning
+            self.zoning = _r.Zoning
             self.nato = _r.NATO
             self.comment = _r.Comment
             self.company = _r.Company
@@ -468,7 +785,7 @@ class DatasetPlan(object):
             _rows=_cur.fetchall()
             for _row in _rows:
               _ret = DatasetPlot(self.filename,_row[0])
-              if _ret.read() == 0:
+              if _ret.read(_con) == 0:
                   return 0
               self.plot_list.append(_ret)
         except Exception as _err:
@@ -478,8 +795,33 @@ class DatasetPlan(object):
             logging.exception(_err)
             return 0
 
-        _con.close()
+      #  _con.close()
         return 1
+
+    def add(self):
+        pass
+
+    def update(self):
+        try:
+            _con = lite.connect(self.filename)
+            _cur = _con.cursor()
+            _cur.execute("UPDATE [Plan] SET Title='{0}',Version='{1}',TMVVersion='{2}',Nato='{3}',KMV='{4}',Zoning='{5}',"
+                         "Comment='{6}',Company='{7}',Date='{8}',Operator='{9}' "
+                         "WHERE PlanID='{10}'".format(str(self.title),str(self.version),str(self.tmv_version),str(self.nato),
+                                                      str(self.kmv),str(self.zoning),str(self.comment),str(self.company),
+                                                      str(self.date),str(self.operator),str(self.planID)))
+
+            _con.commit()
+            lastRowID = _cur.lastrowid
+            _con.close()
+
+        except Exception as _err:
+            print(_err)
+            return False
+
+        return lastRowID
+
+
 
 class Dataset(object):
     def __init__(self,filename):
@@ -499,15 +841,15 @@ class Dataset(object):
     def copy(self, dest):
 
         try:
-            _new_db = lite.connect(dest) # create a memory database
-            _old_db = lite.connect(self.filename)
+            dest = lite.connect(":memory:") # create a memory database
+            _source_db = lite.connect(self.filename)
 
-            query = "".join(line for line in _old_db.iterdump())
-
-            _new_db.executescript(query)
-            _new_db.commit()
-            _new_db.close()
-            _old_db.close()
+            query = "".join(line for line in _source_db.iterdump())
+  #          print (query)
+            dest.executescript(query)
+            dest.commit()
+            dest.close()
+            _source_db.close()
         except Exception as _err:
             _s = "can not copy DataSet {0} \n" \
                  " {1}".format (self.filename,str(_err))

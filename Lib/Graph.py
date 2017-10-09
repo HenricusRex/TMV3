@@ -2,26 +2,35 @@ __author__ = 'Heinz'
 
 
 import sys
+import shutil
 import matplotlib
+
 import math
 import os
 import ast
 import copy
+import uuid
 import DB_Handler_TPL3
 import Workbench
 import matplotlib.ticker as ticker
 import matplotlib.image as image
+import matplotlib.pyplot as plt
 import EngFormat
-from PIL import Image
+#from PIL import Image
+import matplotlib.image as image
 from GraphClient import *
 from PyQt4.QtGui import *
 import numpy
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.ticker import EngFormatter
+from matplotlib.widgets import Cursor
+from matplotlib.lines import Line2D
 from NeedfullThings import *
 from LineInfo import LineInfo
+from Marker import MarkerText
 from GraphClient import Client
 
 from pydispatch import dispatcher
@@ -55,6 +64,65 @@ def axes_pick(self, *args):
         a.pick(mouseevent)
 matplotlib.axes.Axes.pick = axes_pick
 
+class Marker(object):
+    def __init__(self, ax,parent):
+        self.ax = ax
+        self.parent = parent
+        self.xy = None
+        self.xyT = None
+        self.text = ''
+        self.anno = None
+        self.localIdx = ''
+
+    def newMouseMarker(self,x,y):
+        mrk = MarkerText()
+        mrk.exec()
+        if mrk.ret:
+            self.text = mrk.text
+        else:
+            return
+
+        inv = self.ax.transData.inverted()
+        self.xy = inv.transform([x,y])
+        self.xyT = inv.transform([x+20,y+20])
+
+        self.anno = self.ax.annotate(self.text, xy=self.xy,  xytext=self.xyT, size=15,picker = 5,arrowprops=dict(facecolor='black', shrink=1, width=2, headwidth=2))
+        self.localIdx = str(uuid.uuid1())
+        self.parent.markerList.append(self)
+        self.parent.signalGraphUpdate.emit()
+        return
+
+    def newDataBaseMarker(self,xy,xyT,text):
+        self.anno = self.ax.annotate(text, xy=xy,  xytext=xyT, size=15,picker = 5,arrowprops=dict(facecolor='black', shrink=1, width=2, headwidth=2))
+        self.parent.signalGraphUpdate.emit()
+        return
+
+class CursorStatic(object):
+    def __init__(self, ax, x, y, col, parent):
+        self.parent = parent
+        self.removed = False
+        self.x = x
+        self.y = y
+        _xlim = ax.get_xlim()
+        _ylim = ax.get_ylim()
+        self.line1 = Line2D(_xlim, (y,y), picker=5)
+        self.line2 = Line2D((x,x), _ylim, picker=5)
+        self.line1.set_color(col)
+        self.line2.set_color(col)
+        ax.add_line(self.line1)
+        ax.add_line(self.line2)
+        parent.signalGraphUpdate.emit()
+
+    def delLine(self):
+        if self.removed:
+            return
+        self.line1.remove()
+        self.line2.remove()
+        self.removed = True
+        self.parent.signalGraphUpdate.emit()
+
+
+
 class CustomToolbar(NavigationToolbar):
     def __init__(self,canvas_,parentframe_,parclass):
         self.parclass = parclass
@@ -70,6 +138,8 @@ class CustomToolbar(NavigationToolbar):
             (None, None, None, None),
             ('Print','Print','printer','onPrint'),
             (None, None, None, None),
+            ('PDF','PDF','pdf','onPDF'),
+            (None, None, None, None),
             #('Subplots', 'putamus parum claram', 'subplots', 'configure_subplots'),
             ('Save', 'save to file', 'filesave', 'save_figure'),
             (None, None, None, None),
@@ -78,20 +148,39 @@ class CustomToolbar(NavigationToolbar):
             ('ShowPage2', 'show page 2', 'page2', 'onShowPage2'),
             (None, None, None, None),
             ('NoVS', 'no VS', 'novs', 'onNoVS'),
-            (None, None, None, None)
+            (None, None, None, None),
+            (None, None, None, None),
+            ('Cursor','Cursor','cursor','onCursor'),
+            (None, None, None, None),
             )
-        NavigationToolbar.__init__(self,canvas_,parentframe_)
+        NavigationToolbar.__init__(self,canvas_,parentframe_,False)
+
     def onNoVS(self):
         self.parclass.toggleVS()
 
     def onPrint(self):
         self.parclass.print()
-    def onShowPage1(self):
 
+    def onPDF(self):
+        self.parclass.printPDF()
+
+    def onShowPage1(self):
         self.parclass.switchPage1()
     def onShowPage2(self):
 
         self.parclass.switchPage2()
+
+    def onCursor(self):
+        if self.parclass.cursorActive :
+            self.parclass.cursorActive= False
+          #  self.cursor.setChecked(False)
+        else:
+            self.parclass.cursorActive = True
+           # self.cursor.setChecked(True)
+
+        self.parclass.signalShowCursor.emit()
+
+
     def _init_toolbar(self):
         self.basedir = os.path.join(matplotlib.rcParams['datapath'], 'images')
 
@@ -102,37 +191,59 @@ class CustomToolbar(NavigationToolbar):
                 a = self.addAction(self._icon(image_file + '.png'),
                                          text, getattr(self, callback))
                 self._actions[callback] = a
-                if callback in ['zoom', 'pan']:
+                if callback in ['zoom', 'pan','onCursor']:
                     a.setCheckable(True)
                 if tooltip_text is not None:
                     a.setToolTip(tooltip_text)
 
         self.buttons = {}
 
-        # Add the x,y location widget at the right side of the toolbar
-        # The stretch factor is 1 which means any resizing of the toolbar
-        # will resize this label instead of the buttons.
-        if self.coordinates:
-            self.locLabel = QLabel("", self)
-            self.locLabel.setAlignment(Qt.AlignRight | Qt.AlignTop)
-            self.locLabel.setSizePolicy(
-                QSizePolicy(QSizePolicy.Expanding,
-                                  QSizePolicy.Ignored))
-            labelAction = self.addWidget(self.locLabel)
-            labelAction.setVisible(True)
+        self.cbA = QRadioButton('Cursor A ->',self)
+        self.cbA.setChecked(True)
+        self.labelcA = QLabel('')
+        self.labelcA.setMinimumSize(100,30)
 
-        # reference holder for subplots_adjust window
+        self.cbB = QRadioButton('Cursor B ->',self)
+        self.labelcB = QLabel('')
+        self.labelcB.setMinimumSize(100, 30)
+
+        self.labelcC = QLabel('Delta ->')
+        self.labelcC.setMinimumSize(100,30)
+
+        self.labelcD = QLabel('Mouse ->')
+        self.labelcD.setMinimumSize(100,30)
+
+        self.addWidget(self.cbA)
+        self.addWidget(self.labelcA)
+        self.addWidget(self.cbB)
+        self.addWidget(self.labelcB)
+        self.addWidget(self.labelcC)
+        self.addWidget(self.labelcD)
+
+        self.cbA.toggled.connect(self.onRBtoggled)
         self.adj_window = None
 
+    def _update_buttons_checked(self):
+        # sync button checkstates to match active mode
+        self._actions['pan'].setChecked(self._active == 'PAN')
+        self._actions['zoom'].setChecked(self._active == 'ZOOM')
+       # self._actions['onHLine'].setChecked(self._active == 'HLINE')
+       # self._actions['onVLine'].setChecked(self._active == 'VLINE')
 
+    def onRBtoggled(self):
+        return
+        if self.cbA.isChecked():
+            pass
 
-class MainForm(QMainWindow):
+class Graphics(QMainWindow):
     signalShowTitle = QtCore.pyqtSignal(str)
     signalGraphUpdate = pyqtSignal()
     waitEvent = threading.Event()
     signalPrint = pyqtSignal()
-    signalPrintEnd = pyqtSignal()
-
+    signalPDF = pyqtSignal()
+    signalPrintEnd = threading.Event()
+    signalShowCursor = pyqtSignal()
+    signalSetMarker = pyqtSignal(float,float)
 
     def __init__(self, parent = None):
         QMainWindow.__init__(self,parent)
@@ -144,13 +255,16 @@ class MainForm(QMainWindow):
         self.setWindowTitle('TMV3-Graph')
         self.defaultColor = 'black'
         self.defaultStyle = '-'
-        self.defaultWidth = 1
+        self.defaultWidth = 1.1
         self.backgroundPlot = False
         self.signals = Signal()
         self.config = configparser.ConfigParser()
-        self.config.read('TMV3.ini')
+        self.config.read('../Lib/TMV3.ini')
         self.graphUpdate = True
-        process_name = "Graph" + sys.argv[2]
+        try:
+            process_name = "Graph" + sys.argv[2]
+        except Exception as _err:
+            process_name = "Graph"
         self.Client = Client(process_name)
 
 
@@ -165,11 +279,17 @@ class MainForm(QMainWindow):
         self.attList = []
         self.ampList = []
         self.page = 1
-        self.fig = Figure((10.0, 5.0), 100)
-        self.dyfig = self.fig
-        self.fig2 = Figure((10.0, 5.0), 100)
-        self.dyfig2 = self.fig2
+        self.fig = Figure()
+        #        self.fig = Figure((10.0, 5.0), 100)
 
+
+       # self.fig2 = Figure((10.0, 5.0), 100)
+       # self.fig2 = plt.figure()
+        self.fig2 = Figure()
+        self.dyfig2 = self.fig2
+        self.fig = plt.figure()
+        self.dyfig = self.fig
+        print ('dyfig = ',id(self.dyfig))
         self.line1TextFlag = False
         self.line2TextFlag = False
         self.corrAntYEndPos = 0
@@ -181,13 +301,23 @@ class MainForm(QMainWindow):
         self.currentStaticPlot = None
         self.currentStaticPlotCorrList = None
         self.currentStaticPlotFlag = False
-
-
+        self.currentPlotID = 0
+        self.cursorActive = False #enable button on mpl
+        self.cursorA = None
+        self.cursorB = None
+        self.cursorD = None
+        self.marker0 = None
+        self.marker1 = None
+        self.line1 = None
+        self.line2 = None
+        self.markerList=[]
         #Messages
         self.signalShowTitle.connect(self.onShowTitle) #access to Gui via signal
         self.signalGraphUpdate.connect(self.onGraphUpdate) #access to Gui via signal
+        self.signalShowCursor.connect(self.toggleCursor)
         self.signalPrint.connect(self.print)
-
+        self.signalPDF.connect(self.printPDF)
+        self.signalSetMarker.connect(self.setMouseMarker)
         dispatcher.connect(self.onNewPlot, self.signals.GRAPH_NEW_PLOT, dispatcher.Any)
         dispatcher.connect(self.onNewTrace, self.signals.GRAPH_NEW_TRACE, dispatcher.Any)
         dispatcher.connect(self.onNewLine, self.signals.GRAPH_NEW_LINE, dispatcher.Any)
@@ -203,14 +333,13 @@ class MainForm(QMainWindow):
 
         logging.info('TMV3 Graph started')
 
-        self.create_main_frame()
-        #if (ret):
-        #   print("GRAPH Socket started, waiting for jobs")
-        #else:
-        #   print("GRAPH not connected")
-        _sData = []
-        _sData.append(self.signals.GRAPH_STARTED)
-        self.Client.send(_sData)
+        try:
+            self.create_main_frame()
+            _sData = []
+            _sData.append(self.signals.GRAPH_STARTED)
+            self.Client.send(_sData)
+        except Exception as _err:
+            pass
 
     def toggleVS(self):
         # if self.labelD == None:
@@ -232,6 +361,47 @@ class MainForm(QMainWindow):
              self.fig.suptitle("VS-Vertraulich",color='blue',size=15)
          self.signalGraphUpdate.emit()
 
+    def toggleCursor(self):
+        print('toggleCursor')
+
+
+        if self.cursorActive:
+            inv = self.host.transData.inverted()
+
+            _xlim = self.host.get_xlim()
+            _ylim = self.host.get_ylim()
+            _xy1 = self.host.transData.transform((_xlim[0],_ylim[1]))
+            _xy2 = self.host.transData.transform((_xlim[1],_ylim[0]))
+            #_xy1 = self.host.transData.transform((_posx[0],_posy[0]))
+            #ä_xy2 = self.host.transData.transform((_posx[1],_posy[1]))
+
+            _x1 = _xy1[0]+20
+            _x2 = _xy1[0]+40
+            _y1 = _xy2[1]+20
+            _y2 = _xy2[1]+40
+
+            _xy1t = inv.transform((_x1,_y1))
+            _xy2t = inv.transform((_x2,_y2))
+            self.cursorA = CursorStatic(self.host,_xy1t[0],_xy1t[1],'gray',self)
+            self.cursorB = CursorStatic(self.host,_xy2t[0],_xy2t[1],'black',self)
+            self.showCursorPos(self.cursorA.x,self.cursorA.y,'A')
+            self.showCursorPos(self.cursorB.x,self.cursorB.y,'B')
+            self.showCursorPos(math.fabs(self.cursorB.x-self.cursorA.x),math.fabs(self.cursorB.y-self.cursorA.y),'C')
+            # # self.line = Line2D(_xy1,_xy2)
+
+            # self.line1 = Line2D(_xlim, (_xy2t[1],_xy2t[1]))
+            # self.line2 = Line2D((_xy1t[0],_xy1t[0]), _ylim)
+            # self.host.add_line(self.line1)
+            # self.host.add_line(self.line2)
+            # self.signalGraphUpdate.emit()
+            print ('cursor added')
+#           self.cursorD = Cursor(self.host, useblit=False, color='blue', linewidth=2)
+        else:
+            self.cursorA.delLine()
+            self.cursorA = None
+            self.cursorB.delLine()
+            self.cursorB = None
+
     def switchPage1(self):
         self.canvas.setVisible(True)
         self.canvas2.setVisible(False)
@@ -241,7 +411,6 @@ class MainForm(QMainWindow):
         self.page = 1
         self.signalGraphUpdate.emit()
 
-
     def switchPage2(self):
         self.canvas2.setVisible(True)
         self.canvas.setVisible(False)
@@ -250,27 +419,70 @@ class MainForm(QMainWindow):
         self.canvas2.setFocus()
         self.page = 2
 
+    def clear(self):
+        self.fig.clear()
+        self.sensorList.clear()
+        self.rbwList.clear()
+        self.attList.clear()
+        self.ampList.clear()
+        return
+        self.fig.delaxes(self.host)
+        self.fig.delaxes(self.par1)
+        self.fig.delaxes(self.par2)
+        self.fig.delaxes(self.par3)
+        self.fig.delaxes(self.par4)
+        self.sensorList.clear()
+        self.rbwList.clear()
+        self.attList.clear()
+        self.ampList.clear()
+        self.signalGraphUpdate.emit()
+
     def onPrint(self):
         self.signalPrint.emit()
         self.signalPrintEnd.wait()
+
+    def onPdf(self):
+        self.signalPDF.emit()
+        self.signalPrintEnd.wait()
+
+    def printPDF(self):
+        dlg = QFileDialog()
+        pdf_FileName = dlg.getSaveFileName(self,"Save as PDF","","*.pdf")
+        if pdf_FileName:
+            _dirname = os.path.dirname(pdf_FileName)
+            _filename = os.path.splitext(os.path.basename(pdf_FileName))[0]
+            pdf_FileName1 = _dirname + '/' + _filename + ' 1.pdf'
+            pdf_FileName2 = _dirname + '/' + _filename + ' 2.pdf'
+
+
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+            with PdfPages(pdf_FileName)as pdf:
+                pdf.savefig(self.dyfig)
+                pdf.savefig(self.dyfig2)
+
+        self.signalPrintEnd.set()
+        QApplication.restoreOverrideCursor()
+
+
     def print(self):
         printer = QPrinter()
         printer.setOrientation(QPrinter.Landscape)
+        printer.setDuplex(QPrinter.DuplexAuto)
         printerDialog = QPrintDialog(printer)
         ret = printerDialog.exec()
         if ret == QDialog.Accepted:
-            _dpi = 300
-            _xScale=(printer.pageRect().width()/ (self.dyfig.get_figwidth()* _dpi))
-            _yScale=(printer.pageRect().height()/(self.dyfig.get_figheight() * _dpi))
+            _dpi = 96
             painter = QPainter(printer)
-            painter.scale(_xScale,_yScale)
             self.dyfig.savefig("../WorkingDir/Page1.png",dpi=_dpi)
             image = QImage("../WorkingDir/Page1.png")
-            painter.drawImage(QPoint(0,0),image)
+            pageRect = printer.pageRect()
+            imageRect = image.rect()
+            xOffset = (pageRect.width() - imageRect.width())/2
+            yOffset = (pageRect.height() - imageRect.height())/2 - pageRect.y()/2 # ? to fit layout like pdf
+            painter.drawImage(QPoint(xOffset,yOffset),image)
             painter.end()
 
             painter = QPainter(printer)
-            painter.scale(_xScale,_yScale)
             self.dyfig2.savefig("../WorkingDir/Page2.png",dpi=_dpi)
             image = QImage("../WorkingDir/Page2.png")
             painter.drawImage(QPoint(0,0),image)
@@ -280,8 +492,7 @@ class MainForm(QMainWindow):
     def create_main_frame(self):
         self.main_frame = QWidget()
 
-        #self.fig = Figure((10.0, 5.0), 100)
-        #self.fig2 = Figure((10.0, 5.0), 100)
+
         self.canvas =  FigureCanvas(self.fig)
         self.canvas2 =  FigureCanvas(self.fig2)
         self.canvas.setParent(self.main_frame)
@@ -290,8 +501,9 @@ class MainForm(QMainWindow):
 
         self.mpl_toolbar = CustomToolbar(self.canvas, self.main_frame,self)
         self.canvas.mpl_connect('pick_event',self.onPick)
-        #self.canvas.mpl_connect('key_press_event', self.on_key_press)
-
+        self.canvas.mpl_connect('motion_notify_event',self.onMouseMotion)
+      #  self.canvas.mpl_connect('button_press_event',self.onButtonPress)
+        self.canvas.mpl_connect('button_release_event',self.onButtonRelease)
         self.vbox = QVBoxLayout()
         self.vbox.addWidget(self.canvas)  # the matplotlib canvas
         self.vbox.addWidget(self.canvas2)  # the matplotlib canvas
@@ -336,9 +548,6 @@ class MainForm(QMainWindow):
 
         self.host = self.fig.add_subplot(111)
         #pos = self.host.get_position()
-
-
-
        # self.host.set_position([0.2,0.6,0.7,0.3])
         self.fig.subplots_adjust(bottom=0.25,left=0.07,right=0.93,top=0.8)
        # self.host.set_axis_bgcolor('#323232')
@@ -357,9 +566,10 @@ class MainForm(QMainWindow):
         matplotlib.rc('font', **font)
         self.par1 = self.host.twiny()
         self.make_patch_spines_invisible(self.par1)
-        self.par1.text(-0.05,-0.18,"source",horizontalalignment='left',transform=self.host.transAxes)
-        self.par1.text(-0.05,-0.25,"rbw",horizontalalignment='left',transform=self.host.transAxes)
-        self.par1.spines["bottom"].set_position(("outward", 50))
+        self.par1.text(-0.05,-0.18,"source",horizontalalignment='left',transform=self.par1.transAxes)
+        self.par1.text(-0.05,-0.24,"rbw",horizontalalignment='left',transform=self.par1.transAxes)
+      #  self.par1.spines["bottom"].set_position(("outward", 50))
+        self.par1.spines["bottom"].set_position(("axes", -0.20))
         self.par1.xaxis.set_ticks_position('bottom')
         self.par1.xaxis.set_major_formatter(ticker.NullFormatter())
         self.par1.xaxis.set_minor_formatter(ticker.NullFormatter())
@@ -368,7 +578,8 @@ class MainForm(QMainWindow):
 
         self.par2 = self.host.twiny()
         self.make_patch_spines_invisible(self.par2)
-        self.par2.spines["bottom"].set_position(("outward", 50))
+#        self.par2.spines["bottom"].set_position(("outward", 50))
+        self.par2.spines["bottom"].set_position(("axes", -0.20))
         self.par2.xaxis.set_ticks_position('bottom')
         self.par2.xaxis.set_major_formatter(ticker.NullFormatter())
         self.par2.xaxis.set_minor_formatter(ticker.NullFormatter())
@@ -377,9 +588,10 @@ class MainForm(QMainWindow):
 
         self.par3 = self.host.twiny()
         self.make_patch_spines_invisible(self.par3)
-        self.par3.text(-0.05,-0.33,"amp",horizontalalignment='left',transform=self.host.transAxes)
+#        self.par3.spines["bottom"].set_position(("outward", 90))
+        self.par3.spines["bottom"].set_position(("axes", -0.34))
+        self.par3.text(-0.05,-0.33,"amp",horizontalalignment='left',transform=self.par3.transAxes)
         self.par3.text(-0.05,-0.40,"att",horizontalalignment='left',transform=self.host.transAxes)
-        self.par3.spines["bottom"].set_position(("outward", 90))
         self.par3.xaxis.set_ticks_position('bottom')
         self.par3.xaxis.set_major_formatter(ticker.NullFormatter())
         self.par3.xaxis.set_minor_formatter(ticker.NullFormatter())
@@ -388,7 +600,7 @@ class MainForm(QMainWindow):
 
         self.par4 = self.host.twiny()
         self.make_patch_spines_invisible(self.par4)
-        self.par4.spines["bottom"].set_position(("outward", 90))
+        self.par4.spines["bottom"].set_position(("axes", -0.34))
         self.par4.xaxis.set_ticks_position('bottom')
         self.par4.xaxis.set_major_formatter(ticker.NullFormatter())
         self.par4.xaxis.set_minor_formatter(ticker.NullFormatter())
@@ -407,22 +619,124 @@ class MainForm(QMainWindow):
         self.host.text(-0.0,1.12,"Test-No:",horizontalalignment='left',transform=self.host.transAxes)
         self.fig.suptitle("VS-Vertraulich",color='blue',size=15)
 
+    def setMouseMarker(self,x,y):
+        self.marker = Marker(self.host,self)
+        self.marker.newMouseMarker(x,y)
+        _mark = DB_Handler_TPL3.Tpl3Marks(self.workBenchDB,0)
+        _mark.plotID = self.currentPlotID
+        _mark.x = self.marker.xy[0]
+        _mark.y = self.marker.xy[1]
+        _mark.xT = self.marker.xyT[0]
+        _mark.yT = self.marker.xyT[1]
+        _mark.localIdx = self.marker.localIdx
+        _mark.marker_text = self.marker.text
+        _mark.add()
 
     def onPick(self, event):
+        if self.cursorActive:
+            return
+        #pick on marker => delete that marker
         artist = event.artist
-        xmouse, ymouse = event.mouseevent.xdata, event.mouseevent.ydata
-        x, y = artist.get_xdata(), artist.get_ydata()
-        ind = event.ind
-
-       # print ('Artist picked:', event.artist)
-       # print ('{} vertices picked'.format(len(ind)))
-       # print ('Pick between vertices {} and {}'.format(min(ind), max(ind)+1))
         title = '{}'.format(event.artist)
-        xy = '{:.2f},{:.2f}'.format(xmouse, ymouse)
-        data = '{},{}'.format( x[ind[0]], y[ind[0]])
+        if title.startswith('Anno'):
+            if event.mouseevent.button == 3:
+                print (title)
+                for i in self.markerList:
+                    title2 = '{}'.format(i.anno)
+                    if title2 == title:
+                        _mark = DB_Handler_TPL3.Tpl3Marks(self.workBenchDB,0)
+                        _mark.plotID = self.currentPlotID
+                        _mark.localIdx = i.localIdx
+                        _mark.remove()
+                        i.anno.remove()
+                        self.signalGraphUpdate.emit()
 
-        info = LineInfo(title,xy,data)
-        info.show()
+        else:
+            xmouse, ymouse = event.mouseevent.xdata, event.mouseevent.ydata
+            x, y = artist.get_xdata(), artist.get_ydata()
+            ind = event.ind
+           # print ('Artist picked:', event.artist)
+           # print ('{} vertices picked'.format(len(ind)))
+           # print ('Pick between vertices {} and {}'.format(min(ind), max(ind)+1))
+            xy = '{:.2f},{:.2f}'.format(xmouse, ymouse)
+            data = '{},{}'.format( x[ind[0]], y[ind[0]])
+
+            if event.mouseevent.button == 1:
+                info = LineInfo(title,xy,data,self)
+                info.show()
+            if event.mouseevent.button == 3:
+                self.signalSetMarker.emit(event.mouseevent.x, event.mouseevent.y)
+
+    def onButtonRelease(self,event):
+        if self.cursorActive:
+            inv = self.host.transData.inverted()
+            pos = inv.transform((event.x, event.y))
+
+            if event.button == 1:
+                if not self.cursorD is None:
+                    self.cursorD.set_active(False)
+                if self.mpl_toolbar.cbA.isChecked():
+                    if self.cursorA is None:
+                        self.cursorA = CursorStatic(self.host, pos[0], pos[1], 'gray', self)
+                else:
+                    if self.cursorB is None:
+                        self.cursorB = CursorStatic(self.host, pos[0], pos[1], 'black', self)
+
+    def onMouseMotion(self,event):
+        inv =  self.host.transData.inverted()
+        pos = inv.transform((event.x,event.y))
+
+        if self.cursorActive:
+            if event.button == 1:
+                #QtGui.QApplication.setOverrideCursor((QtGui.QCursor(Qt.CrossCursor)))
+                #activate Crossline Cursor
+                if self.cursorD is None:
+                    self.cursorD = Cursor(self.host, useblit=False)
+                else:
+                    self.cursorD.set_active(True)
+
+                if self.mpl_toolbar.cbA.isChecked():
+                    if not self.cursorA is None: #delete static Cursorline if Cursor is active
+                        self.cursorA.delLine()
+                        self.cursorA = None
+                    self.showCursorPos(pos[0], pos[1], 'A')
+                    self.showCursorPos(math.fabs(pos[0]-self.cursorB.x), math.fabs(pos[1]-self.cursorB.y), 'C')
+                    self.cursorD.lineh.set_color('gray')
+                    self.cursorD.linev.set_color('gray')
+
+                else:
+                    if not self.cursorB is None: #delete static Cursorline if Cursor is active
+                        self.cursorB.delLine()
+                        self.cursorB = None
+                    self.showCursorPos(pos[0], pos[1], 'B')
+                    self.showCursorPos(math.fabs(pos[0]-self.cursorA.x), math.fabs(pos[1]-self.cursorA.y), 'C')
+                    self.cursorD.lineh.set_color('black')
+                    self.cursorD.linev.set_color('black')
+
+                event.inaxes = self.host
+                self.cursorD.onmove(event)
+            else:
+                self.showCursorPos(pos[0],pos[1],'D')
+                #QtGui.QApplication.restoreOverrideCursor()
+        else:
+            self.showCursorPos(pos[0], pos[1], 'D')
+
+    def showCursorPos(self,x,y,pos):
+        form = EngFormat.Format()
+        _x = form.FloatToString(x, 3)
+        _y = form.FloatToString(y, 1)
+        _value = '{0}Hz,{1}dB'.format(_x, _y)
+
+        if pos == 'A':
+            self.mpl_toolbar.labelcA.setText(_value)
+        if pos == 'B':
+            self.mpl_toolbar.labelcB.setText(_value)
+        if pos == 'C':
+            _value = '  Delta -> {0}Hz,{1}dB'.format(_x, _y)
+            self.mpl_toolbar.labelcC.setText(_value)
+        if pos == 'D':
+            _value = '      Mouse -> {0}Hz,{1}dB'.format(_x, _y)
+            self.mpl_toolbar.labelcD.setText(_value)
 
     def compressLabel(self,list):
         i = 1
@@ -438,8 +752,6 @@ class MainForm(QMainWindow):
             i += 1
 
     def setLineSensor(self):
-
-
         try:
             self.compressLabel(self.sensorList)
 
@@ -459,17 +771,7 @@ class MainForm(QMainWindow):
                     x1pos.append(i.labelPos)
                     labels1.append(i.label)
 
-            # if not self.line1TextFlag:
-            #     self.par1.text(-0.05,-0.18,"source",horizontalalignment='left',transform=self.host.transAxes)
-            #     self.par1.text(-0.05,-0.25,"rbw",horizontalalignment='left',transform=self.host.transAxes)
-            #     self.par1.spines["bottom"].set_position(("outward", 50))
-            #     self.par1.xaxis.set_ticks_position('bottom')
-            #     self.par1.xaxis.set_tick_params(which='minor',length=1,direction='in', pad=-15, labelbottom='on')
-            #     self.par1.xaxis.set_tick_params(which='major',length=10,direction='in', pad=20,labelbottom='on')
-            #     self.line1TextFlag = True
 
-
-    #        self.par1.set_xscale('log')
             self.par1.xaxis.set_major_formatter(ticker.NullFormatter())
             self.par1.xaxis.set_minor_locator(ticker.FixedLocator(x1pos))
             self.par1.xaxis.set_minor_formatter(ticker.FixedFormatter(labels1))
@@ -500,8 +802,8 @@ class MainForm(QMainWindow):
                 x1pos.append(i.labelPos)
                 labels1.append(i.label)
 
-            self.par2.spines["bottom"].set_position(("outward", 50))
-            self.par2.xaxis.set_ticks_position('bottom')
+         #   self.par2.spines["bottom"].set_position(("outward", 50))
+         #   self.par2.xaxis.set_ticks_position('bottom')
 #            self.par2.set_xscale('log')
             self.par2.xaxis.set_major_formatter(ticker.NullFormatter())
             self.par2.xaxis.set_minor_locator(ticker.FixedLocator(x1pos))
@@ -513,6 +815,7 @@ class MainForm(QMainWindow):
         except Exception as _err:
             print(_err)
             logging.exception(_err)
+
     def setLineAMP(self):
 
         self.compressLabel(self.ampList)
@@ -535,9 +838,9 @@ class MainForm(QMainWindow):
 
 
             if not self.line2TextFlag:
-                 self.par3.text(-0.05,-0.33,"amp",horizontalalignment='left',transform=self.host.transAxes)
-                 self.par3.text(-0.05,-0.40,"att",horizontalalignment='left',transform=self.host.transAxes)
-                 self.par3.spines["bottom"].set_position(("outward", 90))
+                # self.par3.text(-0.05,-0.33,"amp",horizontalalignment='left',transform=self.host.transAxes)
+                # self.par3.text(-0.05,-0.40,"att",horizontalalignment='left',transform=self.host.transAxes)
+               #  self.par3.spines["bottom"].set_position(("outward", 90))
                  self.par3.xaxis.set_ticks_position('bottom')
                  self.par3.xaxis.set_major_formatter(ticker.NullFormatter())
                  self.par3.xaxis.set_minor_formatter(ticker.NullFormatter())
@@ -565,7 +868,6 @@ class MainForm(QMainWindow):
     def setLineATT(self):
 
         self.compressLabel(self.attList)
-        self.compressLabel(self.attList)
 
         try:
             x1 = []
@@ -584,8 +886,8 @@ class MainForm(QMainWindow):
                 labels1.append(i.label)
 
 
-            self.par4.spines["bottom"].set_position(("outward", 90))
-            self.par4.xaxis.set_ticks_position('bottom')
+       #     self.par4.spines["bottom"].set_position(("outward", 90))
+       #     self.par4.xaxis.set_ticks_position('bottom')
            # # self.par1.set_xlim(1e3,1e9)
            #  self.par4.set_xscale('log')
             self.par4.xaxis.set_major_formatter(ticker.NullFormatter())
@@ -632,6 +934,7 @@ class MainForm(QMainWindow):
         self.attList.append(_Att)
 
     def addAmp(self,startFreq,stopFreq,amp,autorange,log=True):
+        print('addAmp',startFreq,stopFreq,amp,autorange)
         form = EngFormat.Format()
         _sAMP = form.FloatToString(amp,0)
         col='b'
@@ -646,6 +949,11 @@ class MainForm(QMainWindow):
             self.backgroundPlot = backgroundPlot
             self.onNewPlot(data)
             self.onShowTitle(data.plot_title)
+            if not backgroundPlot:
+                self.onResult(data.result)
+            self.currentPlotID = data.plot_id
+
+            print('ShowPlot, Master={0}, ID={1}, Title={2}, Result={3}',format(self.backgroundPlot),data.plot_id,data.plan_title,data.result)
 
             #remember data for interactive user clicks
             self.currentStaticPlotFlag = True
@@ -656,14 +964,14 @@ class MainForm(QMainWindow):
                 self.onNewTrace(_t)
                 # show Corrections as line
                 corrDict = dict(corrList)
-
-                for x in eval(_t.corIDs):
-                    line = corrDict[x]
-                    assert isinstance(line,DB_Handler_TPL3.Tpl3Lines)
-                    dxy = self.cutRange(line.data_xy,_t.x1,_t.x2)
-                    dline = copy.deepcopy(line)
-                    dline.data_xy = dxy
-                    self.onNewLine(dline)
+                if not _t.corIDs is None:
+                    for x in eval(_t.corIDs):
+                        line = corrDict[x]
+                        assert isinstance(line,DB_Handler_TPL3.Tpl3Lines)
+                        dxy = self.cutRange(line.data_xy,_t.x1,_t.x2)
+                        dline = copy.deepcopy(line)
+                        dline.data_xy = dxy
+                        self.onNewLine(dline)
 
 
             #_lines = eval (data.lineObjects)
@@ -673,6 +981,13 @@ class MainForm(QMainWindow):
                 elif _line.type == 'Probe': pass
                 else:
                     self.onNewLine(_line)
+
+            for mark in data.marks:
+                m = Marker(self.host,self)
+                xy = (mark.x,mark.y)
+                xyT = (mark.xT,mark.yT)
+                m.newDataBaseMarker(xy,xyT,mark.marker_text)
+
 
             # if self.corrAntYEndPos > 0:
             #     _text = 'Antenna'
@@ -710,7 +1025,7 @@ class MainForm(QMainWindow):
             logging.exception(_err)
 
     def onNewPlot(self, data):
-        print ('Graph: new Plot')
+     #   print ('Graph: new Plot')
         assert isinstance(data,DB_Handler_TPL3.Tpl3Plot)
         self.host.set_xlim(data.x1,data.x2)
         self.host.set_ylim(data.y1,data.y2)
@@ -719,9 +1034,17 @@ class MainForm(QMainWindow):
         self.par3.set_xlim(data.x1,data.x2)
         self.par4.set_xlim(data.x1,data.x2)
         self.par1.set_xscale('log')
+        self.par1.xaxis.set_major_formatter(ticker.NullFormatter())
+        self.par1.xaxis.set_minor_formatter(ticker.NullFormatter())
         self.par2.set_xscale('log')
+        self.par2.xaxis.set_major_formatter(ticker.NullFormatter())
+        self.par2.xaxis.set_minor_formatter(ticker.NullFormatter())
         self.par3.set_xscale('log')
+        self.par3.xaxis.set_major_formatter(ticker.NullFormatter())
+        self.par3.xaxis.set_minor_formatter(ticker.NullFormatter())
         self.par4.set_xscale('log')
+        self.par4.xaxis.set_major_formatter(ticker.NullFormatter())
+        self.par4.xaxis.set_minor_formatter(ticker.NullFormatter())
         #self.setWindowTitle(data.plot_title)
         self.signalShowTitle.emit(data.plot_title)
         #self.figure_canvas.draw()
@@ -748,8 +1071,6 @@ class MainForm(QMainWindow):
         self.currentStaticPlotFlag = False
         pass
 
-
-
     def onShowTitle(self,txt):
         #access to Gui only via signal
         self.setWindowTitle(txt)
@@ -760,6 +1081,7 @@ class MainForm(QMainWindow):
             self.canvas.draw()
 
     def onNewLine(self, data):
+       # print('onNewLineStart')
         try:
             assert isinstance(data,DB_Handler_TPL3.Tpl3Lines)
 
@@ -787,11 +1109,14 @@ class MainForm(QMainWindow):
          #   print(data.color, data.style, data.width)
             if data.color == '': _color = self.defaultColor
             if data.style == '': style = self.defaultStyle
-            if data.style == '0.0': _width = self.defaultWidth
+            if data.width  == '0.0': _width = self.defaultWidth
             if self.backgroundPlot == 'True':
                 _color = 'grey'
 
-            line, = self.host.plot(_x, _y, picker=5, label=data.title, color=_color,ls=_style, lw=_width)
+           # line, = self.host.plot(_x, _y, picker=5, label=data.title, color=_color,ls=_style, lw=_width)
+#            line, = self.host.plot(_x, _y, picker=5, label=data.title, color=_color, lw=_width)
+
+            line, = self.host.plot(_x, _y,picker=5, label=data.title,color=_color,ls=_style,lw= 1)
 
 
             if data.type == "Limit":
@@ -846,9 +1171,10 @@ class MainForm(QMainWindow):
         except Exception as _err:
             print("Graph: onNewLine: {0}".format(str(_err)))
             logging.exception(_err)
+        #print('onNewLineEnd')
 
     def onNewTrace(self, data):
-        print('GRAPH NewTrace autorange:',data.autorange)
+        #print('GRAPH NewTrace autorange:',data.autorange)
         _x = []
         _y = []
         try:
@@ -875,12 +1201,13 @@ class MainForm(QMainWindow):
             _width = self.defaultWidth
             if self.backgroundPlot == 'True': _color = 'grey'
             label = "TraceID{}".format(str(data.trace_id))
-            self.host.plot(_x, _y, picker=5, label=label, color=_color, ls=_style, lw=_width)
+            self.host.plot(_x, _y, picker=5, label=label, color=_color, ls=_style, lw=1)
 
        #     self.signalGraphUpdate.emit()
             self.addRBW(_startFreq,_stopFreq,data.rbw)
             self.addAmp(_startFreq,_stopFreq,data.amplifier,data.autorange)
             self.addAtt(_startFreq,_stopFreq,data.attenuator,data.autorange)
+
             self.setLineRBW()
             self.setLineAMP()
             self.setLineATT()
@@ -892,6 +1219,7 @@ class MainForm(QMainWindow):
         pass
 
     def onResult(self,data):
+        #print('onResultStart')
 
         right = 0.9
         top = 0.9
@@ -901,7 +1229,7 @@ class MainForm(QMainWindow):
             fontsize=20, color='red',
             transform=self.host.transAxes)
         self.signalGraphUpdate.emit()
-
+        #print('onResultEnd')
 
     def onNewAnnotation(self, data):
         print('GRAPH NewAnnotation')
@@ -922,17 +1250,15 @@ class MainForm(QMainWindow):
 
     def onMakeThumbnail(self):
         try:
-            #print ('making thumbnail')
-            self.dyfig.savefig('../WorkingDir/Page1.png', format = 'png',dpi=300)
-            im = Image.open('../WorkingDir/Page1.png')
-            im.thumbnail((150,150))
-            im.save("../WorkingDir/ThumbNail.png")
+            #t1 = "../WorkingDir/x " + time.ctime() + ".png"
+            #t1x = t1.replace(':', ' ')
+            self.fig.savefig('../WorkingDir/Page1.png', format='png')
+            image.thumbnail('../WorkingDir/Page1.png','../WorkingDir/ThumbNail.png',scale=0.10)
 
             if self.autoPrint:
                 print ("autoPrint",self.autoPrint)
                 self.onPrint()
 
-            #image.thumbnail("../WorkingDir/Page1.svg","../WorkingDir/ThumbNail.svg",scale=0.15,interpolation='gaussian')
         except Exception as _err:
             print(_err)
             self.fig.savefig('../WorkingDir/Pagex.png', format = 'png',dpi=300)
@@ -1021,7 +1347,6 @@ class MainForm(QMainWindow):
 
         return _l2
 
-
     def getDefaultLineStyle(self,type):
         if type == 'Limit':
             self.defaultColor = self.config['LineStyle']['limit_color']
@@ -1056,18 +1381,22 @@ class MainForm(QMainWindow):
             self.defaultStyle = self.config['LineStyle']['anaylse_style']
             self.defaultWidth = self.config['LineStyle']['anaylse_width']
         pass
+
     def make_patch_spines_invisible(self,ax):
         ax.spines['top'].set_visible(False)
         ax.spines['left'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['bottom'].set_visible(True)
+
     def on_key_press(self, event):
         print('you pressed', event.key)
         # implement the default mpl key press events described at
         # http://matplotlib.org/users/navigation_toolbar.html#navigation-keyboard-shortcuts
      #   key_press_handler(event, self.canvas, self.mpl_toolbar)
+
     def setCorrLabel(self,a,c,p):
         self.aXposOld = 0
+
 class CorrLabel(object):
     def __init__(self,parent=None):
         self.labelAntenna = None
@@ -1112,7 +1441,7 @@ def main():
 
     app = QApplication(sys.argv)
     rec = app.desktop().screenGeometry()
-    form = MainForm()
+    form = Graphics()
     #right screen pos, show always win-title
     x = rec.width() - 1200 - 10
     y = int(sys.argv[1]) + 40

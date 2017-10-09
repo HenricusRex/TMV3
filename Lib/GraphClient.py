@@ -56,7 +56,7 @@ class Client(object):
             try:
                 _data = self.q.get()
                 _sdata = pickle.loads(_data)
-
+               # print('GraphClient',_sdata[0],time.asctime())
                 if _sdata[0] == self.signals.GRAPH_NEW_PLOT:
                     #_sdata[1] = Plot
                     dispatcher.send(self.signals.GRAPH_NEW_PLOT,dispatcher.Anonymous, _sdata[1])
@@ -67,6 +67,7 @@ class Client(object):
 
                 if _sdata[0] == self.signals.GRAPH_NEW_LINE:
                     #_sdata[1] = Line-dbRow
+                    print(time.asctime())
                     dispatcher.send(self.signals.GRAPH_NEW_LINE, dispatcher.Anonymous, _sdata[1])
 
                 if _sdata[0] == self.signals.GRAPH_NEW_ANNOTATION:
@@ -104,6 +105,8 @@ class Client(object):
                     dispatcher.send(self.signals.GRAPH_RESULT, dispatcher.Anonymous, _sdata[1])
 
                 if _sdata[0] == self.signals.GRAPH_MAKE_THUMBNAIL:
+                    time.sleep(2) # give time to complete graphics
+                   # print(time.asctime())
                     dispatcher.send(self.signals.GRAPH_MAKE_THUMBNAIL, dispatcher.Anonymous)
 
                 if _sdata[0] == self.signals.WB_GET_LINE:

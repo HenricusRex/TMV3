@@ -3,25 +3,39 @@ __author__ = 'HS'
 class Format():
 
 
-    def FloatToString(self,value,d):
+    def FloatToString(self,value,d,dim=''):
         #format double to string with cutting 0s and adding Unit
         if value >= 1e9:
             k = value/1e9
-            sf = "%." + str(d) + "fG"
+            if d == None:
+                sf = "%." + "fG"
+            else:
+                sf = "%." + str(d) + "fG"
             s = sf % k
         elif value >= 1e6:
             k = value/1e6
-            sf = "%." + str(d) + "fM"
+            if d == None:
+                sf = "%." + "fM"
+            else:
+                sf = "%." + str(d) + "fM"
             s = sf % k
         elif value >= 1e3:
             k = value/1e3
-            sf = "%." + str(d) + "fk"
+            if d == None:
+                sf = "%." + "fk"
+            else:
+                sf = "%." + str(d) + "fk"
             s = sf % k
         else:
             k = value
             sf = "%." + str(d) + "f"
+            if d == None:
+                sf = "%." + "f"
+            else:
+                sf = "%." + str(d) + "f"
             s = sf % k
 
+        s += dim
         return s
 
     def StringToFloat(self,s):

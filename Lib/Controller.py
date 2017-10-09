@@ -14,17 +14,14 @@ import shutil
 import time
 import threading
 import signal
-import cProfile, pstats, io
-from datetime import datetime
-from Workbench import Ticket
-from NeedfullThings import *
+import pstats, io
 from DB_Handler_TDS3 import *
-from DB_Handler_TPL3 import *
 from Server import Server
 from JobTables import JobTable
-from DB_Handler_TPL3 import Tpl3Routes, Tpl3Lines
 from ImportZZ import *
 from ImportZKMV import *
+from Line import *
+
 
 import Line
 import Routing
@@ -39,7 +36,7 @@ import TestDataZK
 import TestDataZZ
 import ShowRelatedRoutes
 import ServerGraph
-
+import EditorDB
 
 logging.basicConfig(filename="TMV3log.txt",
                     level=logging.ERROR,
@@ -51,6 +48,7 @@ class MainForm(QtGui.QMainWindow):
     signalShowMessage = pyqtSignal(str)
     signalCollapseTreeview = pyqtSignal()
     signalWait = threading.Event()
+    signalWaitForProcessThumbnail = threading.Event()
     signalWaitForFinishedLastPlot = threading.Event()
 
     def __init__(self, parent=None):
@@ -59,18 +57,17 @@ class MainForm(QtGui.QMainWindow):
         self.testPyhtonRunning()
         QtGui.QMainWindow.__init__(self)
         self.ui = uic.loadUi("Controller.ui", self)
-        self.pr = cProfile.Profile()
+      #  self.pr = cProfile.Profile()
         #   self.controlTreeView = ControlTreeView.ControlTreeView(self)
         #   self.ui.tabWidget.addTab(self.controlTreeView,'xx')
         self.model = QtGui.QStandardItemModel()
         self.model.itemChanged.connect(self.onItemChanged)
-        #self.treeview_item_list = []
-        self.signalWaitForFinishedLastPlot.set()
+
         self.JTable = 0
         self.signals = Signal()
 
         self.Server = Server(self)
-
+        self.signalWaitForProcessThumbnail.set()
         self.MeasProcess = None
         self.GraphProcess = None
         self.GraphProcessList = []
@@ -79,8 +76,6 @@ class MainForm(QtGui.QMainWindow):
         self.timer = threading.Timer(5, self.timeOutMeasurementStart)
         self.ds = 0  # dataset
         self.statusBar_label1 = QtGui.QLabel('')
-        #  self.statusBar_label2 = QtGui.QLabel("")
-        #self.statusBar_label.setStyleSheet('QLabel {color: red}')
         self.statusBar().addWidget(self.statusBar_label1)
         self.workBench = None
         self.workBenchDB = ''
@@ -98,12 +93,8 @@ class MainForm(QtGui.QMainWindow):
         self.uiHeight = 0
         self.planTitle = ""
         self.runningFlag = False
-        # self.setWindowFlags(self.windowFlags() | QtCore.Qt.CustomizeWindowHint)
-        # self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowCloseButtonHint)
-        # self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowMaximizeButtonHint)
-        self.setWindowFlags(QtCore.Qt.CustomizeWindowHint | QtCore.Qt.WindowTitleHint)
         self.testModul = None
-
+        self.plotList = []
         #Signals from Process Meas
         dispatcher.connect(self.onMeasStarted, signal=self.signals.MEAS_STARTED, sender=dispatcher.Any)
         dispatcher.connect(self.onJobComplete, self.signals.JOB_COMPLETE, dispatcher.Any)
@@ -144,7 +135,7 @@ class MainForm(QtGui.QMainWindow):
         self.startOption = self.config['Welcome']['start_option']
 
         # load Workbench
-        print('load workbench')
+
         if not QtCore.QFile.exists(self.workBenchDB):
             print('no workbench')
             exit
@@ -156,10 +147,11 @@ class MainForm(QtGui.QMainWindow):
             self.uiHeight = 750
             self.resize(self.uiWidth, self.uiHeight)
             self.testModul = TestDataZK.TestDataZK()
-            self.ui.tabWidget.addTab(self.testModul, "Zone KMV")
-            self.ui.tabWidget.tabBar().moveTab(3, 0)
+            self.ui.tabWidget.addTab(self.testModul, "Table of Tests")
+            #move new tab to left position
+            self.ui.tabWidget.tabBar().moveTab(2, 0)
 
-            self.ui.actionAddLimits.setVisible(False)
+            self.ui.actionAddLimits.setVisible(True)
             self.ui.actionAddCorrections.setVisible(False)
             self.ui.actionAddTestPlan.setVisible(False)
             self.ui.actionExport_Master_KMV.setVisible(False)
@@ -179,9 +171,10 @@ class MainForm(QtGui.QMainWindow):
             self.resize(self.uiWidth, self.uiHeight)
             self.testModul = TestDataZZ.TestDataZZ()
             self.ui.tabWidget.addTab(self.testModul, "Zone Zulassung")
-            self.ui.tabWidget.tabBar().moveTab(3, 0)
+            #move new tab to left position
+            self.ui.tabWidget.tabBar().moveTab(2, 0)
 
-            self.ui.actionAddLimits.setVisible(False)
+            self.ui.actionAddLimits.setVisible(True)
             self.ui.actionAddTestPlan.setVisible(False)
             #copy last TestPlan to ActiveTestPlan
             #self.currentTestID = int (self.config['Current']['current_testID_ZZ'])
@@ -228,7 +221,6 @@ class MainForm(QtGui.QMainWindow):
 
         self.ui.BtnExit_3.clicked.connect(self.onMnuExit)
         self.ui.BtnExit_2.clicked.connect(self.onMnuExit)
-        self.ui.BtnExit.clicked.connect(self.onMnuExit)
         self.ui.BtnBackupTPL.clicked.connect(self.onBtnBackupTPL)
 
         self.ui.BtnShowRelatedRoute.clicked.connect(self.onShowRelatedRoutes)
@@ -253,6 +245,9 @@ class MainForm(QtGui.QMainWindow):
         self.ui.actionImport_Master_KMV.triggered.connect(self.onMnuImportMaster)
         self.ui.actionUpdate_ZKMV.triggered.connect(self.onMnuUpdateZKMV)
         self.ui.actionUpdate_ZZ.triggered.connect(self.onMnuUpdateZZ)
+        self.ui.actionLimits_2.triggered.connect(self.onMnuOpenLimits)
+        self.ui.actionEdit_current_Test_Plan.triggered.connect(self.onMnuEditCurrentTestPlan)
+
 
     def disableFunctions(self):
         self.ui.tabWidget.setTabEnabled(0, False)
@@ -302,12 +297,16 @@ class MainForm(QtGui.QMainWindow):
 
         cR.close()
         sRR.close()
-        _mText = 'you have to complete the new routes: {0}'.format(addList)
-        QtGui.QMessageBox.information(MainForm, 'TMV3', _mText, QtGui.QMessageBox.Ok)
+        if len(addList)== 0:
+            _mText = 'Routes are complete '
+            QtGui.QMessageBox.information(self, 'TMV3', _mText, QtGui.QMessageBox.Ok)
+        else:
+            _mText = 'you have to complete the new routes: {0}'.format(addList)
+            QtGui.QMessageBox.information(self, 'TMV3', _mText, QtGui.QMessageBox.Ok)
 
-        cR = Routing.Routing()
-        cR.loadRoutes()
-        cR.showDialog()
+            cR = Routing.Routing()
+            cR.loadRoutes()
+            cR.showDialog()
 
         pass
 
@@ -364,6 +363,7 @@ class MainForm(QtGui.QMainWindow):
         pass
 
     def startServerGraph(self):
+        pass
         self.serverGraph = ServerGraph.ServerGraph()
         self._sg = threading.Thread(target=self.serverGraph.start)
         self._sg.daemon = False
@@ -397,12 +397,16 @@ class MainForm(QtGui.QMainWindow):
 
     def onTabChanged(self, idx):
         if idx == 0:
+            self.ui.setCursor(QtCore.Qt.BusyCursor)
             self.resize(self.uiWidth, self.uiHeight)
             self.testModul.fillDialog()
+        self.ui.setCursor(QtCore.Qt.ArrowCursor)
         if idx == 1:
+            self.ui.setCursor(QtCore.Qt.BusyCursor)
             #controller
             self.testModul.loadCurrentTDS()
             self.resize(350, 750)
+            self.ui.setCursor(QtCore.Qt.ArrowCursor)
         if idx == 2:
             self.resize(300, 700)
         if idx == 3:
@@ -417,9 +421,15 @@ class MainForm(QtGui.QMainWindow):
         return False
 
     def onBtnStart(self):
+        self.ticket.testID = self.testModul.currentTestID
+        dispatcher.send(self.signals.WB_GET_TEST, dispatcher.Anonymous, self.ticket)
+        if self.ticket.data == None:
+            _ret = QtGui.QMessageBox.information(self, 'TMV3', 'no Test defined. Click Button "New Test"',
+                                                 QtGui.QMessageBox.Ok)
+            return
 
         _mode = self.startOption
-
+ #       print(self.testModul.currentTestID)
         if _mode == 'ZK' or _mode == 'SK':
             if self.testModul.masterID == 0:
                 _ret = QtGui.QMessageBox.information(self, 'TMV3', 'no Master-KMV defined. Proceed ?',
@@ -432,6 +442,7 @@ class MainForm(QtGui.QMainWindow):
             self.startPosSet = True
 
         self.changeColorTreeView('black')
+        #clean all processes
         try:
             for proc in self.GraphProcessList:
                 _data = []
@@ -454,6 +465,8 @@ class MainForm(QtGui.QMainWindow):
         self.testModul.currentPlotNo = 1
         self.runningFlag = True
         self.disableFunctions()
+        self.signalWaitForProcessThumbnail.set()
+        #Process Meas will inform controller, that it is started and to generate a new plot
 
 
     def onBtnStop(self):
@@ -591,14 +604,17 @@ class MainForm(QtGui.QMainWindow):
             _line = self.ticket.data
             _tm.addData([_line.line_id, _line.title, _line.version, _line.date, _line.comment])
 
-        choose = Choose(_tm,'Limit')
-
+        choose = Choose(_tm,'Limit',self)
         choose.exec()
         if choose.ret:
             _ID = _tm.data(choose.sel[0], Qt.DisplayRole)
-            editLimit = Line.Line(self, _ID, False)
-            editLimit.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-            editLimit.showNormal()
+            editLimits = Line.Line(self, _ID, False)
+            editLimits.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+            editLimits.setWindowTitle('Limits')
+            editLimits.showNormal()
+
+
+
 
     def onMnuAntenna(self):
         _tm = TableModel(['ID', 'Title', 'Version', 'Date', 'Comment'])
@@ -614,7 +630,7 @@ class MainForm(QtGui.QMainWindow):
             _line = self.ticket.data
             _tm.addData([_line.line_id, _line.title, _line.version, _line.date, _line.comment])
 
-        choose = Choose(_tm, 'Antenna')
+        choose = Choose(_tm, 'Antenna',self)
 
         choose.exec()
 
@@ -639,7 +655,7 @@ class MainForm(QtGui.QMainWindow):
             _line = self.ticket.data
             _tm.addData([_line.line_id, _line.title, _line.version, _line.date, _line.comment])
 
-        choose = Choose(_tm, 'Cable')
+        choose = Choose(_tm, 'Cable',self)
 
         choose.exec()
         if choose.ret:
@@ -665,7 +681,7 @@ class MainForm(QtGui.QMainWindow):
             if _line.masterID == 0:
                 _tm.addData([_line.line_id, _line.title, _line.version, _line.date, _line.comment])
 
-        choose = Choose(_tm, 'Probes')
+        choose = Choose(_tm, 'Probes',self)
 
         choose.exec()
         if choose.ret:
@@ -689,12 +705,12 @@ class MainForm(QtGui.QMainWindow):
         pass
 
     def onMnuUpdateZZ(self):
-        print("onMnuUpdateZZ")
+
         izz = ImportZZ()
         izz.showDialog()
 
     def onMnuUpdateZKMV(self):
-        print("onMnuUpdateZKMV")
+
         izz = ImportZKMV()
         izz.showDialog()
 
@@ -708,6 +724,11 @@ class MainForm(QtGui.QMainWindow):
             proc.kill()
         self.Server.stop()
         self.close()
+
+    def onMnuEditCurrentTestPlan(self):
+        #os.chdir('../Editor')
+        self.EditProcess = os.system('python ../Editor/EditorDB.py True')
+        pass
 
     def openWorkbench(self, mode_new):
         if mode_new:
@@ -738,7 +759,7 @@ class MainForm(QtGui.QMainWindow):
         self.onStop()
 
     def onPlotComplete(self):
-        print('Plot Complete')
+    #time.sleep(2)
         _command = []
         _command.append(self.signals.GRAPH_MAKE_THUMBNAIL)
         _command.append(self.ticket.plotID)
@@ -747,6 +768,7 @@ class MainForm(QtGui.QMainWindow):
         # no direct access to ui via thread
         self.signalCollapseTreeview.emit()
 
+
     def collapseTreeView(self):
         self.ui.treeView.collapseAll()
 
@@ -754,13 +776,14 @@ class MainForm(QtGui.QMainWindow):
         print("Thumbnail ready")
         dispatcher.send(self.signals.WB_SET_IMAGE, dispatcher.Anonymous, self.ticket)
 
-    def onGoOn(self):
-        #1 Measurement complete, last action was writing thumbnail.
-        # next one please
-        _command = []
-        _command.append(self.signals.MEAS_GOON)
-        self.Server.writeMeas(_command)
-        pass
+
+    # def onGoOn(self):
+    #     #1 Measurement complete, last action was writing thumbnail.
+    #     # next one please
+    #     _command = []
+    #     _command.append(self.signals.MEAS_GOON)
+    #     self.Server.writeMeas(_command)
+    #     pass
 
     def onMeasResult(self, result):
         # dispatcher.send(self.signals.WB_GET_PLOT_INFO, dispatcher.Anonymous,self.ticket.plotID)
@@ -781,7 +804,9 @@ class MainForm(QtGui.QMainWindow):
 
     def onJobComplete(self):
         # Close process Measurement
-        print("Controller: JobComplete")
+        self.signalWaitForProcessThumbnail.wait()
+        self.signalWaitForProcessThumbnail.clear()
+
         try:
             #self.MeasProcess.kill()
             self.ui.BtnStop.click()
@@ -799,7 +824,7 @@ class MainForm(QtGui.QMainWindow):
 
 
     #--- Treeview Functions ----------------------------------------------------------------------
-    #treeview functions are slow, because each check-change has a commit in job table as a consequence
+    #treeview functions are slow, because each check-change causes a commit in job table #
     def initTreeView(self):
         if not self.routeFlag:
             _routeFlag = False
@@ -816,6 +841,7 @@ class MainForm(QtGui.QMainWindow):
             _parent_item_plot = self.model.invisibleRootItem()
             _item = QtGui.QStandardItem(self.ds.db.title)
             _s = 'current Testplan:  ' + self.ds.db.title + ' ' + self.ds.db.version
+            self.planTitle = self.ds.db.title + ' ' + self.ds.db.version
             self.statusBar_label1.setText(_s)
             self.statusBar_label1.repaint()
             #y= ctypes.cast(id(item), ctypes.py_object).value
@@ -826,6 +852,7 @@ class MainForm(QtGui.QMainWindow):
             for _member_plot in self.ds.db.plot_list:
                 assert isinstance(_member_plot, DatasetPlot)
                 _item = QtGui.QStandardItem(_member_plot.title)
+                self.plotList.append(_member_plot.title)
                 _item.setCheckable(True)
                 #x = self.model.indexFromItem(_item)
                 _item.setCheckState(QtCore.Qt.Checked)
@@ -846,16 +873,17 @@ class MainForm(QtGui.QMainWindow):
                     _item.setCheckState(QtCore.Qt.Checked)
                     _parent_item_routine.appendRow(_item)
                     _parent_item_setting = _item
-                    print("Routine:",_member_routine.device1)
+                 #   print("Routine:",_member_routine.device1)
                     #' add Routine to JobTable'
                     _item.setData(self.JTable.CurrentJob)
                     self.JTable.addJob(1, 'Routine', id(_item), _member_routine.id_routine, _member_routine.title,
                                        _member_routine)
 
-                    if not (_member_routine.limits == None):
-                        _limitLines = eval(_member_routine.limits)
+                    if not _member_routine.limits is None:
+                        _limitLines = _member_routine.limits.split('\n')
                         for _member_line in _limitLines:
-                            _item = QtGui.QStandardItem(_member_line[0])
+                            _member_line = _member_line.replace('\r','')
+                            _item = QtGui.QStandardItem(_member_line)
                             _item.setCheckable(True)
                             _item.setCheckState(QtCore.Qt.Checked)
                             _parent_item_setting.appendRow(_item)
@@ -864,18 +892,19 @@ class MainForm(QtGui.QMainWindow):
                             _item.setData(self.JTable.CurrentJob)
                             _limit = Tpl3Lines("", 0)
                             _limit.type = 'Limit'
-                            _limit.title = _member_line[0]
-                            _limit.version = _member_line[1]
+                            _list = _member_line.split(',')
+                            _limit.title = _list[0]
+                            _limit.version = _list[1]
                             self.ticket.data = _limit
                             dispatcher.send(self.signals.WB_GET_LINE_EXISTS, dispatcher.Anonymous, self.ticket)
                             if _limit.line_id == 0:
                                 _err = "Limit {0} not found".format(str(_member_line[0]))
                                 QtGui.QMessageBox.information(self, 'TMV3', _err, QtGui.QMessageBox.Ok)
-                                return
+                              #  return
                             self.JTable.addJob(1, 'Limit', id(_item), 0, _member_line[0][0], _limit)
 
                     if not _member_routine.lines == None:
-                        _lines = eval(_member_routine.lines)
+                        _lines = _member_routine.line.split('\n')
                         for _member_line in _lines:
                             _item = QtGui.QStandardItem(_member_line[0])
                             _item.setCheckable(True)
@@ -1106,14 +1135,14 @@ class MainForm(QtGui.QMainWindow):
 
     def onMeasStarted(self):
         Kommando = []
-        print("Server: Meas gestartet")
+     #   print("Server: Meas gestartet")
         self.timer.cancel()
         Kommando.append(self.signals.JOB_TABLE)
 
         self.Server.writeMeas(Kommando)
 
     def onMeasError(self):
-        print("Meas Error")
+     #   print("Meas Error")
         try:
             #self.MeasProcess.kill()
             self.ui.BtnStop.click()
@@ -1125,7 +1154,6 @@ class MainForm(QtGui.QMainWindow):
 
     def onLoadTDS(self):
         #-loads ActiveTestPlan to TreeView
-
         self.ds = Dataset(os.path.abspath(os.path.join(self.workingDir, 'ActiveTestPlan.TDS3')))
         if self.ds.read():
             # self.ds.filename
@@ -1137,6 +1165,7 @@ class MainForm(QtGui.QMainWindow):
             #    self.config.write(configfile)
             self.TestRelatedRoutes()
             self.initTreeView()
+
             #            self.controlTreeView.onLoadTDS()
             self.ui.BtnStart.setEnabled(True)
             self.ui.BtnPause.setEnabled(True)
@@ -1149,6 +1178,8 @@ class MainForm(QtGui.QMainWindow):
             #pickle.dump(self.JTable,f,pickle.HIGHEST_PROTOCOL)
         self.ui.setCursor(QtCore.Qt.ArrowCursor)
 
+        return self.plotList
+
     # --- Graphic Functions -----------------------------------------------------------------------------------
     # ---
     def startGraph(self):
@@ -1157,13 +1188,12 @@ class MainForm(QtGui.QMainWindow):
             _command = []
             _command.append(self.signals.GRAPH_STOP)
             self.Server.writeGraph(_command)
-        time.sleep(1)
+      #  time.sleep(1)
         _offset = len(self.GraphProcessList) * 40
         _td = self.controllerStartTime - datetime.now()
         _tds = int(_td.total_seconds())
         _name = str(_tds)
-        self.GraphProcess = subprocess.Popen([sys.executable, 'Graph.py', str(_offset), _name], shell=False)
-        self.GraphProcessList.append(self.GraphProcess)
+
 
         self.Server.graphName = "Graph" + _name
 
@@ -1201,8 +1231,9 @@ class MainForm(QtGui.QMainWindow):
         #Measurement generates new Plot.
         #send info to Graphic
         #send data to Workbench
-
-
+        print("C:Wait for signal")
+        self.signalWaitForProcessThumbnail.wait()
+        print("C:Wait for signal End")
         self.graphStarted = False
         self.startGraph()
 
@@ -1226,10 +1257,14 @@ class MainForm(QtGui.QMainWindow):
             _masterPlot.plot_title = data.plot_title
             self.ticket.data = _masterPlot
             dispatcher.send(self.signals.WB_GET_MASTER_PLOT, dispatcher.Anonymous, self.ticket)
+            self.ticket.data = _masterPlot.plot_id
+            dispatcher.send(self.signals.WB_GET_PLOT_CORR_IDS, dispatcher.Anonymous, self.ticket)
+            _corrListMaster = self.ticket.data
             if self.ticket.data != None:
                 _command = []
                 _command.append(self.signals.GRAPH_SHOW_PLOT)
                 _command.append(_masterPlot)
+                _command.append(_corrListMaster)
                 _command.append('True')
                 self.Server.writeGraph(_command)
 

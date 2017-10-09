@@ -7,6 +7,20 @@ class DD_ESU(SpectrumAnalyzer):
         self.preSelectorState = False
         self.stepMode = False
         pass
+    def editorGetName(self):
+        return('ESU')
+
+    def editorGetBaseCommands(self):
+        baseCommands = []
+        baseCommands.append(('StartFreq','float','set_StartFreq','validate_StartFreq'))
+        baseCommands.append(('StopFreq','float','set_StartFreq','validate_StopFreq'))
+        baseCommands.append(('ResBw','set_RewBw'))
+        baseCommands.append(('VidBw','set_VidBw'))
+        baseCommands.append(('SweepTime','set_SweepTime'))
+        baseCommands.append(('PreSelector','set_StartFreq'))
+        baseCommands.append(('PreAmplifier','set_StartFreq'))
+        baseCommands.append(('PreAmplifier','set_StartFreq'))
+        baseCommands.append(('PreAmplifier','set_StartFreq'))
 
 
     def __enter__(self):

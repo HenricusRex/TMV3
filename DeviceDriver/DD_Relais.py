@@ -32,10 +32,12 @@ class Relais():
         #Test given connection
         try:
             self.rl = self.rm.open_resource(self.name)
+            self.rl.clear()
             #self.sa.open()
           # _ret = self.rl.query("*IDN?")
         except visa.VisaIOError as _err:
             _msg = visa.Error(_err)
+            self.showMessage(_msg)
             logging.exception(_msg)
             return False
         return True
@@ -44,3 +46,8 @@ class Relais():
             self.rl.write(command)
             self.rl.close()
 
+    def showMessage(self,text):
+        s = str(text).replace('\r','')
+        s = s.replace('\n','')
+        sdata = pickle.dumps(s)
+        dispatcher.send(self.signals.SHOW_MESSAGE, dispatcher.Anonymous,sdata)

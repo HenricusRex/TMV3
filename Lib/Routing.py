@@ -5,7 +5,9 @@ from pydispatch import dispatcher
 from Workbench import Ticket
 from NeedfullThings import Signal
 import sys
+
 sys.path.append('../DeviceDriver')
+import subprocess
 import DB_Handler_TPL3
 import DD_Relais
 import DD_Analyzer
@@ -14,17 +16,20 @@ import sqlite3
 import configparser
 import os
 import logging
-
+import pickle
 logging.basicConfig(filename="TMV3log.txt",
                     level=logging.error,
                     format='%(asctime)s %(message)s',
                     datefmt='%m.%d.%Y %I:%M:%S')
 
 class Router(object):
-    def __init__(self):
+    def __init__(self,parent = None):
+        self.parent = parent
         self.cutFreqX1 = 0
         self.cutFreqX2 = 0
+        self.signals = Signal()
         pass
+
     def setRoute(self,saDeviceDriver,alias,antenna,cable,probe,relais):
         _startFreq = [] # used for Receiver TransducerRange
         _stopFreq = []  # used for Receiver TransducerRange
@@ -36,9 +41,16 @@ class Router(object):
             _deviceRelais = DD_Relais.Relais(relais.device)
             _ret = _deviceRelais.checkConnection()
             if  _ret == False:
-                return False
+                print("deviceRelais connecion canceled")
+                _s = "Matrix {0} not connected. Proceed anyway?" .format(relais.device)
+              #  self.MessageProcess = subprocess.Popen([sys.executable, "MessageBox.py", "TMV3", _s], shell=False)
+               # self.MessageProcess.wait()
+                ret = self.parent.parent.onShowMessageBox(_s, '1')
+                if ret == QtGui.QMessageBox.No:
+                    return False
             else:
                 _deviceRelais.write(relais.command)
+                print("deviceRelais connecion established")
 
 
 
@@ -56,7 +68,7 @@ class Router(object):
             #     return False
 
         except Exception as _err:
-            print ("Router: SetRoute: {0}".format(str(_err)))
+            print("....................................................................")
             logging.exception(_err)
 
         try:
@@ -207,10 +219,17 @@ class Router(object):
 
         return _l2
 
+
+    def showMessage(self,text):
+        s = str(text).replace('\r','')
+        s = s.replace('\n','')
+        sdata = pickle.dumps(s)
+        dispatcher.send(self.signals.SHOW_MESSAGE, dispatcher.Anonymous,sdata)
+
 class Routing(QtGui.QDialog):
     def __init__(self):
         QtGui.QDialog.__init__(self)
-        self.ui = uic.loadUi("Routing.ui", self)
+        self.ui = uic.loadUi("../Lib/Routing.ui", self)
         self.centerOnScreen()
         self.saveFlag = True
         self.delFlag = False
@@ -558,3 +577,8 @@ class Routing(QtGui.QDialog):
 
 
 
+    def showMessage(self,text):
+        s = str(text).replace('\r','')
+        s = s.replace('\n','')
+        sdata = pickle.dumps(s)
+        dispatcher.send(self.signals.SHOW_MESSAGE, dispatcher.Anonymous,sdata)
